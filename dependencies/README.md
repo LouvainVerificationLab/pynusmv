@@ -7,6 +7,5 @@ Essentially, it ships the source code of the following two other projects:
   - MiniSat (070721) which is licensed to you under MIT license.
 
 Should you want to get and build your own copy of these projects and not use
-the ones provided here, you are more than welcome to download:
-  - NuSMV   from ...
-  - MiniSat from ...
+the ones provided here, you are more than welcome to download the source code
+of these projects from their respective repositories.
