@@ -1,2 +1,19 @@
 migration_scripts/__pycache__
 pynusmv/__pycache__
+
+# Ignore all unpacked dependencies
+dependencies/MiniSat/*
+dependencies/NuSMV/*
+
+# Ignore compilation dependencies
+system.requirement
+dependencies/libnusmv.a
+
+# Ignore all generated artifacts
+pynusmv_lower_interface/**/*.py
+pynusmv_lower_interface/**/*.c
+pynusmv_lower_interface/**/*.h
+
+# Ignore all binary artifacts
+build/*
+dist/*
