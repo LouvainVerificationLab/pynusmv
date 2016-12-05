@@ -11,7 +11,7 @@
 #
 # Author: X. Gillard <xavier.gillard [at] uclouvain.be>
 '''
-import batch_utils
+from batch_utils import *
 
 def is_swig_interface(fname):
     ''':return: True iff `fname` is a swig interface file'''

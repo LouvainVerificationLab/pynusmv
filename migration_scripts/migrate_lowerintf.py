@@ -12,7 +12,7 @@
 #
 # Author: X. Gillard <xavier.gillard [at] uclouvain.be>
 '''
-import batch_utils
+from batch_utils import *
 
 def migrate_pynusmv_nusmv_refs(fname):
     '''
