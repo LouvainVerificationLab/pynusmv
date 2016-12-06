@@ -10,36 +10,12 @@
 # Author: X. Gillard <xavier.gillard [at] uclouvain.be>
 ################################################################################
 
-MINISAT   = ./MiniSat/minisat
-NUSMV     = ./NuSMV/NuSMV-2.5.4/nusmv
-
-LIBRARIES = -lsat -lsatsolvers -lminisat -lncurses -lexpat -lreadline
-LIB_DIRS  = -L$(MINISAT)/simp/ \
-						-L$(NUSMV)/src/sat/.libs/ \
-						-L$(NUSMV)/src/sat/solvers/.libs/ \
-						-L$(NUSMV)/.libs/
-
 # This target builds the libnusmv shared library which is used by the lower
 # interface of pynusmv
-all: libnusmv.a
+all: minisat.build nusmv.build
 
 # This target wipes off anything that has been unpacked or compiled
 clean: minisat.clean nusmv.clean
-	rm libnusmv.a
-
-# This target builds the libnusmv static library which is embedded by the lower
-# interface of pynusmv.
-#
-# Note:
-#   This is a STATIC lib even though the lower interface (extension modules) are
-#   packaged as dynamic libs
-libnusmv.a: system.requirement minisat.build nusmv.build
-	ar -rcsv libnusmv.a  `python3 object_files.py`
-
-# This target builds the libnusmv shared library which is used by the lower
-# interface of pynusmv
-#libnusmv.so: system.requirement minisat.build nusmv.build
-#	g++ -shared $(LIBRARIES) -o libnusmv.so `python3 object_files.py` $(LIB_DIRS)
 
 # This target checks that all the tools and libraries which are required in order
 # to build pynusmv and its dependencies are installed on the target system.

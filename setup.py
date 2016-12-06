@@ -4,8 +4,59 @@ from setuptools.extension import Extension
 import os
 import os.path
 
-# Make sure the NuSMV binaries are built and the static lib is created.
+# Make sure the NuSMV binaries are built and the static libs created.
 os.system('make -C ./dependencies')
+
+def foreach_file(path, condition, action):
+    '''
+    Applies the given `action` to all files satisfying the `condition` in `path`
+    and its subdirectories.
+
+    :param path: the directory containig files that might need migration
+    :param condition: the condition determining whether or not the action should
+        be applied on some given file. (function fname -> Boolean)
+    :param action: the action to be applied on the given file.
+        (function fname -> anything)
+    '''
+    for f in os.listdir(path):
+        abs_path = os.path.join(path, f)
+
+        if os.path.isfile(abs_path) and condition(abs_path):
+            action(abs_path)
+        elif os.path.isdir(abs_path):
+            foreach_file(abs_path, condition, action)
+
+def is_static_lib(fname):
+    ''':return: True iff `fname` denotes a static library'''
+    basename = os.path.basename(fname)
+    return basename.startswith('lib')  \
+           and basename.endswith('.a') \
+           and not os.path.islink(fname)
+
+def memoize_info(fname, lib_names, lib_dirs, extra_objects):
+    basename = os.path.basename(fname)
+    # strips off the 'lib' part of the name
+    libname = basename[3:-2]
+    if libname not in lib_names:
+        lib_names.append(libname)
+    # memoize the enclosing directory
+    libdir  = os.path.dirname(fname)
+    if libdir not in lib_dirs:
+        lib_dirs.append(libdir)
+    # memoize the static lib file
+    if fname not in extra_objects:
+        extra_objects.append(fname)
+
+def libraries_info():
+    libnames        = ['expat']
+    libdirs         = []
+    extra_objects   = []
+    memoize_libinfo = lambda x: memoize_info(x, libnames, libdirs, extra_objects)
+    foreach_file('./dependencies', is_static_lib, memoize_libinfo)
+    return {
+        'libraries'    : libnames,
+        'library_dirs' : libdirs ,
+        'extra_objects': extra_objects }
 
 # This is the path to NuSMV binaries
 INCLUDES  = [
@@ -14,42 +65,16 @@ INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/include'
 ]
 
+LIBRARIES = libraries_info()
+
 # This is a list of generic arguments that need to be repeated over and over
 # for each of the extensions we generate
 EXTENSION_ARGS = {
   # The swig specific arguments
   'swig_opts'      : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
   'include_dirs'   : INCLUDES,
-  'libraries'      : [
-    # Expay (xml parsing : required by CUDD)
-    'expat',
-    # CUDD (required by NuSMV)
-    'cudd',
-    'cudd_util',
-    'mtr',
-    'st',
-    # Minisat (required by BMC functionalities of NuSMV)
-    'minisat',
-    # NuSMV itself
-    'nusmv'
-  ],
   'extra_compile_args': ['-g', '-fPIC'],
-  'library_dirs'   : [
-    './dependencies',
-    './dependencies/MiniSat/minisat/simp',
-    './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib'
-  ],
-  'extra_objects'  : [
-    # NuSMV
-    './dependencies/libnusmv.a',
-    # MiniSat
-    './dependencies/MiniSat/minisat/simp/libminisat.a',
-    # CUDD
-    './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib/libcudd.a',
-    './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib/libcudd_util.a',
-    './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib/libmtr.a',
-    './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib/libst.a'
-  ]
+  **LIBRARIES
 }
 
 
