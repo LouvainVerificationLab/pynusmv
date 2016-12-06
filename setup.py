@@ -33,6 +33,7 @@ EXTENSION_ARGS = {
     # NuSMV itself
     'nusmv'
   ],
+  'extra_compile_args': ['-g', '-fPIC'],
   'library_dirs'   : [
     './dependencies',
     './dependencies/MiniSat/minisat/simp',
@@ -370,12 +371,13 @@ EXTENSIONS = [
 #    au module qui va etre installe
 # le 'py_modules' correspond aux modules python qui vont composer le corps du
 #    module insallé.
-setup(name         = 'pynusmv',
-      version      = "1.0-RC01",
-      author       = "Simon BUSARD, Xavier GILLARD",
-      author_email = "simon.busard@uclouvain.be, xavier.gillard@uclouvain.be",
-      url          = "http://lvl.info.ucl.ac.be/Tools/PyNuSMV",
-      description  = "Embed NuSMV as a python library",
-      ext_modules  = EXTENSIONS,
-      packages     = find_packages()
+setup(name             = 'pynusmv',
+      version          = "1.0-RC01",
+      author           = "Simon BUSARD, Xavier GILLARD",
+      author_email     = "simon.busard@uclouvain.be, xavier.gillard@uclouvain.be",
+      url              = "http://lvl.info.ucl.ac.be/Tools/PyNuSMV",
+      description      = "Embed NuSMV as a python library",
+      ext_modules      = EXTENSIONS,
+      packages         = find_packages(),
+      install_requires = ['pyparsing']
       )
