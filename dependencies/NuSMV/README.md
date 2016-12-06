@@ -23,4 +23,4 @@ have been marked explicitly as such. Here is the list:
 
 These patches are automatically applied at build time via the use of the makefiles. You can consult
 the details of these patches directly from the content of the `*.patch` files. These are regular
-diffs obtained through the use of the UNIX `diff` command.
+diffs obtained through the use of the UNIX `diff -u` command.

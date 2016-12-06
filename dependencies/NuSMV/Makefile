@@ -17,26 +17,27 @@ NUSMV=./NuSMV-2.5.4/nusmv/
 MINISAT=../../../MiniSat/minisat
 
 # This target goes through all the steps required to compile NuSMV.
-all: nusmv.build
+all: nusmv.built
 
 # This target wipes off everything that has been unpacked and built.
 clean:
 	rm -rf NuSMV-2.5.4
-	rm nusmv.unpack
-	rm nusmv.configure
-	rm nusmv.build
+	rm nusmv.unpacked
+	rm nusmv.patched
+	rm nusmv.configured
+	rm nusmv.built
 
 # This target just unpacks the archive containing nusmv
-nusmv.unpack:
+nusmv.unpacked:
 	tar -xpf NuSMV-2.5.4.tar.gz
-	touch nusmv.unpack
+	touch nusmv.unpacked
 
-nusmv.patch: nusmv.unpack
+nusmv.patched: nusmv.unpacked
 	patch -p0 -N < pynusmv.patch
-	touch nusmv.patch
+	touch nusmv.patched
 
 # This target configures nusmv for proper compilation on your system
-nusmv.configure: nusmv.patch
+nusmv.configured: nusmv.patched
 	# Note: because we didn't build the (nusmv-patched) version of CUDD explicitly
 	#       the configuration script will schedule a compilation of that library
 	#       before proceeding to the rest of the compilation.
@@ -48,13 +49,13 @@ nusmv.configure: nusmv.patch
 															--enable-static-link \
 															CFLAGS="-g -O2 -fPIC" \
 														  CXXFLAGS="-g -O2 -fPIC"
-	touch nusmv.configure
+	touch nusmv.configured
 
 # This target proceeds to the build (proper) of the nusmv codebase
 #
 # Note: because we didn't build the (nusmv-patched) version of CUDD explicitly
 #       the configuration script scheduled a compilation of that library
 #       before proceeding to the rest of the compilation.
-nusmv.build: nusmv.configure
+nusmv.built: nusmv.configured
 	make -C $(NUSMV)
-	touch nusmv.build
+	touch nusmv.built
