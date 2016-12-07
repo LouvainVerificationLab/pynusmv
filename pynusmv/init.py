@@ -78,8 +78,12 @@ def init_nusmv(collecting=True):
 
         # Initialize option commands (set, unset)
         # to be able to set parser_is_lax
-        nsopt.init_options_cmd()
-        nscmd.Cmd_SecureCommandExecute("set parser_is_lax")
+        ##############
+        # -- XGILLARD: FIXME this provokes an unexpected SEGFAULT --
+        #+++++++++++++
+        #nsopt.init_options_cmd()
+        #nscmd.Cmd_SecureCommandExecute("set parser_is_lax")
+        ##############
 
         return _PyNuSMVContext()
 
