@@ -13,7 +13,9 @@ dependencies/libnusmv.a
 pynusmv_lower_interface/**/*.py
 pynusmv_lower_interface/**/*.c
 pynusmv_lower_interface/**/*.h
+pynusmv_lower_interface/**/*.so
 
 # Ignore all binary artifacts
 build/*
 dist/*
+pynusmv.egg-info/*

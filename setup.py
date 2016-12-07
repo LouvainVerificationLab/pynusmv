@@ -48,7 +48,7 @@ def memoize_info(fname, lib_names, lib_dirs, extra_objects):
         extra_objects.append(fname)
 
 def libraries_info():
-    libnames        = ['expat']
+    libnames        = ['expat', 'readline', 'ncurses']
     libdirs         = []
     extra_objects   = []
     memoize_libinfo = lambda x: memoize_info(x, libnames, libdirs, extra_objects)
