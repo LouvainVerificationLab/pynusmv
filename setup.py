@@ -62,7 +62,9 @@ class SharedLib(Command):
         ('libname='   ,  'l',   'The name of the output library'),
         ('output_dir=',  'o',   'The directory where to place the library'),
         ('libraries=',   'L',   'The set libraries depended upon'),
-        ('library-dirs=', None, 'Directories containing the libs when not standard')
+        ('library-dirs=', None, 'Directories containing the libs when not standard'),
+        ('extensions=',  'e',   'The list of extensions of the object files that will be incorporated'),
+        ('exclusions=',  'E',   'The list of object files that must be excluded from the output')
     ]
 
     def initialize_options(self):
@@ -71,6 +73,8 @@ class SharedLib(Command):
         self.output_dir   = '.'
         self.libraries    = []
         self.library_dirs = []
+        self.extensions   = ['.o', '.a']
+        self.exclusions   = []
 
     def finalize_options(self):
         pass
@@ -80,39 +84,30 @@ class SharedLib(Command):
             os.makedirs(self.output_dir)
 
         result  = os.path.join(self.output_dir, self.sh_libname())
-        pattern = "g++ -shared -fPIC -o {result:} {libs:} {dirs:}"
+        pattern = "g++ -shared -fPIC -o {result:} {objects:} {libs:} {dirs:}"
         libs    = " ".join(map(lambda x: '-l'+x, self.libraries))
         dirs    = " ".join(map(lambda x: '-L'+x, self.library_dirs))
-        command = pattern.format(result=result, libs=libs, dirs=dirs)
+        objects = " ".join(self.list_all(self.source_dir))
+        command = pattern.format(result=result, objects=objects, libs=libs, dirs=dirs)
         print(command)
         os.system(command)
 
     def sh_libname(self):
         return 'lib{libname:}.so'.format(libname=self.libname)
 
-    def list_static_libs(self, directory):
+    def list_all(self, directory):
+        result = list()
         for item in os.listdir(directory):
             abs_path = os.path.join(directory, item)
 
             if os.path.isdir(abs_path):
-                results.extend(self.list_static_libs(abs_path))
-            elif os.path.isfile(abs_path) and self.is_static_lib(fname):
-                self.memoize_lib(abs_path)
+                result.extend(self.list_all(abs_path))
+            elif os.path.isfile(abs_path):
+                if any(item.endswith(x) for x in self.extensions):
+                    if item not in self.exclusions:
+                        result.append(abs_path)
 
-    def is_static_lib(self, fname):
-        return fname.startswith("lib") and fname.endswith(".a")
-
-    def memoize_lib(self, abs_name):
-        # The directory containing the detected lib
-        _enclosing = os.path.dirname(abs_name)
-        # The 'unique' part of the lb name (without 'lib' prefix and .a extension)
-        _libname   = os.path.basename(abs_name)[3:-2]
-
-        if _enclosing not in self.library_dirs:
-            self.library_dirs.append(_enclosing)
-
-        if _libname not in self.libraries:
-            self.libraries.append(_libname)
+        return result
 
 class BuildExtWithDeps(build_ext):
     '''
@@ -136,6 +131,7 @@ class BuildExtWithDeps(build_ext):
         _lib.libname    = 'dependencies'
         _lib.output_dir = '../{}'.format(LIB_FOLDER)
         _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
+        _lib.exclusions = [ 'main.o' ]
         _lib.run()
 
         print("Copying the result in ../{}".format(LIB_FOLDER))
