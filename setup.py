@@ -20,6 +20,10 @@ import os
 import os.path
 import shutil
 
+# This configuration simply tells the name of the folder which will contain the
+# dependencies sharedlib.
+LIB_FOLDER = 'libs'
+
 # The coming classes define new (custom) commands that extend the ones available
 # in setuptools. The goal of these commands is to generate a sharedlib containing
 # all the code of NuSMV necessary for the extensions composing the lower interface
@@ -54,19 +58,19 @@ class SharedLib(Command):
 
     description = 'links compiled artifacts present in the subtree to a sharedlib'
     user_options= [
-        ('source-dir=', 's', 'The directory containing the inputs'),
-        ('libname='   , 'l', 'The name of the output library'),
-        ('extensions=', 'e', 'The extensions of the compiled artifacts'),
-        ('output_dir=', 'o', 'The directory where to place the library'),
-        ('libraries=',  'L', 'The set libraries depended upon')
+        ('source-dir=',  's',   'The directory containing the inputs'),
+        ('libname='   ,  'l',   'The name of the output library'),
+        ('output_dir=',  'o',   'The directory where to place the library'),
+        ('libraries=',   'L',   'The set libraries depended upon'),
+        ('library-dirs=', None, 'Directories containing the libs when not standard')
     ]
 
     def initialize_options(self):
-        self.source_dir = None
-        self.libname    = None
-        self.extensions = ['.a']
-        self.output_dir = '.'
-        self.libraries  = []
+        self.source_dir   = None
+        self.libname      = None
+        self.output_dir   = '.'
+        self.libraries    = []
+        self.library_dirs = []
 
     def finalize_options(self):
         pass
@@ -76,29 +80,39 @@ class SharedLib(Command):
             os.makedirs(self.output_dir)
 
         result  = os.path.join(self.output_dir, self.sh_libname())
-        pattern = "g++ -shared -fPIC {libs:} -o {result:} {objects:}"
-        objects = " ".join(self.list_objects(self.source_dir))
+        pattern = "g++ -shared -fPIC -o {result:} {libs:} {dirs:}"
         libs    = " ".join(map(lambda x: '-l'+x, self.libraries))
-        command = pattern.format(libs=libs, result=result, objects=objects)
+        dirs    = " ".join(map(lambda x: '-L'+x, self.library_dirs))
+        command = pattern.format(result=result, libs=libs, dirs=dirs)
         print(command)
         os.system(command)
 
     def sh_libname(self):
         return 'lib{libname:}.so'.format(libname=self.libname)
 
-    def list_objects(self, directory):
-        results = list()
+    def list_static_libs(self, directory):
         for item in os.listdir(directory):
             abs_path = os.path.join(directory, item)
 
             if os.path.isdir(abs_path):
-                results.extend(self.list_objects(abs_path))
-            elif os.path.isfile(abs_path):
-                for ext in self.extensions:
-                    if item.endswith(ext):
-                        results.append(abs_path)
+                results.extend(self.list_static_libs(abs_path))
+            elif os.path.isfile(abs_path) and self.is_static_lib(fname):
+                self.memoize_lib(abs_path)
 
-        return results
+    def is_static_lib(self, fname):
+        return fname.startswith("lib") and fname.endswith(".a")
+
+    def memoize_lib(self, abs_name):
+        # The directory containing the detected lib
+        _enclosing = os.path.dirname(abs_name)
+        # The 'unique' part of the lb name (without 'lib' prefix and .a extension)
+        _libname   = os.path.basename(abs_name)[3:-2]
+
+        if _enclosing not in self.library_dirs:
+            self.library_dirs.append(_enclosing)
+
+        if _libname not in self.libraries:
+            self.libraries.append(_libname)
 
 class BuildExtWithDeps(build_ext):
     '''
@@ -107,7 +121,7 @@ class BuildExtWithDeps(build_ext):
     extensions.
 
     .. Note::
-        The sharedlib is called `libdependencies` and is located in `../.libs`
+        The sharedlib is called `libdependencies` and is located in `../LIB_FOLDER`
     '''
 
     def run(self):
@@ -120,13 +134,13 @@ class BuildExtWithDeps(build_ext):
         _lib = self.get_finalized_command('sharedlib')
         _lib.source_dir = 'dependencies'
         _lib.libname    = 'dependencies'
-        _lib.output_dir = '../.libs'
+        _lib.output_dir = '../{}'.format(LIB_FOLDER)
         _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
         _lib.run()
 
-        print("Copying the result in ../.libs")
+        print("Copying the result in ../{}".format(LIB_FOLDER))
         sh_libname = _lib.sh_libname()
-        libs_folder= os.path.join(self.build_lib, 'libs')
+        libs_folder= os.path.join(self.build_lib, LIB_FOLDER)
 
         # crete the output folder if necessary
         if not os.path.exists(libs_folder):
@@ -135,7 +149,7 @@ class BuildExtWithDeps(build_ext):
         # then move the sharedlib over there
         shutil.copyfile(
             os.path.join(_lib.output_dir, sh_libname),
-            os.path.join(self.build_lib+'/libs', sh_libname))
+            os.path.join(libs_folder, sh_libname))
 
         # continue with the regular build_ext
         build_ext.run(self)
@@ -147,10 +161,10 @@ INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/include'
 ]
 
-# These are the libraries dependencies. Note, the ../.libs things is a vile hack
-# but it DOES WORK. I tried so many different options that I cant remember them
-# all but the bottomline is: I don't like this hack either but distutils and
-# setuptools are not going to help you creating a cleaner solution.
+# These are the libraries dependencies. Note, the ../LIB_FOLDER things is a vile
+# hack but it DOES WORK. I tried so many different options that I cant remember
+# them all but the bottomline is: I don't like this hack either but distutils
+# and setuptools are not going to help you creating a cleaner solution.
 #
 # The data file approach simply doesn't work
 #
@@ -168,7 +182,7 @@ INCLUDES  = [
 # able to deal with it (fails with exit code 2).
 LIBRARIES = {
     'libraries'    : ['dependencies'],
-    'library_dirs' : ['../.libs']
+    'library_dirs' : ['../{}'.format(LIB_FOLDER)]
 }
 
 # This is a list of generic arguments that need to be repeated over and over
