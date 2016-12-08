@@ -1,71 +1,175 @@
+'''
+# This script provides all the necessary logic for you to build a distribution
+# of pynusmv which you can run on your machine.
+#
+# This file is part of the pynusmv distribution. As such it is licensed to you
+# under the term of the LGPLv2. For more information regarding the legal aspect
+# of this licensing, please refer to the full text of the license on the free
+# software foundation website.
+#
+# Author: X. Gillard <xavier.gillard [at] uclouvain.be>
+'''
+from setuptools                    import setup, find_packages, Command
+from setuptools.extension          import Extension
+# Command to build native extentions
+from setuptools.command.build_ext  import build_ext
+# Command to build pure python modules
+from setuptools.command.build_py   import build_py
 
-from setuptools           import setup, find_packages
-from setuptools.extension import Extension
 import os
 import os.path
+import shutil
 
-# Make sure the NuSMV binaries are built and the static libs created.
-os.system('make -C ./dependencies')
-
-def foreach_file(path, condition, action):
+# The coming classes define new (custom) commands that extend the ones available
+# in setuptools. The goal of these commands is to generate a sharedlib containing
+# all the code of NuSMV necessary for the extensions composing the lower interface
+# to link with.
+class Makefile(Command):
     '''
-    Applies the given `action` to all files satisfying the `condition` in `path`
-    and its subdirectories.
-
-    :param path: the directory containig files that might need migration
-    :param condition: the condition determining whether or not the action should
-        be applied on some given file. (function fname -> Boolean)
-    :param action: the action to be applied on the given file.
-        (function fname -> anything)
+    Additional command for setuptools that executes some Makefile
     '''
-    for f in os.listdir(path):
-        abs_path = os.path.join(path, f)
+    description = 'This command executes the desired `makefile`.'
+    user_options= [
+        ('source-dir=', 's',   'The directory containing the Makefile'),
+        ('target=',      None, 'The target to be executed')
+    ]
 
-        if os.path.isfile(abs_path) and condition(abs_path):
-            action(abs_path)
-        elif os.path.isdir(abs_path):
-            foreach_file(abs_path, condition, action)
+    def initialize_options(self):
+        self.source_dir = '.'
+        self.target     = ''
 
-def is_static_lib(fname):
-    ''':return: True iff `fname` denotes a static library'''
-    basename = os.path.basename(fname)
-    return basename.startswith('lib')  \
-           and basename.endswith('.a') \
-           and not os.path.islink(fname)
+    def finalize_options(self):
+        pass
 
-def memoize_info(fname, lib_names, lib_dirs, extra_objects):
-    basename = os.path.basename(fname)
-    # strips off the 'lib' part of the name
-    libname = basename[3:-2]
-    if libname not in lib_names:
-        lib_names.append(libname)
-    # memoize the enclosing directory
-    libdir  = os.path.dirname(fname)
-    if libdir not in lib_dirs:
-        lib_dirs.append(libdir)
-    # memoize the static lib file
-    if fname not in extra_objects:
-        extra_objects.append(fname)
+    def run(self):
+        pattern = 'make -C {src_dir:} {target:}'
+        command = pattern.format(src_dir=self.source_dir, target=self.target)
+        os.system(command)
 
-def libraries_info():
-    libnames        = ['expat', 'readline', 'ncurses']
-    libdirs         = []
-    extra_objects   = []
-    memoize_libinfo = lambda x: memoize_info(x, libnames, libdirs, extra_objects)
-    foreach_file('./dependencies', is_static_lib, memoize_libinfo)
-    return {
-        'libraries'    : libnames,
-        'library_dirs' : libdirs ,
-        'extra_objects': extra_objects }
+class SharedLib(Command):
+    '''
+    Additional command for setuptools that builds a sharedlib from all the object
+    files present in the given subtree
+    '''
 
-# This is the path to NuSMV binaries
+    description = 'links compiled artifacts present in the subtree to a sharedlib'
+    user_options= [
+        ('source-dir=', 's', 'The directory containing the inputs'),
+        ('libname='   , 'l', 'The name of the output library'),
+        ('extensions=', 'e', 'The extensions of the compiled artifacts'),
+        ('output_dir=', 'o', 'The directory where to place the library'),
+        ('libraries=',  'L', 'The set libraries depended upon')
+    ]
+
+    def initialize_options(self):
+        self.source_dir = None
+        self.libname    = None
+        self.extensions = ['.a']
+        self.output_dir = '.'
+        self.libraries  = []
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
+        result  = os.path.join(self.output_dir, self.sh_libname())
+        pattern = "g++ -shared -fPIC {libs:} -o {result:} {objects:}"
+        objects = " ".join(self.list_objects(self.source_dir))
+        libs    = " ".join(map(lambda x: '-l'+x, self.libraries))
+        command = pattern.format(libs=libs, result=result, objects=objects)
+        print(command)
+        os.system(command)
+
+    def sh_libname(self):
+        return 'lib{libname:}.so'.format(libname=self.libname)
+
+    def list_objects(self, directory):
+        results = list()
+        for item in os.listdir(directory):
+            abs_path = os.path.join(directory, item)
+
+            if os.path.isdir(abs_path):
+                results.extend(self.list_objects(abs_path))
+            elif os.path.isfile(abs_path):
+                for ext in self.extensions:
+                    if item.endswith(ext):
+                        results.append(abs_path)
+
+        return results
+
+class BuildExtWithDeps(build_ext):
+    '''
+    This command extends build_ext to make sure the dependencies are built
+    and packs them into a sharedlib which can then be used to link with other
+    extensions.
+
+    .. Note::
+        The sharedlib is called `libdependencies` and is located in `../.libs`
+    '''
+
+    def run(self):
+        print("Making the dependencies")
+        _make = self.get_finalized_command('make')
+        _make.source_dir = 'dependencies'
+        _make.run()
+
+        print("Packing them in a shared library")
+        _lib = self.get_finalized_command('sharedlib')
+        _lib.source_dir = 'dependencies'
+        _lib.libname    = 'dependencies'
+        _lib.output_dir = '../.libs'
+        _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
+        _lib.run()
+
+        print("Copying the result in ../.libs")
+        sh_libname = _lib.sh_libname()
+        libs_folder= os.path.join(self.build_lib, 'libs')
+
+        # crete the output folder if necessary
+        if not os.path.exists(libs_folder):
+            os.makedirs(libs_folder)
+
+        # then move the sharedlib over there
+        shutil.copyfile(
+            os.path.join(_lib.output_dir, sh_libname),
+            os.path.join(self.build_lib+'/libs', sh_libname))
+
+        # continue with the regular build_ext
+        build_ext.run(self)
+
+# This is the path to NuSMV header files
 INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/nusmv',
     './dependencies/NuSMV/NuSMV-2.5.4/nusmv/src',
     './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/include'
 ]
 
-LIBRARIES = libraries_info()
+# These are the libraries dependencies. Note, the ../.libs things is a vile hack
+# but it DOES WORK. I tried so many different options that I cant remember them
+# all but the bottomline is: I don't like this hack either but distutils and
+# setuptools are not going to help you creating a cleaner solution.
+#
+# The data file approach simply doesn't work
+#
+# Statically linking all the extensions with nusmv code does not work
+# since NuSMV needs global state which is not shared when the extensions embed
+# NuSMV code.
+#
+# Plugging an extr bit of code into the shared lib to turn it into a python
+# extension is also doomed to fail since the other extensions do not realize
+# that the symbols they need have already been loaded into memory (even after
+# the pseudo-ext is loaded)
+#
+# Making a big blob with all the NuSMV code and compile it all into one single
+# python extension is both _unmaintainable_ and is _SO HUGE_ that swig isn't
+# able to deal with it (fails with exit code 2).
+LIBRARIES = {
+    'libraries'    : ['dependencies'],
+    'library_dirs' : ['../.libs']
+}
 
 # This is a list of generic arguments that need to be repeated over and over
 # for each of the extensions we generate
@@ -77,7 +181,8 @@ EXTENSION_ARGS = {
   **LIBRARIES
 }
 
-
+# In the coming lines, we define all the extensions composing the lower
+# interface of pynusmv. These are all generated using swig.
 EXTENSIONS = [
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core._addons_core',
@@ -390,12 +495,7 @@ EXTENSIONS = [
         **EXTENSION_ARGS)
 ]
 
-# setup est vraiment l'endroit ou on va builder le module python et le packager
-# le 'name' correspond au nom du module qui sera packaged et installé dans les libs
-# le 'ext_modules' correspond aux modules d'extension (en C) qui sont nécessaires
-#    au module qui va etre installe
-# le 'py_modules' correspond aux modules python qui vont composer le corps du
-#    module insallé.
+#
 setup(name             = 'pynusmv',
       version          = "1.0-RC01",
       author           = "Simon BUSARD, Xavier GILLARD",
@@ -404,5 +504,14 @@ setup(name             = 'pynusmv',
       description      = "Embed NuSMV as a python library",
       ext_modules      = EXTENSIONS,
       packages         = find_packages(),
-      install_requires = ['pyparsing']
-      )
+      install_requires = ['pyparsing'],
+      # This is how we actually extend the setuptools framework with extra
+      # commands (in particular, we enrich the build_ext command) to take
+      # care of building NuSMV and packing it all into a sharedlib called
+      # `libdependencies`
+      cmdclass    = {
+          'make'        : Makefile,
+          'sharedlib'   : SharedLib,
+          'build_ext'   : BuildExtWithDeps
+      }
+)
