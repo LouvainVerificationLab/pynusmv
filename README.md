@@ -39,6 +39,9 @@ although we have strong confidence that it is sufficient.
   * Setuptools 2.1 or higher -- https://pypi.python.org/pypi/setuptools
   * pyparsing version 2.0.2 or higher -- http://pyparsing.wikispaces.com/
 
+On OS X, you also need the `install_name_tool` command. But don't worry much
+about this one, it should already be installed on your system.
+
 In addition to these, you will need to have `libexpat` installed on your system
 (SWIG on OSX also requires `pcre` but this might not be mandatory on all
 platforms moreover, you can simply your swig installed with `brew install swig`

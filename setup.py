@@ -166,6 +166,18 @@ class FixLoadPath(Command):
         return '@loader_path/{}'.format(self.rel_to_target(x))
 
     def fix(self, ext):
+        '''
+        Adapts the linking of the dynamic libraries to allow the use of a
+        relative path between the ext to fix and the target library.
+
+        .. Note::
+            The following resources have been really useful and/or inspirational
+                - http://conda.pydata.org/docs/building/shared-libraries.html
+                - http://apple.co/2hcSLFx
+                - http://stackoverflow.com/questions/4513799/how-to-set-the-runtime-path-rpath-of-an-executable-with-gcc-under-mac-osx
+                - setup.py in http://effbot.org/downloads/Imaging-1.1.7.tar.gz
+                - https://docs.python.org/3.5/extending/extending.html (even if this one led to a dead end)
+        '''
         pattern = 'install_name_tool -change {name:} {loader_path:} {ext:}'
         command = pattern.format(name=self.name,
                                  loader_path=self.loader_path(ext),
