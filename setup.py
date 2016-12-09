@@ -112,6 +112,71 @@ class SharedLib(Command):
 
         return result
 
+class FixLoadPath(Command):
+    '''
+    This command is OSX specific and fixes the load path of some depenency lib
+    in all the specified extensions modules. This way, the whole archive can be
+    shipped and installed at a site specific location without requiring the user
+    to fiddle with his LD_PATH.
+
+    .. Note::
+        Proceeding this way is certainly not the cleanest approach from a
+        conceptual point of view but it turns out that it DOES WORKS !
+        I tried so many different options that I cant remember them all but
+        the bottomline is: I don't like this hack either but distutils
+        and setuptools are not going to help you creating a cleaner solution.
+
+        The data file approach simply doesn't work
+
+        Statically linking all the extensions with nusmv code does not work
+        since NuSMV needs global state which is not shared when the extensions embed
+        NuSMV code.
+
+        Plugging an extr bit of code into the shared lib to turn it into a python
+        extension is also doomed to fail since the other extensions do not realize
+        that the symbols they need have already been loaded into memory (even after
+        the pseudo-ext is loaded)
+
+        Making a big blob with all the NuSMV code and compile it all into one single
+        python extension is both _unmaintainable_ and is _SO HUGE_ that swig isn't
+        able to deal with it (fails with exit code 2).
+
+        Passing the `runtime_library_dirs` to the extensions do not work on OSX.
+    '''
+    description = "OSX specific command to fix the load path of the libdependencies"
+    user_options= [
+        ('name=',        'n', 'The name of the library as it has been written in the shared object'),
+        ('target-path=', 't', 'The path the targetted shared object (the one to refer to)'),
+        ('ext-modules=', 'm', 'The extension modules that needs to be fixed')
+    ]
+
+    def initialize_options(self):
+        self.name        = None
+        self.target_path = None
+        self.ext_modules = []
+
+    def finalize_options(self):
+        pass
+
+    def rel_to_target(self, x):
+        extdir = os.path.dirname(x)
+        return os.path.relpath(self.target_path, extdir)
+
+    def loader_path(self, x):
+        return '@loader_path/{}'.format(self.rel_to_target(x))
+
+    def fix(self, ext):
+        pattern = 'install_name_tool -change {name:} {loader_path:} {ext:}'
+        command = pattern.format(name=self.name,
+                                 loader_path=self.loader_path(ext),
+                                 ext=ext)
+        print(command)
+        os.system(command)
+
+    def run(self):
+        for ext in self.ext_modules:
+            self.fix(ext)
+
 class BuildExtWithDeps(build_ext):
     '''
     This command extends build_ext to make sure the dependencies are built
@@ -121,6 +186,16 @@ class BuildExtWithDeps(build_ext):
     .. Note::
         The sharedlib is called `libdependencies` and is located in `../LIB_FOLDER`
     '''
+    def find_ext_modules(self, directory):
+        result = list()
+        for item in os.listdir(directory):
+            abs_path = os.path.join(directory, item)
+
+            if os.path.isdir(abs_path):
+                result.extend(self.find_ext_modules(abs_path))
+            elif os.path.isfile(abs_path) and item.endswith('.so'):
+                result.append(abs_path)
+        return result
 
     def run(self):
         print("Making the dependencies")
@@ -135,7 +210,7 @@ class BuildExtWithDeps(build_ext):
         _lib.output_dir = '{}'.format(LIB_FOLDER)
         _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
         _lib.exclusions = [ 'main.o' ]
-        _lib.ex_args    = [ '-install_name @rpath/libs/libdependencies.so']
+        _lib.ex_args    = [ '-headerpad_max_install_names', '-install_name libdependencies.so']
         _lib.run()
 
         print("Copying the result in {}".format(LIB_FOLDER))
@@ -154,6 +229,15 @@ class BuildExtWithDeps(build_ext):
         # continue with the regular build_ext
         build_ext.run(self)
 
+        # then fix the generated extensions to make then use the relative loader
+        print("Fixing the loader_path")
+        _fix = self.get_finalized_command("fix-load-path")
+        _fix.name        = 'lib/libdependencies.so'
+        _fix.target_path = os.path.join(lib_folder, sh_libname)
+        _fix.ext_modules = self.find_ext_modules(self.build_lib)
+        _fix.run()
+
+
 # This is the path to NuSMV header files
 INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/nusmv',
@@ -161,25 +245,7 @@ INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/include'
 ]
 
-# These are the libraries dependencies. Note, the ../LIB_FOLDER things is a vile
-# hack but it DOES WORK. I tried so many different options that I cant remember
-# them all but the bottomline is: I don't like this hack either but distutils
-# and setuptools are not going to help you creating a cleaner solution.
-#
-# The data file approach simply doesn't work
-#
-# Statically linking all the extensions with nusmv code does not work
-# since NuSMV needs global state which is not shared when the extensions embed
-# NuSMV code.
-#
-# Plugging an extr bit of code into the shared lib to turn it into a python
-# extension is also doomed to fail since the other extensions do not realize
-# that the symbols they need have already been loaded into memory (even after
-# the pseudo-ext is loaded)
-#
-# Making a big blob with all the NuSMV code and compile it all into one single
-# python extension is both _unmaintainable_ and is _SO HUGE_ that swig isn't
-# able to deal with it (fails with exit code 2).
+# These are the libraries dependencies.
 LIBRARIES = {
     'libraries'    : ['dependencies']
 }
@@ -191,7 +257,7 @@ EXTENSION_ARGS = {
   'swig_opts'      : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
   'include_dirs'   : INCLUDES,
   'extra_compile_args': ['-g', '-fPIC'],
-  'extra_link_args'   : ['-Llib','-Xlinker', '-rpath'],
+  'extra_link_args': ['-Llib', '-headerpad_max_install_names'],
   **LIBRARIES
 }
 
@@ -524,8 +590,9 @@ setup(name             = 'pynusmv',
       # care of building NuSMV and packing it all into a sharedlib called
       # `libdependencies`
       cmdclass    = {
-          'make'        : Makefile,
-          'sharedlib'   : SharedLib,
-          'build_ext'   : BuildExtWithDeps
+          'make'         : Makefile,
+          'sharedlib'    : SharedLib,
+          'fix-load-path': FixLoadPath,
+          'build_ext'    : BuildExtWithDeps
       }
 )
