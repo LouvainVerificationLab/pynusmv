@@ -22,7 +22,7 @@ import shutil
 
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
-LIB_FOLDER = 'libs'
+LIB_FOLDER = 'lib'
 
 # The coming classes define new (custom) commands that extend the ones available
 # in setuptools. The goal of these commands is to generate a sharedlib containing
@@ -64,7 +64,8 @@ class SharedLib(Command):
         ('libraries=',   'L',   'The set libraries depended upon'),
         ('library-dirs=', None, 'Directories containing the libs when not standard'),
         ('extensions=',  'e',   'The list of extensions of the object files that will be incorporated'),
-        ('exclusions=',  'E',   'The list of object files that must be excluded from the output')
+        ('exclusions=',  'E',   'The list of object files that must be excluded from the output'),
+        ('extra-args=',  'a',   'Extra arguments (ie. linker) passed on to gcc')
     ]
 
     def initialize_options(self):
@@ -75,6 +76,7 @@ class SharedLib(Command):
         self.library_dirs = []
         self.extensions   = ['.o', '.a']
         self.exclusions   = []
+        self.extra_args   = []
 
     def finalize_options(self):
         pass
@@ -84,11 +86,12 @@ class SharedLib(Command):
             os.makedirs(self.output_dir)
 
         result  = os.path.join(self.output_dir, self.sh_libname())
-        pattern = "g++ -shared -fPIC -o {result:} {objects:} {libs:} {dirs:}"
+        pattern = "g++ -shared -fPIC {ex_args:} -o {result:} {objects:} {libs:} {dirs:}"
         libs    = " ".join(map(lambda x: '-l'+x, self.libraries))
         dirs    = " ".join(map(lambda x: '-L'+x, self.library_dirs))
         objects = " ".join(self.list_all(self.source_dir))
-        command = pattern.format(result=result, objects=objects, libs=libs, dirs=dirs)
+        ex_args = " ".join(self.extra_args)
+        command = pattern.format(result=result, ex_args=ex_args, objects=objects, libs=libs, dirs=dirs)
         print(command)
         os.system(command)
 
@@ -129,23 +132,24 @@ class BuildExtWithDeps(build_ext):
         _lib = self.get_finalized_command('sharedlib')
         _lib.source_dir = 'dependencies'
         _lib.libname    = 'dependencies'
-        _lib.output_dir = '../{}'.format(LIB_FOLDER)
+        _lib.output_dir = '{}'.format(LIB_FOLDER)
         _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
         _lib.exclusions = [ 'main.o' ]
+        _lib.ex_args    = [ '-install_name @rpath/libs/libdependencies.so']
         _lib.run()
 
-        print("Copying the result in ../{}".format(LIB_FOLDER))
+        print("Copying the result in {}".format(LIB_FOLDER))
         sh_libname = _lib.sh_libname()
-        libs_folder= os.path.join(self.build_lib, LIB_FOLDER)
+        lib_folder = os.path.join(self.build_lib, LIB_FOLDER)
 
         # crete the output folder if necessary
-        if not os.path.exists(libs_folder):
-            os.makedirs(libs_folder)
+        if not os.path.exists(lib_folder):
+            os.makedirs(lib_folder)
 
         # then move the sharedlib over there
         shutil.copyfile(
             os.path.join(_lib.output_dir, sh_libname),
-            os.path.join(libs_folder, sh_libname))
+            os.path.join(lib_folder, sh_libname))
 
         # continue with the regular build_ext
         build_ext.run(self)
@@ -177,8 +181,7 @@ INCLUDES  = [
 # python extension is both _unmaintainable_ and is _SO HUGE_ that swig isn't
 # able to deal with it (fails with exit code 2).
 LIBRARIES = {
-    'libraries'    : ['dependencies'],
-    'library_dirs' : ['../{}'.format(LIB_FOLDER)]
+    'libraries'    : ['dependencies']
 }
 
 # This is a list of generic arguments that need to be repeated over and over
@@ -188,6 +191,7 @@ EXTENSION_ARGS = {
   'swig_opts'      : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
   'include_dirs'   : INCLUDES,
   'extra_compile_args': ['-g', '-fPIC'],
+  'extra_link_args'   : ['-Llib','-Xlinker', '-rpath'],
   **LIBRARIES
 }
 
