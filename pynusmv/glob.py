@@ -18,20 +18,20 @@ __all__ = ['load', 'symb_table', 'bdd_encoding', 'prop_database',
 import tempfile
 import os
 
-from pynusmv_lower_interface.nusmv.parser import _parser as nsparser
-from pynusmv_lower_interface.nusmv.opt import _opt as nsopt
-from pynusmv_lower_interface.nusmv.compile import _compile as nscompile
-from pynusmv_lower_interface.nusmv.enc import _enc as nsenc
-from pynusmv_lower_interface.nusmv.enc.bool import _bool as nsboolenc
-from pynusmv_lower_interface.nusmv.enc.bdd import _bdd as nsbddenc
-from pynusmv_lower_interface.nusmv.enc.base import _base as nsbaseenc
-from pynusmv_lower_interface.nusmv.prop import _prop as nsprop
-from pynusmv_lower_interface.nusmv.compile.symb_table import _symb_table as nssymb_table
-from pynusmv_lower_interface.nusmv.fsm import _fsm as nsfsm
-from pynusmv_lower_interface.nusmv.set import _set as nsset
-from pynusmv_lower_interface.nusmv.fsm.bdd import _bdd as nsbddfsm
-from pynusmv_lower_interface.nusmv.trace import _trace as nstrace
-from pynusmv_lower_interface.nusmv.trace.exec_ import _exec_ as nstraceexec
+from pynusmv_lower_interface.nusmv.parser import parser as nsparser
+from pynusmv_lower_interface.nusmv.opt import opt as nsopt
+from pynusmv_lower_interface.nusmv.compile import compile as nscompile
+from pynusmv_lower_interface.nusmv.enc import enc as nsenc
+from pynusmv_lower_interface.nusmv.enc.bool import bool as nsboolenc
+from pynusmv_lower_interface.nusmv.enc.bdd import bdd as nsbddenc
+from pynusmv_lower_interface.nusmv.enc.base import base as nsbaseenc
+from pynusmv_lower_interface.nusmv.prop import prop as nsprop
+from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as nssymb_table
+from pynusmv_lower_interface.nusmv.fsm import fsm as nsfsm
+from pynusmv_lower_interface.nusmv.set import set as nsset
+from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as nsbddfsm
+from pynusmv_lower_interface.nusmv.trace import trace as nstrace
+from pynusmv_lower_interface.nusmv.trace.exec_ import exec_ as nstraceexec
 
 from .fsm import BddEnc, SymbTable
 from .node import FlatHierarchy

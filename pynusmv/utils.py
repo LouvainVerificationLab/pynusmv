@@ -8,7 +8,7 @@ used by PyNuSMV internals.
 __all__ = ['PointerWrapper', 'fixpoint', 'update']
 
 
-from pynusmv.init import _register_wrapper
+from pynusmv.init import register_wrapper
 
 
 class PointerWrapper(object):

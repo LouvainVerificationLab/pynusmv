@@ -130,6 +130,10 @@ def node2word(node: 'node') -> "WordNumber_ptr":
 def word2node(word: 'WordNumber_ptr') -> "node_ptr":
     """word2node(WordNumber_ptr word) -> node"""
     return _node.word2node(word)
+
+def node_equal(left: 'node', right: 'node') -> "boolean":
+    """node_equal(node left, node right) -> boolean"""
+    return _node.node_equal(left, right)
 PRIuPTR = _node.PRIuPTR
 PRIdPTR = _node.PRIdPTR
 LLU = _node.LLU

@@ -10,11 +10,11 @@ __all__ = ['propTypes', 'Prop', 'PropDb', 'Spec', 'true', 'false', 'not_',
            'ax', 'ag', 'af', 'au', 'aw', 'atom']
 
 
-from pynusmv_lower_interface.nusmv.prop import _prop as nsprop
-from pynusmv_lower_interface.nusmv.parser import _parser as nsparser
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
-from pynusmv_lower_interface.nusmv.compile.type_checking import _type_checking as nstype_checking
-from pynusmv_lower_interface.nusmv.compile.symb_table import _symb_table as nssymb_table
+from pynusmv_lower_interface.nusmv.prop import prop as nsprop
+from pynusmv_lower_interface.nusmv.parser import parser as nsparser
+from pynusmv_lower_interface.nusmv.node import node as nsnode
+from pynusmv_lower_interface.nusmv.compile.type_checking import type_checking as nstype_checking
+from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as nssymb_table
 
 from .fsm import BddFsm
 from .utils import PointerWrapper

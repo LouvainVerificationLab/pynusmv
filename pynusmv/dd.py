@@ -22,13 +22,13 @@ __all__ = ['enable_dynamic_reordering', 'disable_dynamic_reordering',
            'DDManager']
 
 
-from pynusmv_lower_interface.nusmv.dd import _dd as nsdd
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
-from pynusmv_lower_interface.nusmv.compile.symb_table import _symb_table as nssymb_table
-from pynusmv_lower_interface.nusmv.enc.bdd import _bdd as nsbddEnc
-from pynusmv_lower_interface.nusmv.utils import _utils as nsutils
-from pynusmv_lower_interface.nusmv.cinit import _cinit as nscinit
-from pynusmv_lower_interface.nusmv.opt import _opt as nsopt
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
+from pynusmv_lower_interface.nusmv.node import node as nsnode
+from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as nssymb_table
+from pynusmv_lower_interface.nusmv.enc.bdd import bdd as nsbddEnc
+from pynusmv_lower_interface.nusmv.utils import utils as nsutils
+from pynusmv_lower_interface.nusmv.cinit import cinit as nscinit
+from pynusmv_lower_interface.nusmv.opt import opt as nsopt
 
 from .utils import PointerWrapper
 from .exception import MissingManagerError

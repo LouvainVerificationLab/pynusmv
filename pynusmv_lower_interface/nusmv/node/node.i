@@ -57,11 +57,9 @@ node_ptr word2node(WordNumber_ptr word) {
     return (node_ptr) word;
 }
 
-/* -- Xavier GILLARD : this symbol already exists in libnusmv.a --
- * boolean node_equal(node_ptr left, node_ptr right) {
- *    return left == right;
- * }
- */
+boolean node_equal(node_ptr left, node_ptr right) {
+  return left == right;
+}
 %}
 
 

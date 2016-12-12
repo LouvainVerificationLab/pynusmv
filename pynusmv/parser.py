@@ -50,7 +50,7 @@ __all__ = [
     'parseAllString']
 
 
-from .exception import NuSMVParsingError, _Error
+from .exception import NuSMVParsingError, Error
 
 from .utils import update
 from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
@@ -66,8 +66,8 @@ from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
                     Compassion,
                     Expression)
 
-from pynusmv_lower_interface.nusmv.parser import _parser as nsparser
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
+from pynusmv_lower_interface.nusmv.parser import parser as nsparser
+from pynusmv_lower_interface.nusmv.node import node as nsnode
 
 from pyparsing import (Word as PWord, Forward, Optional, Literal,
                        OneOrMore, FollowedBy, Suppress, ZeroOrMore,

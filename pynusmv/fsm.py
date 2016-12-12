@@ -18,21 +18,21 @@ __all__ = ['BddFsm', 'BddTrans', 'BddEnc', 'SymbTable']
 
 import tempfile
 
-from pynusmv_lower_interface.nusmv.fsm.bdd import _bdd as bddFsm
-from pynusmv_lower_interface.nusmv.enc.bdd import _bdd as bddEnc
-from pynusmv_lower_interface.nusmv.enc.base import _base as nsbaseEnc
-from pynusmv_lower_interface.nusmv.trans.bdd import _bdd as nsbddtrans
-from pynusmv_lower_interface.nusmv.set import _set as nsset
-from pynusmv_lower_interface.nusmv.compile.symb_table import _symb_table as nssymb_table
-from pynusmv_lower_interface.nusmv.compile import _compile as nscompile
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
-from pynusmv_lower_interface.nusmv.prop import _prop as nsprop
-from pynusmv_lower_interface.nusmv.fsm.sexp import _sexp as nssexp
-from pynusmv_lower_interface.nusmv.utils import _utils as nsutils
+from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as bddFsm
+from pynusmv_lower_interface.nusmv.enc.bdd import bdd as bddEnc
+from pynusmv_lower_interface.nusmv.enc.base import base as nsbaseEnc
+from pynusmv_lower_interface.nusmv.trans.bdd import bdd as nsbddtrans
+from pynusmv_lower_interface.nusmv.set import set as nsset
+from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as nssymb_table
+from pynusmv_lower_interface.nusmv.compile import compile as nscompile
+from pynusmv_lower_interface.nusmv.node import node as nsnode
+from pynusmv_lower_interface.nusmv.prop import prop as nsprop
+from pynusmv_lower_interface.nusmv.fsm.sexp import sexp as nssexp
+from pynusmv_lower_interface.nusmv.utils import utils as nsutils
 
-from pynusmv_lower_interface.nusmv.fsm import _fsm as nsfsm
-from pynusmv_lower_interface.nusmv.opt import _opt as nsopt
-from pynusmv_lower_interface.nusmv.compile.type_checking import _type_checking as nstype_checking
+from pynusmv_lower_interface.nusmv.fsm import fsm as nsfsm
+from pynusmv_lower_interface.nusmv.opt import opt as nsopt
+from pynusmv_lower_interface.nusmv.compile.type_checking import type_checking as nstype_checking
 
 from .dd import BDD, State, Inputs, StateInputs, DDManager, Cube
 from .utils import PointerWrapper, AttributeDict

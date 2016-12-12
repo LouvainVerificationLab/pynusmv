@@ -16,12 +16,12 @@ import random
 from .utils import PointerWrapper
 from .parser import parse_next_expression, parse_identifier
 
-from pynusmv_lower_interface.nusmv.compile import _compile as nscompile
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
-from pynusmv_lower_interface.nusmv.utils import _utils as nsutils
-from pynusmv_lower_interface.nusmv.set import _set as nsset
-from pynusmv_lower_interface.nusmv.parser import _parser as nsparser
-from pynusmv_lower_interface.nusmv.parser._parser import (TRANS, INIT, INVAR, ASSIGN, FAIRNESS,
+from pynusmv_lower_interface.nusmv.compile import compile as nscompile
+from pynusmv_lower_interface.nusmv.node import node as nsnode
+from pynusmv_lower_interface.nusmv.utils import utils as nsutils
+from pynusmv_lower_interface.nusmv.set import set as nsset
+from pynusmv_lower_interface.nusmv.parser import parser as nsparser
+from pynusmv_lower_interface.nusmv.parser.parser import (TRANS, INIT, INVAR, ASSIGN, FAIRNESS,
                                   JUSTICE, COMPASSION, SPEC, LTLSPEC, PSLSPEC,
                                   INVARSPEC, COMPUTE, DEFINE, ISA, GOTO,
                                   CONSTRAINT, MODULE, PROCESS, MODTYPE, LAMBDA,
