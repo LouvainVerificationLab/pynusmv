@@ -50,7 +50,7 @@ __all__ = [
     'parseAllString']
 
 
-from .exception import NuSMVParsingError, Error
+from .exception import NuSMVParsingError, _Error
 
 from .utils import update
 from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
