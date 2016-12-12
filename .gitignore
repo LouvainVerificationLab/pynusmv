@@ -1,3 +1,4 @@
+/**/__pycache__/*
 migration_scripts/__pycache__
 pynusmv/__pycache__
 
@@ -10,7 +11,7 @@ system.requirement
 dependencies/libnusmv.a
 
 # Ignore all generated artifacts
-#pynusmv_lower_interface/**/*.py
+pynusmv_lower_interface/**/*.py
 pynusmv_lower_interface/**/*.c
 pynusmv_lower_interface/**/*.h
 pynusmv_lower_interface/**/*.so
