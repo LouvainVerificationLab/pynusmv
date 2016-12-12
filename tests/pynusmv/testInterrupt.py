@@ -4,29 +4,29 @@ from pynusmv.dd import BDD
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv import glob
 
-from pynusmv_lower_interface.nusmv.dd import _dd as nsdd
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
 
 
 class TestInterrupt(unittest.TestCase):
-
+    
     def setUp(self):
         init_nusmv()
-
+    
     def tearDown(self):
         deinit_nusmv()
-
-
+    
+    
     def model(self):
         glob.load_from_file("tests/pynusmv/models/inputs.smv")
         glob.compute_model()
         fsm = glob.prop_database().master.bddFsm
         self.assertIsNotNone(fsm)
         return fsm
-
+        
     @unittest.skip("Takes too long, used to check CTRL-C")
     def test_interrupt(self):
         fsm = self.model()
-
+        
         init = fsm.init
         initptr = init._ptr
         reachptr = fsm.reachable_states._ptr
