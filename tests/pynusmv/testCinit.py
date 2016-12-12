@@ -5,7 +5,7 @@ class TestCinit(unittest.TestCase):
 
 	def test_cinit_NuSMV_init(self):
 
-		from pynusmv_lower_interface.nusmv.cinit import _cinit
+		from pynusmv_lower_interface.nusmv.cinit import _cinit as cinit
 
 		cinit.NuSMVCore_init_data()
 		cinit.NuSMVCore_init(None, 0)

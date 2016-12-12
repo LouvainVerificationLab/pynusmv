@@ -1,9 +1,9 @@
 import unittest
 
-from pynusmv_lower_interface.nusmv.cinit import _cinit
-from pynusmv_lower_interface.nusmv.cmd import _cmd
-from pynusmv_lower_interface.nusmv.node import node as _nsnode
-from pynusmv_lower_interface.nusmv.parser import _parser
+from pynusmv_lower_interface.nusmv.cinit import _cinit as cinit
+from pynusmv_lower_interface.nusmv.cmd import _cmd as cmd
+from pynusmv_lower_interface.nusmv.node import _node as nsnode
+from pynusmv_lower_interface.nusmv.parser import parser
 
 from pynusmv.dd import BDD
 from pynusmv.dd import BDDList

@@ -19,3 +19,7 @@ pynusmv_lower_interface/**/*.so
 build/*
 dist/*
 pynusmv.egg-info/*
+
+# Ignore all compiled test artifacts
+tests/__pycache__/*
+tests/pynusmv/__pycache__/*
