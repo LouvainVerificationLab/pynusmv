@@ -250,6 +250,24 @@ class BuildExtWithDeps(build_ext):
         _fix.run()
 
 
+class ListPackages(Command):
+    '''
+    This command is a plain utility command that does not participate in the
+    build and only serves the purpose of conveniently listing the python packages
+    that are packed in the distribution archive.
+    '''
+    description = "Prints the list of python packages that will be part of the distribution"
+    user_options= []
+
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        for pkg in find_packages():
+            print("- {}".format(pkg))
+
+
 # This is the path to NuSMV header files
 INCLUDES  = [
     './dependencies/NuSMV/NuSMV-2.5.4/nusmv',
@@ -589,7 +607,7 @@ EXTENSIONS = [
 
 #
 setup(name             = 'pynusmv',
-      version          = "1.0-RC01",
+      version          = "1.0rc1",
       author           = "Simon BUSARD, Xavier GILLARD",
       author_email     = "simon.busard@uclouvain.be, xavier.gillard@uclouvain.be",
       url              = "http://lvl.info.ucl.ac.be/Tools/PyNuSMV",
@@ -605,6 +623,7 @@ setup(name             = 'pynusmv',
           'make'         : Makefile,
           'sharedlib'    : SharedLib,
           'fix-load-path': FixLoadPath,
-          'build_ext'    : BuildExtWithDeps
+          'build_ext'    : BuildExtWithDeps,
+          'list_packages': ListPackages
       }
 )
