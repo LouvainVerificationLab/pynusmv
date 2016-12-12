@@ -20,10 +20,10 @@ __all__ = ['init_nusmv', 'deinit_nusmv', 'reset_nusmv', 'is_nusmv_init']
 import weakref
 import gc
 
-from pynusmv_lower_interface.nusmv.cinit import _cinit as nscinit
-from pynusmv_lower_interface.nusmv.opt import _opt as nsopt
-from pynusmv_lower_interface.nusmv.cmd import _cmd as nscmd
-from pynusmv_lower_interface.nusmv.dd import _dd as nsdd
+from pynusmv_lower_interface.nusmv.cinit import cinit as nscinit
+from pynusmv_lower_interface.nusmv.opt import opt as nsopt
+from pynusmv_lower_interface.nusmv.cmd import cmd as nscmd
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
 
 from .exception import NuSMVInitError, PyNuSMVError
 
@@ -78,12 +78,8 @@ def init_nusmv(collecting=True):
 
         # Initialize option commands (set, unset)
         # to be able to set parser_is_lax
-        ##############
-        # -- XGILLARD: FIXME this provokes an unexpected SEGFAULT --
-        #+++++++++++++
-        #nsopt.init_options_cmd()
-        #nscmd.Cmd_SecureCommandExecute("set parser_is_lax")
-        ##############
+        nsopt.init_options_cmd()
+        nscmd.Cmd_SecureCommandExecute("set parser_is_lax")
 
         return _PyNuSMVContext()
 

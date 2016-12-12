@@ -96,7 +96,7 @@ except ImportError:
     from collections import Mapping
 from copy import deepcopy
 
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
+from pynusmv_lower_interface.nusmv.node import node as nsnode
 
 from .utils import update
 from .exception import NuSMVModuleError

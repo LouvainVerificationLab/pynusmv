@@ -53,4 +53,4 @@ def is_source(fname):
     return is_python(fname) or is_swig(fname)
 
 if __name__ == '__main__':
-    foreach_file('tests', is_python, migrate_refs)
+    foreach_file('pynusmv', is_python, migrate_refs)

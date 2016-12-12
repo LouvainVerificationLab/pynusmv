@@ -21,8 +21,8 @@ __all__ = ['PyNuSMVError', 'MissingManagerError', 'NuSMVLexerError',
 
 from collections import namedtuple
 
-from pynusmv_lower_interface.nusmv.parser import _parser as nsparser
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
+from pynusmv_lower_interface.nusmv.parser import parser as nsparser
+from pynusmv_lower_interface.nusmv.node import node as nsnode
 
 
 class PyNuSMVError(Exception):

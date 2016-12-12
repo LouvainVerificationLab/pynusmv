@@ -8,9 +8,9 @@ __all__ = ['check_ctl_spec', 'eval_simple_expression', 'eval_ctl_spec',
            'explain', 'explainEX', 'explainEU', 'explainEG']
 
 
-from pynusmv_lower_interface.nusmv.node import _node as nsnode
-from pynusmv_lower_interface.nusmv.dd import _dd as nsdd
-from pynusmv_lower_interface.nusmv.mc import _mc as nsmc
+from pynusmv_lower_interface.nusmv.node import node as nsnode
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
+from pynusmv_lower_interface.nusmv.mc import mc as nsmc
 
 from .dd import BDD, State, Inputs, BDDList
 from .prop import atom
