@@ -351,6 +351,15 @@ class BuildExtWithDeps(build_ext):
         _fix.ext_modules = self.find_ext_modules(self.build_lib)
         _fix.run()
 
+
+class BuildPyExtra(build_py):
+    '''
+    This command enriches the usual build_py command with some additional
+    features like the generation of __init__ files in all the modules of the
+    lower interface and a forceful copy of the swigged python module (which are
+    required for the proper functioning of the library).
+    '''
+    def run(self):
         # Generate init scripts for each of the modules composing the lower intf
         print("Generate init files for modules of the lower interface")
         self.get_finalized_command("mk_init").run()
@@ -362,6 +371,43 @@ class BuildExtWithDeps(build_ext):
         _cpy.target = os.path.join(self.build_lib, "pynusmv_lower_interface")
         _cpy.run()
 
+        # continue with the regular build_py
+        build_py.run(self)
+
+class Doc(Command):
+    '''
+    Generates the documentation in the usual build directory
+    '''
+    description = 'Generates the project documentation'
+    user_options= [
+        ("build-dir=", None, "The location of the build directory where to copy the docs"),
+        ("builder="  , None, "The sphinx builder to use to generate the docs")
+    ]
+
+    def initialize_options(self):
+        self.builder  = 'html'
+        self.build_dir= None
+
+    def finalize_options(self):
+        self.set_undefined_options('build', ('build_lib', 'build_dir') )
+
+    def run(self):
+        # ensure it can be done
+        if not os.path.exists(self.build_dir):
+            os.makedirs(self.build_dir)
+
+        # it cant already exist: delete it if needed
+        _doc = os.path.join(self.build_dir, "doc")
+        if os.path.exists(_doc):
+            shutil.rmtree(_doc)
+
+        # copy the doc folder to the build location
+        shutil.copytree("doc", _doc)
+
+        # use the makefile to effectively generate the docs
+        pattern = "cd {build_dir:} ; make -C doc {builder:}"
+        command = pattern.format(build_dir=self.build_dir, builder=self.builder)
+        os.system(command)
 
 class Clean(Command):
     '''
@@ -856,13 +902,17 @@ setup(name             = 'pynusmv',
       # care of building NuSMV and packing it all into a sharedlib called
       # `libdependencies`
       cmdclass    = {
+          # overridden commands
+          'build_ext'    : BuildExtWithDeps,
+          'build_py'     : BuildPyExtra,
+          'clean'        : Clean,
+          # additional / custom / esoteric stuffs
+          'doc'          : Doc,
+          'list_packages': ListPackages,
           'make'         : Makefile,
           'sharedlib'    : SharedLib,
           'fix-load-path': FixLoadPath,
-          'build_ext'    : BuildExtWithDeps,
           'mk_init'      : GenerateInitFiles,
-          'copy_swig_mod': CopySwiggedModules,
-          'list_packages': ListPackages,
-          'clean'        : Clean
+          'copy_swig_mod': CopySwiggedModules
       }
 )
