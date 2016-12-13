@@ -38,7 +38,9 @@ although we have strong confidence that it is sufficient.
   * Python3 (version 3.2 or higher) -- http://python.org/
   * Setuptools 2.1 or higher -- https://pypi.python.org/pypi/setuptools
   * pyparsing version 2.0.2 or higher -- http://pyparsing.wikispaces.com/
+  * Sphinx if you intend to re-build the project documentation.
 
+#### On OS X
 On OS X, you also need the `install_name_tool` command. But don't worry much
 about this one, it should already be installed on your system.
 
@@ -63,30 +65,31 @@ modules that build above that lower interface. As usual, depending on the comman
 you pass to setuptools, the output will be produced under `build` or `dist`.
 
 ### Verifying your build
-To check if the compilation was successfull, you can run the unit tests:
-`python3 -m unittest`
+To check if the compilation was successful and make sure you didn't break
+anything in the expected behavior of the lib, you can run the unit tests as such:
+`python3 setup.py test`
 
 ## DOCUMENTATION
 The full API of (the upper interface of) PyNuSMV can be generated thanks
-to Sphinx (http://www.sphinx-doc.org/) by running: `make html`
-in the doc/ directory. The documentation is then available in the
-doc/html/index.html page. Other userful information like a presentation
-of the tool and a short tutorial are also given.
+to Sphinx (http://www.sphinx-doc.org/) by running the following command:
+`python3 setup.py doc` or `python3 setup.py doc --builder=<builder>`
+
+The resulting documentation will be produced in buid/doc/<builder>. Where
+_builder_ is the name of the builder you chose to generate the documentation.
+By default, this builder is set to `html` which means the documentation will
+be generated in html format.
 
 The same documentation is also available on http://pynusmv.readthedocs.org/.
-
-### FIXME: Chances are high that the documentation be broken
 
 ## Content
 This package contains:
   - this README.md file;
-  - TOOLS.md : notes about the tools provided with PyNuSMV;
-  - dependencies/ : a directory containing the dependencies project necessary to pynusmv
+  - dependencies : a directory containing the dependencies project necessary to pynusmv
   - pynusmv : the package containig the whole upper interface of pynusmv
   - pynusmv_lower_interface : the package containing the wole lower interface of pynusmv
+  - doc : a directory containing the files that permit the documentation generation.
+  - tests : the project unittests
   - setup.py : PyNuSMV compilation file;
-
-### FIXME: Add the tests again
 
 Note that pre-compiled versions have less content because only the minimal
 required files (i.e. PyNuSMV files and nusmv shared library) are included.

@@ -392,6 +392,10 @@ class Doc(Command):
         self.set_undefined_options('build', ('build_lib', 'build_dir') )
 
     def run(self):
+        # The complete system needs to be built before we can proceed to
+        # documentation generation
+        self.get_finalized_command('build').run()
+
         # ensure it can be done
         if not os.path.exists(self.build_dir):
             os.makedirs(self.build_dir)
