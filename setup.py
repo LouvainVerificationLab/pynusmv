@@ -60,7 +60,7 @@ class SharedLib(Command):
     user_options= [
         ('source-dir=',  's',   'The directory containing the inputs'),
         ('libname='   ,  'l',   'The name of the output library'),
-        ('output_dir=',  'o',   'The directory where to place the library'),
+        ('output-dir=',  'o',   'The directory where to place the library'),
         ('libraries=',   'L',   'The set libraries depended upon'),
         ('library-dirs=', None, 'Directories containing the libs when not standard'),
         ('extensions=',  'e',   'The list of extensions of the object files that will be incorporated'),
