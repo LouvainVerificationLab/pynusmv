@@ -34,7 +34,13 @@ class SharedLibBuilder:
     '''
     def __init__(self, fname):
         '''
-        Initializes a new builder instance
+        Initializes a new builder instance.
+
+        :param fname: the name of the file to be produced.
+
+        .. warning::
+            If you intend to create the lib in a folder other than the current
+            one, you will need to create it first.
         '''
         self._fname = fname
         self._libs  = []
@@ -383,6 +389,9 @@ class BuildExtWithDeps(build_ext):
         print("Packing them in a shared library")
         library_soname= "libdependencies.so"
         library_fname = os.path.join(LIB_FOLDER, library_soname)
+
+        if not os.path.exists(LIB_FOLDER):
+            os.makedirs(LIB_FOLDER)
 
         SharedLibBuilder(library_fname)\
             .depending_on("expat", "ncurses", "readline")\
@@ -985,7 +994,6 @@ setup(name             = 'pynusmv',
           'doc'          : Doc,
           'list_packages': ListPackages,
           'make'         : Makefile,
-          'sharedlib'    : SharedLib,
           'fix-load-path': FixLoadPath,
           'mk_init'      : GenerateInitFiles,
           'copy_swig_mod': CopySwiggedModules
