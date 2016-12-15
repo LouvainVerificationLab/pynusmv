@@ -33,6 +33,12 @@ REQUIRED_LIBS = [
     #'libncurses'
 ]
 
+# Platform specific things
+if platform.system() == 'Darwin':
+    REQUIRED_TOOLS.append('install_name_tool')
+elif platform.system() == 'Linux':
+    REQUIRED_TOOLS.append('patchelf')
+
 def is_windows():
     ''':return: True iff the current platform is a windows machine'''
     return platform.system().lower() == 'windows'
