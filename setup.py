@@ -220,7 +220,7 @@ class FixLoadPath(Command):
         if platform.system() == 'Darwin':
             return '@loader_path/{}'.format(self.rel_to_target(x))
         if platform.system() == 'Linux':
-            return "'$ORIGIN/{}'".format(self.rel_to_target(x))
+            return "'$ORIGIN/{}'".format(os.path.dirname(self.rel_to_target(x)))
 
         raise ValueError('Unsupported platform')
 
