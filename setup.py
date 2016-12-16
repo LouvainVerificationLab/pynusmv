@@ -396,7 +396,7 @@ class BuildExtWithDeps(build_ext):
         SharedLibBuilder(library_fname)\
             .depending_on("expat", "ncurses", "readline")\
             .require('.o', "dependencies/NuSMV/NuSMV-2.5.4/nusmv", ['main.o'])\
-            .require('.a', "dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1/lib")\
+            .require('.a', "dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1")\
             .require('.a', "dependencies/MiniSat/minisat")\
             .build()
 
