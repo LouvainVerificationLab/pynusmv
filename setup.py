@@ -15,6 +15,8 @@ from setuptools.extension          import Extension
 from setuptools.command.build_ext  import build_ext
 # Command to build pure python modules
 from setuptools.command.build_py   import build_py
+# Command to perform a build then run the tests
+from setuptools.command.test       import test
 
 import os
 import os.path
@@ -608,6 +610,21 @@ class Clean(Command):
         self.remove_pycaches('tests')
 
 
+class BuildAndTest(test):
+    '''
+    This command overrides the default one and performs a full build before
+    to run the unittests of the project. (default command performs an inplace
+    build)
+    '''
+    description = 'Performs a complete build then run the unit tests'
+
+    def run(self):
+        '''
+        Overrides setuptools.command.test.test.run to perform a complete build
+        '''
+        self.get_finalized_command("build").run()
+        test.run(self)
+
 class ListPackages(Command):
     '''
     This command is a plain utility command that does not participate in the
@@ -989,6 +1006,7 @@ setup(name             = 'pynusmv',
           # overridden commands
           'build_ext'    : BuildExtWithDeps,
           'build_py'     : BuildPyExtra,
+          'test'         : BuildAndTest,
           'clean'        : Clean,
           # additional / custom / esoteric stuffs
           'doc'          : Doc,
