@@ -975,7 +975,7 @@ EXTENSIONS = [
 
 #
 setup(name             = 'pynusmv',
-      version          = "1.0rc1",
+      version          = "1.0rc2",
       author           = "Simon BUSARD, Xavier GILLARD",
       author_email     = "simon.busard@uclouvain.be, xavier.gillard@uclouvain.be",
       url              = "http://lvl.info.ucl.ac.be/Tools/PyNuSMV",
