@@ -34,6 +34,7 @@ nusmv.unpacked:
 
 nusmv.patched: nusmv.unpacked
 	patch -p0 -N < pynusmv.patch
+	patch -p0 -N < cudd.patch
 	touch nusmv.patched
 
 # This target configures nusmv for proper compilation on your system

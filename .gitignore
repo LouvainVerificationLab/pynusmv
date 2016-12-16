@@ -3,8 +3,8 @@ migration_scripts/__pycache__
 pynusmv/__pycache__
 
 # Ignore all unpacked dependencies
-dependencies/MiniSat/*
-dependencies/NuSMV/*
+dependencies/MiniSat/minisat/*
+dependencies/NuSMV/NuSMV-2.5.4/*
 
 # Ignore compilation dependencies
 system.requirement

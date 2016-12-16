@@ -29,9 +29,11 @@ include dependencies/MiniSat/Makefile
 include dependencies/MiniSat/minisat2-070721.zip
 include dependencies/MiniSat/nusmv.patch
 include dependencies/MiniSat/pynusmv.patch
+include dependencies/MiniSat/makefiles.patch
 
 # -- NUSMV --
 include dependencies/NuSMV/README.md
 include dependencies/NuSMV/Makefile
 include dependencies/NuSMV/NuSMV-2.5.4.tar.gz
 include dependencies/NuSMV/pynusmv.patch
+include dependencies/NuSMV/cudd.patch

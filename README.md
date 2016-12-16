@@ -40,10 +40,14 @@ although we have strong confidence that it is sufficient.
   * pyparsing version 2.0.2 or higher -- http://pyparsing.wikispaces.com/
   * Sphinx if you intend to re-build the project documentation.
 
-#### On OS X
-On OS X, you also need the `install_name_tool` command. But don't worry much
-about this one, it should already be installed on your system.
+#### Platform specific tools
+On OS X, you will also need the `install_name_tool` command. But don't worry much
+about this one, it should already be installed on your system. Similarly, on
+Linux, you will need the `patchelf` command which is used for the same purpose.
+This should however not be a big problem since a package for patchelf exists for
+all major Linux distributions.
 
+#### Extra libraries
 In addition to these, you will need to have `libexpat` installed on your system
 (SWIG on OSX also requires `pcre` but this might not be mandatory on all
 platforms moreover, you can simply your swig installed with `brew install swig`

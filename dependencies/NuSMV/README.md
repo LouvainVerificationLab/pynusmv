@@ -20,7 +20,7 @@ have been marked explicitly as such. Here is the list:
       - commented out the `PSL_EXPR_MAKE_W_N2W_OP` which was defined twice.
   * nusmv/src/prop/Prop.h
       - commented out the declaration of `Prop_set_name` which is later redefined with const keyword.
-
+  * The makefiles of CUDD have also been patched so as to compile the source code of that lib with `-fPIC` flag which allows the embedding of its code in a shared object.
 These patches are automatically applied at build time via the use of the makefiles. You can consult
 the details of these patches directly from the content of the `*.patch` files. These are regular
 diffs obtained through the use of the UNIX `diff -u` command.

@@ -13,16 +13,123 @@ from setuptools                    import setup, find_packages, Command
 from setuptools.extension          import Extension
 # Command to build native extentions
 from setuptools.command.build_ext  import build_ext
-# Command to build pure python modules
-from setuptools.command.build_py   import build_py
+# Command to perform a build then run the tests
+from setuptools.command.test       import test
 
 import os
 import os.path
 import shutil
+import platform
+import subprocess
 
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
+
+class SharedLibBuilder:
+    '''
+    This class is a simple builder that I developed to ease the creation of the
+    `depenedencies` shared library used to embody all of the NuSMV, CUDD and
+    SAT solvers code.
+    '''
+    def __init__(self, fname):
+        '''
+        Initializes a new builder instance.
+
+        :param fname: the name of the file to be produced.
+
+        .. warning::
+            If you intend to create the lib in a folder other than the current
+            one, you will need to create it first.
+        '''
+        self._fname = fname
+        self._libs  = []
+        self._obj   = []
+
+    def depending_on(self, *libs):
+        '''
+        Defines the libraries that _might_ be necessary to the sharedlib creation
+        if they are installed on the target system.
+
+        :param libs: a list of libraries that might be required by the objects
+            contained in the produced library.
+        :return: self to allow chaining
+        '''
+        self._libs.extend(libs)
+        return self
+
+    def require(self, what, where, excluding=[]):
+        '''
+        Defines what should constitute the body of the sharedlib.
+
+        :param what: the extension of the files that need to be combined into the lib.
+        :param where: the location where to (recursively) search for files having the extension `what`.
+        :param excluding: the name of objects that must explicitly be ignored by the build process.
+        :return: self to allow function call chaining.
+        '''
+        self._obj.append( (where, what, excluding) )
+        return self
+
+    def lib_not_found(self):
+        '''
+        :return: the distinctive message that is used to decide whether or not
+        some library is installed on the target system.
+        '''
+        OSX  = "library not found"
+        LINUX= "cannot find -l"
+        return LINUX if platform.system() == 'Linux' else OSX
+
+    def is_lib_installed(self, libname):
+        '''
+        :return: True iff libname is a system library available at link time
+        '''
+        cmd = "ld -l{}".format(libname)
+        sub = subprocess.run(cmd, shell=True, check=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        return self.lib_not_found() not in str(sub.stderr)
+
+    def list_artifacts(self, what, where, excl):
+        '''
+        :return: the list of objects with extention `what` in the subtree of `where`
+        having a name different from those in `excl`.
+
+        :param what: the extension of the files that need to be combined into the lib.
+        :param where: the location where to (recursively) search for files having the extension `what`.
+        :param excl: the name of objects that must explicitly be ignored by the build process.
+        '''
+        results = []
+        for path, dirs, files in os.walk(where):
+            fnames   = filter(lambda x: x.endswith(what) and x not in excl, files)
+            artifacts= [ os.path.join(path, fname) for fname in fnames ]
+            results.extend(artifacts)
+        return results
+
+    def platform_dependent_flags(self):
+        '''
+        :return: some platform dependent flags which help getting an useful output
+        '''
+        return "-Wl,--no-as-needed" if platform.system() == 'Linux' else ''
+
+    def get_command(self):
+        '''
+        :return: the potentially very long command which is used to actually
+        generate the shared library
+        '''
+        libraries = ["-l{}".format(l) for l in filter(lambda x: self.is_lib_installed(x), self._libs) ]
+        objects = [ obj for (where,what, excl) in self._obj for obj in self.list_artifacts(what, where, excl) ]
+
+        pattern = "g++ -shared -fPIC {flags:} -o {fname:} {libs:} {objects:}"
+        command = pattern.format(
+                            fname   = self._fname,
+                            flags   = self.platform_dependent_flags(),
+                            libs    = " ".join(libraries),
+                            objects = " ".join(objects))
+        return command
+
+    def build(self):
+        '''
+        Actually proceeds to the build of the sharedlib.
+        '''
+        os.system(self.get_command())
 
 # The coming classes define new (custom) commands that extend the ones available
 # in setuptools. The goal of these commands is to generate a sharedlib containing
@@ -50,74 +157,21 @@ class Makefile(Command):
         command = pattern.format(src_dir=self.source_dir, target=self.target)
         os.system(command)
 
-class SharedLib(Command):
-    '''
-    Additional command for setuptools that builds a sharedlib from all the object
-    files present in the given subtree
-    '''
-
-    description = 'links compiled artifacts present in the subtree to a sharedlib'
-    user_options= [
-        ('source-dir=',  's',   'The directory containing the inputs'),
-        ('libname='   ,  'l',   'The name of the output library'),
-        ('output_dir=',  'o',   'The directory where to place the library'),
-        ('libraries=',   'L',   'The set libraries depended upon'),
-        ('library-dirs=', None, 'Directories containing the libs when not standard'),
-        ('extensions=',  'e',   'The list of extensions of the object files that will be incorporated'),
-        ('exclusions=',  'E',   'The list of object files that must be excluded from the output'),
-        ('extra-args=',  'a',   'Extra arguments (ie. linker) passed on to gcc')
-    ]
-
-    def initialize_options(self):
-        self.source_dir   = None
-        self.libname      = None
-        self.output_dir   = '.'
-        self.libraries    = []
-        self.library_dirs = []
-        self.extensions   = ['.o', '.a']
-        self.exclusions   = []
-        self.extra_args   = []
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
-
-        result  = os.path.join(self.output_dir, self.sh_libname())
-        pattern = "g++ -shared -fPIC {ex_args:} -o {result:} {objects:} {libs:} {dirs:}"
-        libs    = " ".join(map(lambda x: '-l'+x, self.libraries))
-        dirs    = " ".join(map(lambda x: '-L'+x, self.library_dirs))
-        objects = " ".join(self.list_all(self.source_dir))
-        ex_args = " ".join(self.extra_args)
-        command = pattern.format(result=result, ex_args=ex_args, objects=objects, libs=libs, dirs=dirs)
-        print(command)
-        os.system(command)
-
-    def sh_libname(self):
-        return 'lib{libname:}.so'.format(libname=self.libname)
-
-    def list_all(self, directory):
-        result = list()
-        for item in os.listdir(directory):
-            abs_path = os.path.join(directory, item)
-
-            if os.path.isdir(abs_path):
-                result.extend(self.list_all(abs_path))
-            elif os.path.isfile(abs_path):
-                if any(item.endswith(x) for x in self.extensions):
-                    if item not in self.exclusions:
-                        result.append(abs_path)
-
-        return result
-
 class FixLoadPath(Command):
     '''
-    This command is OSX specific and fixes the load path of some depenency lib
-    in all the specified extensions modules. This way, the whole archive can be
-    shipped and installed at a site specific location without requiring the user
-    to fiddle with his LD_PATH.
+    This command is platform dependent and fixes the load path of some depenency
+    lib in all the specified extensions modules. This way, the whole archive can
+    be shipped and installed at a site specific location without requiring the
+    user to fiddle with his LD_PATH.
+
+    .. Note::
+        On OS X, this command executes a call to `install_name_tool` and
+        on Linux, it executes a call to `patchelf`.
+
+        To verify the effectiveness of the load path patching, one can use the
+        following commands:
+            * `otool -L <lib>` on OSX
+            * `ldd <lib>` on Linux
 
     .. Note::
         Proceeding this way is certainly not the cleanest approach from a
@@ -143,7 +197,7 @@ class FixLoadPath(Command):
 
         Passing the `runtime_library_dirs` to the extensions do not work on OSX.
     '''
-    description = "OSX specific command to fix the load path of the libdependencies"
+    description = "Platform specific command to fix the load path of the libdependencies"
     user_options= [
         ('name=',        'n', 'The name of the library as it has been written in the shared object'),
         ('target-path=', 't', 'The path the targetted shared object (the one to refer to)'),
@@ -163,7 +217,21 @@ class FixLoadPath(Command):
         return os.path.relpath(self.target_path, extdir)
 
     def loader_path(self, x):
-        return '@loader_path/{}'.format(self.rel_to_target(x))
+        if platform.system() == 'Darwin':
+            return '@loader_path/{}'.format(self.rel_to_target(x))
+        if platform.system() == 'Linux':
+            return "'$ORIGIN/{}'".format(os.path.dirname(self.rel_to_target(x)))
+
+        raise ValueError('Unsupported platform')
+
+    def command_pattern(self):
+        if platform.system() == 'Darwin':
+            return 'install_name_tool -change {name:} {loader_path:} {ext:}'
+        if platform.system() == 'Linux' :
+            return 'patchelf --set-rpath {loader_path:} {ext:}'
+
+        raise ValueError('Unsupported platform')
+
 
     def fix(self, ext):
         '''
@@ -178,7 +246,7 @@ class FixLoadPath(Command):
                 - setup.py in http://effbot.org/downloads/Imaging-1.1.7.tar.gz
                 - https://docs.python.org/3.5/extending/extending.html (even if this one led to a dead end)
         '''
-        pattern = 'install_name_tool -change {name:} {loader_path:} {ext:}'
+        pattern = self.command_pattern()
         command = pattern.format(name=self.name,
                                  loader_path=self.loader_path(ext),
                                  ext=ext)
@@ -317,18 +385,22 @@ class BuildExtWithDeps(build_ext):
         _make.source_dir = 'dependencies'
         _make.run()
 
+
         print("Packing them in a shared library")
-        _lib = self.get_finalized_command('sharedlib')
-        _lib.source_dir = 'dependencies'
-        _lib.libname    = 'dependencies'
-        _lib.output_dir = '{}'.format(LIB_FOLDER)
-        _lib.libraries  = [ 'expat', 'ncurses', 'readline' ]
-        _lib.exclusions = [ 'main.o' ]
-        _lib.ex_args    = [ '-headerpad_max_install_names', '-install_name libdependencies.so']
-        _lib.run()
+        library_soname= "libdependencies.so"
+        library_fname = os.path.join(LIB_FOLDER, library_soname)
+
+        if not os.path.exists(LIB_FOLDER):
+            os.makedirs(LIB_FOLDER)
+
+        SharedLibBuilder(library_fname)\
+            .depending_on("expat", "ncurses", "readline")\
+            .require('.o', "dependencies/NuSMV/NuSMV-2.5.4/nusmv", ['main.o'])\
+            .require('.a', "dependencies/NuSMV/NuSMV-2.5.4/cudd-2.4.1.1")\
+            .require('.a', "dependencies/MiniSat/minisat")\
+            .build()
 
         print("Copying the result in {}".format(LIB_FOLDER))
-        sh_libname = _lib.sh_libname()
         lib_folder = os.path.join(self.build_lib, LIB_FOLDER)
 
         # crete the output folder if necessary
@@ -337,8 +409,8 @@ class BuildExtWithDeps(build_ext):
 
         # then move the sharedlib over there
         shutil.copyfile(
-            os.path.join(_lib.output_dir, sh_libname),
-            os.path.join(lib_folder, sh_libname))
+            os.path.join(LIB_FOLDER, library_soname),
+            os.path.join(lib_folder, library_soname))
 
         # continue with the regular build_ext
         build_ext.run(self)
@@ -346,20 +418,11 @@ class BuildExtWithDeps(build_ext):
         # then fix the generated extensions to make then use the relative loader
         print("Fixing the loader_path")
         _fix = self.get_finalized_command("fix-load-path")
-        _fix.name        = 'lib/libdependencies.so'
-        _fix.target_path = os.path.join(lib_folder, sh_libname)
+        _fix.name        = library_fname
+        _fix.target_path = os.path.join(lib_folder, library_soname)
         _fix.ext_modules = self.find_ext_modules(self.build_lib)
         _fix.run()
 
-
-class BuildPyExtra(build_py):
-    '''
-    This command enriches the usual build_py command with some additional
-    features like the generation of __init__ files in all the modules of the
-    lower interface and a forceful copy of the swigged python module (which are
-    required for the proper functioning of the library).
-    '''
-    def run(self):
         # Generate init scripts for each of the modules composing the lower intf
         print("Generate init files for modules of the lower interface")
         self.get_finalized_command("mk_init").run()
@@ -370,9 +433,6 @@ class BuildPyExtra(build_py):
         _cpy.source = "pynusmv_lower_interface"
         _cpy.target = os.path.join(self.build_lib, "pynusmv_lower_interface")
         _cpy.run()
-
-        # continue with the regular build_py
-        build_py.run(self)
 
 class Doc(Command):
     '''
@@ -536,6 +596,21 @@ class Clean(Command):
         self.remove_pycaches('tests')
 
 
+class BuildAndTest(test):
+    '''
+    This command overrides the default one and performs a full build before
+    to run the unittests of the project. (default command performs an inplace
+    build)
+    '''
+    description = 'Performs a complete build then run the unit tests'
+
+    def run(self):
+        '''
+        Overrides setuptools.command.test.test.run to perform a complete build
+        '''
+        self.get_finalized_command("build").run()
+        test.run(self)
+
 class ListPackages(Command):
     '''
     This command is a plain utility command that does not participate in the
@@ -563,19 +638,27 @@ INCLUDES  = [
 
 # These are the libraries dependencies.
 LIBRARIES = {
-    'libraries'    : ['dependencies']
+    'libraries' : ['dependencies']
 }
 
 # This is a list of generic arguments that need to be repeated over and over
 # for each of the extensions we generate
 EXTENSION_ARGS = {
   # The swig specific arguments
-  'swig_opts'      : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
-  'include_dirs'   : INCLUDES,
+  'swig_opts'         : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
+  'include_dirs'      : INCLUDES,
   'extra_compile_args': ['-g', '-fPIC'],
-  'extra_link_args': ['-Llib', '-headerpad_max_install_names'],
+  'extra_link_args'   : ['-Llib'],
   **LIBRARIES
 }
+
+# Plug-in the platform specific linking flags
+if platform.system() == 'Darwin':
+    # OSX specific
+    EXTENSION_ARGS['extra_link_args'].append('-headerpad_max_install_names')
+
+if platform.system() == 'Linux':
+    EXTENSION_ARGS['extra_compile_args'].append('-Wl,--no-as-needed')
 
 # In the coming lines, we define all the extensions composing the lower
 # interface of pynusmv. These are all generated using swig.
@@ -908,13 +991,12 @@ setup(name             = 'pynusmv',
       cmdclass    = {
           # overridden commands
           'build_ext'    : BuildExtWithDeps,
-          'build_py'     : BuildPyExtra,
+          'test'         : BuildAndTest,
           'clean'        : Clean,
           # additional / custom / esoteric stuffs
           'doc'          : Doc,
           'list_packages': ListPackages,
           'make'         : Makefile,
-          'sharedlib'    : SharedLib,
           'fix-load-path': FixLoadPath,
           'mk_init'      : GenerateInitFiles,
           'copy_swig_mod': CopySwiggedModules
