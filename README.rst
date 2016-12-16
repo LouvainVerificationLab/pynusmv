@@ -110,8 +110,7 @@ The resulting documentation will be produced in buid/doc/. Where
 documentation. By default, this builder is set to ``html`` which means
 the documentation will be generated in html format.
 
-The same documentation is also available on
-http://pythonhosted.org/pynusmv/.
+The same documentation is also available on http://pynusmv.readthedocs.org/.
 
 Content
 -------
