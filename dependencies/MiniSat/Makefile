@@ -31,6 +31,9 @@ minisat.patched: minisat.unpacked
 	patch -p0 -N < nusmv.patch
 	# Patch nusmv so that it build smoothly on all (tested) platforms
 	patch -p0 -N < pynusmv.patch
+	# Patch the makefiles to produce position independent code
+	# This is necessary to create a sharedlib containing the minisat symbols
+	patch -p0 -N < makefiles.patch
 	touch minisat.patched
 
 # This target proceeds to the build (proper) of the minisat codebase

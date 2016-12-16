@@ -1,0 +1,22 @@
+--- minisat/core/Makefile	2006-10-02 14:09:37.000000000 +0200
++++ PATCHED_MAKES/core/Makefile	2016-12-16 11:16:50.000000000 +0100
+@@ -1,7 +1,7 @@
+ MTL       = ../mtl
+ CHDRS     = $(wildcard *.h) $(wildcard $(MTL)/*.h)
+ EXEC      = minisat
+-CFLAGS    = -I$(MTL) -Wall -ffloat-store
++CFLAGS    = -I$(MTL) -Wall -ffloat-store -fPIC
+ LFLAGS    = -lz
+ 
+ include ../mtl/template.mk
+--- minisat/simp/Makefile	2016-12-16 11:29:44.000000000 +0100
++++ PATCHED_MAKES/simp/Makefile	2016-12-16 11:18:27.000000000 +0100
+@@ -2,7 +2,7 @@
+ CORE      = ../core
+ CHDRS     = $(wildcard *.h) $(wildcard $(MTL)/*.h)
+ EXEC      = minisat
+-CFLAGS    = -I$(MTL) -I$(CORE) -Wall -ffloat-store
++CFLAGS    = -I$(MTL) -I$(CORE) -Wall -ffloat-store -fPIC
+ LFLAGS    = -lz
+ 
+ CMAINS    = Main.C
