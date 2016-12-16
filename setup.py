@@ -13,8 +13,6 @@ from setuptools                    import setup, find_packages, Command
 from setuptools.extension          import Extension
 # Command to build native extentions
 from setuptools.command.build_ext  import build_ext
-# Command to build pure python modules
-from setuptools.command.build_py   import build_py
 # Command to perform a build then run the tests
 from setuptools.command.test       import test
 
@@ -425,15 +423,6 @@ class BuildExtWithDeps(build_ext):
         _fix.ext_modules = self.find_ext_modules(self.build_lib)
         _fix.run()
 
-
-class BuildPyExtra(build_py):
-    '''
-    This command enriches the usual build_py command with some additional
-    features like the generation of __init__ files in all the modules of the
-    lower interface and a forceful copy of the swigged python module (which are
-    required for the proper functioning of the library).
-    '''
-    def run(self):
         # Generate init scripts for each of the modules composing the lower intf
         print("Generate init files for modules of the lower interface")
         self.get_finalized_command("mk_init").run()
@@ -444,9 +433,6 @@ class BuildPyExtra(build_py):
         _cpy.source = "pynusmv_lower_interface"
         _cpy.target = os.path.join(self.build_lib, "pynusmv_lower_interface")
         _cpy.run()
-
-        # continue with the regular build_py
-        build_py.run(self)
 
 class Doc(Command):
     '''
@@ -1005,7 +991,6 @@ setup(name             = 'pynusmv',
       cmdclass    = {
           # overridden commands
           'build_ext'    : BuildExtWithDeps,
-          'build_py'     : BuildPyExtra,
           'test'         : BuildAndTest,
           'clean'        : Clean,
           # additional / custom / esoteric stuffs
