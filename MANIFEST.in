@@ -20,7 +20,6 @@ recursive-include pynusmv_lower_interface *.i *.tpl
 # Note: CUDD is packaged as part of the NUSMV distribution.
 
 # -- GENERAL --
-include dependencies/README.md
 include dependencies/README.rst
 include dependencies/Makefile
 include dependencies/system_requirements.py
