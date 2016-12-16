@@ -1,0 +1,37 @@
+--- minisat/core/SolverTypes.h	2006-11-10 22:54:30.000000000 +0100
++++ xgi.patched.solvertypes.h	2015-10-29 23:46:09.000000000 +0100
+@@ -111,20 +111,13 @@
+         extra.abst = abstraction;  }
+ 
+     // NOTE: This constructor cannot be used directly (doesn't allocate enough memory).
++    //       Use  Clause_new instead
+     template<class V>
+     Clause(const V& ps, bool learnt) {
+         size_etc = (ps.size() << 3) | (uint32_t)learnt;
+         for (int i = 0; i < ps.size(); i++) data[i] = ps[i];
+         if (learnt) extra.act = 0; else calcAbstraction(); }
+ 
+-    // -- use this function instead:
+-    template<class V>
+-    friend Clause* Clause_new(const V& ps, bool learnt = false) {
+-        assert(sizeof(Lit)      == sizeof(uint32_t));
+-        assert(sizeof(float)    == sizeof(uint32_t));
+-        void* mem = malloc(sizeof(Clause) + sizeof(uint32_t)*(ps.size()));
+-        return new (mem) Clause(ps, learnt); }
+-
+     int          size        ()      const   { return size_etc >> 3; }
+     void         shrink      (int i)         { assert(i <= size()); size_etc = (((size_etc >> 3) - i) << 3) | (size_etc & 7); }
+     void         pop         ()              { shrink(1); }
+@@ -146,6 +139,12 @@
+     void         strengthen  (Lit p);
+ };
+ 
++// XGI/Patch -- This function used to be declared as a friend inside class Clause
++template<class V> Clause* Clause_new(const V& ps, bool learnt = false) {
++    assert(sizeof(Lit)      == sizeof(uint32_t));
++    assert(sizeof(float)    == sizeof(uint32_t));
++    void* mem = malloc(sizeof(Clause) + sizeof(uint32_t)*(ps.size()));
++    return new (mem) Clause(ps, learnt); }
+ 
+ /*_________________________________________________________________________________________________
+ |

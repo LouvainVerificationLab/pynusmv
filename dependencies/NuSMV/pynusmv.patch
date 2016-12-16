@@ -1,0 +1,75 @@
+--- NuSMV-2.5.4/nusmv/src/bmc/sbmc/sbmcTableauIncLTLformula.c	2011-10-12 11:04:36.000000000 +0200
++++ ../../../PyNuSMV/src/nusmv/src/bmc/sbmc/sbmcTableauIncLTLformula.c	2016-11-30 10:31:32.000000000 +0100
+@@ -1909,7 +1909,8 @@
+   SideEffects        [None]
+ 
+ ******************************************************************************/
+-static lsList sbmc_unroll_invariant_f(const BeEnc_ptr be_enc,
++/* sbusard 13/06/12 - Removing the static modifier to export the function. */
++/*static*/ lsList sbmc_unroll_invariant_f(const BeEnc_ptr be_enc,
+                                       const node_ptr ltlspec,
+                                       const unsigned int i_model,
+                                       const hash_ptr info_map,
+@@ -3102,7 +3103,8 @@
+   SideEffects        [None]
+ 
+ ******************************************************************************/
+-static lsList sbmc_unroll_invariant_p(const BeEnc_ptr be_enc,
++/* sbusard 13/06/12 - Removing the static modifier to export the function. */
++/*static*/ lsList sbmc_unroll_invariant_p(const BeEnc_ptr be_enc,
+                                       const node_ptr ltlspec,
+                                       const unsigned int i_model,
+                                       const hash_ptr info_map,
+--- NuSMV-2.5.4/nusmv/src/cmd/cmdMisc.c	2011-10-12 11:04:36.000000000 +0200
++++ ../../../PyNuSMV/src/nusmv/src/cmd/cmdMisc.c	2016-11-30 10:31:32.000000000 +0100
+@@ -167,7 +167,8 @@
+   rl_attempted_completion_function = command_completion;
+ #endif
+ 
+-  nusmv_assert(start_time == -1);
++  /* sbusard 15/06/12 - Commenting to allow init-quit cycles of NuSMV */
++  /*nusmv_assert(start_time == -1);*/
+   start_time = util_cpu_time();
+ }
+ 
+--- NuSMV-2.5.4/nusmv/src/parser/symbols.h	2011-10-12 11:04:36.000000000 +0200
++++ ../../../PyNuSMV/src/nusmv/src/parser/symbols.h	2016-11-30 10:31:32.000000000 +0100
+@@ -89,6 +89,10 @@
+   CONTEXT,
+   EU,
+   AU,
++  /* sbusard 27/06/12 - adding EW and AW operators support */
++  EW,
++  AW,
++
+   EBU,
+   ABU,
+   MINU,
+--- NuSMV-2.5.4/nusmv/src/parser/psl/pslExpr.h	2011-10-12 11:04:36.000000000 +0200
++++ ../../../PyNuSMV/src/nusmv/src/parser/psl/pslExpr.h	2016-11-30 10:31:32.000000000 +0100
+@@ -175,9 +175,10 @@
+ #define PSL_EXPR_MAKE_W_W2W_OP(res, left, op, right) \
+   psl_expr_make_binary_op(&res, &left, op, &right, SC_WORD_EXPR, SC_WORD_EXPR)
+ 
+-#define PSL_EXPR_MAKE_W_N2W_OP(res, left, op, right)                    \
++/* sbusard 11/06/12 - This macro is defined twice. */
++/*#define PSL_EXPR_MAKE_W_N2W_OP(res, left, op, right)                    \
+   psl_expr_make_binary_mixed_op(&res, &left, op, &right,                \
+-                                SC_WORD_EXPR, SC_NUM_EXPR, SC_WORD_EXPR)
++                                SC_WORD_EXPR, SC_NUM_EXPR, SC_WORD_EXPR)*/
+ 
+ #define PSL_EXPR_MAKE_W_NW2W_OP(res, left, op, right)                    \
+   psl_expr_make_binary_mixed_op(&res, &left, op, &right,                \
+--- NuSMV-2.5.4/nusmv/src/prop/Prop.h	2011-10-12 11:04:36.000000000 +0200
++++ ../../../PyNuSMV/src/nusmv/src/prop/Prop.h	2016-11-30 10:31:32.000000000 +0100
+@@ -197,7 +197,9 @@
+ EXTERN const char* Prop_get_type_as_string ARGS((Prop_ptr self));
+ 
+ EXTERN node_ptr Prop_get_name ARGS((const Prop_ptr self));
+-EXTERN void Prop_set_name ARGS((Prop_ptr self, node_ptr name));
++/* sbusard 11/06/12
++ * This signature is defined twice, with const keyword line 224. */
++/*EXTERN void Prop_set_name ARGS((Prop_ptr self, node_ptr name));*/
+ 
+ EXTERN Prop_Status Prop_get_status ARGS((const Prop_ptr self));
+ EXTERN const char* Prop_get_status_as_string ARGS((const Prop_ptr self));
