@@ -1,0 +1,39 @@
+# This manifest template provides the basis for generating a self contained
+# source distribution for pynusmv.
+#
+# This file is part of the pynusmv distribution. As such it is licensed to you
+# under the term of the LGPLv2. For more information regarding the legal aspect
+# of this licensing, please refer to the full text of the license on the free
+# software foundation website.
+#
+# Author: X. Gillard <xavier.gillard [at] uclouvain.be>
+
+# Include documentation and pure python modules
+include *.md
+include *.py
+
+# Include all what is necessary to rebuild the lower interface extensions
+recursive-include pynusmv_lower_interface *.i *.tpl
+
+# Include all what is necessary to rebuild the dependencies upon which all the
+# rest relies.
+# Note: CUDD is packaged as part of the NUSMV distribution.
+
+# -- GENERAL --
+include dependencies/README.md
+include dependencies/Makefile
+include dependencies/system_requirements.py
+
+# -- MINISAT --
+include dependencies/MiniSat/Makefile
+include dependencies/MiniSat/minisat2-070721.zip
+include dependencies/MiniSat/nusmv.patch
+include dependencies/MiniSat/pynusmv.patch
+include dependencies/MiniSat/makefiles.patch
+
+# -- NUSMV --
+include dependencies/NuSMV/README.md
+include dependencies/NuSMV/Makefile
+include dependencies/NuSMV/NuSMV-2.5.4.tar.gz
+include dependencies/NuSMV/pynusmv.patch
+include dependencies/NuSMV/cudd.patch

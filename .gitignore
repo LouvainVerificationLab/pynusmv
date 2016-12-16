@@ -1,4 +1,27 @@
-__pycache__
+/**/__pycache__/*
+migration_scripts/__pycache__
+pynusmv/__pycache__
 
-dep/pyparsing-2.0.2/
-dep/swig-2.0.6/
+# Ignore all unpacked dependencies
+dependencies/MiniSat/minisat/*
+dependencies/NuSMV/NuSMV-2.5.4/*
+
+# Ignore compilation dependencies
+system.requirement
+dependencies/libnusmv.a
+
+# Ignore all generated artifacts
+pynusmv_lower_interface/**/*.py
+pynusmv_lower_interface/**/*.c
+pynusmv_lower_interface/**/*.h
+pynusmv_lower_interface/**/*.so
+pynusmv_lower_interface/**/__pycache__/*
+
+# Ignore all binary artifacts
+build/*
+dist/*
+pynusmv.egg-info/*
+
+# Ignore all compiled test artifacts
+tests/__pycache__/*
+tests/pynusmv/__pycache__/*
