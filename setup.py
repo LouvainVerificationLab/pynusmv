@@ -590,7 +590,6 @@ class Clean(Command):
 
         # Delete the __pycache__
         print("Deleting the build __pycache__ s")
-        self.remove_pycaches('migration_scripts')
         self.remove_pycaches('pynusmv')
         self.remove_pycaches('pynusmv_lower_interface')
         self.remove_pycaches('tests')

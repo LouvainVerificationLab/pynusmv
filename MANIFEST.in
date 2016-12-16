@@ -21,6 +21,7 @@ recursive-include pynusmv_lower_interface *.i *.tpl
 
 # -- GENERAL --
 include dependencies/README.md
+include dependencies/README.rst
 include dependencies/Makefile
 include dependencies/system_requirements.py
 
