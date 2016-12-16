@@ -83,7 +83,7 @@ _builder_ is the name of the builder you chose to generate the documentation.
 By default, this builder is set to `html` which means the documentation will
 be generated in html format.
 
-The same documentation is also available on http://pynusmv.readthedocs.org/.
+The same documentation is also available on http://pythonhosted.org/pynusmv/.
 
 ## Content
 This package contains:
