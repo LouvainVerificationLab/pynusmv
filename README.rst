@@ -79,7 +79,10 @@ To build and install your distribution of pynusmv from the sources, you
 should proceed with the following command: ``python3 setup.py install``
 
 This will start by unpacking, patching and building the following
-dependencies: \* MiniSat \* CUDD \* NuSMV
+dependencies:
+- MiniSat
+- CUDD
+- NuSMV
 
 Once that is done, the actual core of setup.py will be executed. This
 involves building the dynamic libraries for the lower interface and
@@ -112,13 +115,28 @@ http://pythonhosted.org/pynusmv/.
 Content
 -------
 
-This package contains: - this README.md file; - dependencies : a
-directory containing the dependencies project necessary to pynusmv -
-pynusmv : the package containig the whole upper interface of pynusmv -
-pynusmv\_lower\_interface : the package containing the wole lower
-interface of pynusmv - doc : a directory containing the files that
-permit the documentation generation. - tests : the project unittests -
-setup.py : PyNuSMV compilation file;
+This package contains:
+
+*README*
+    This file
+
+*dependencies*
+    A directory containing the dependencies project necessary to pynusmv
+
+*pynusmv*
+    The package containig the whole upper interface of pynusmv
+
+*pynusmv\_lower\_interface*
+    The package containing the wole lower interface of pynusmv
+
+*doc*
+    A directory containing the files that permit the documentation generation.
+
+*tests*
+    The project unittests
+
+*setup.py*
+    PyNuSMV compilation file;
 
 Note that pre-compiled versions have less content because only the
 minimal required files (i.e. PyNuSMV files and nusmv shared library) are
@@ -135,8 +153,10 @@ Note
 ~~~~
 
 Alongside with PyNuSMV, the following dependencies are brought to you
-under the following license terms: \* NuSMV : LGPL (same license as
-PyNuSMV). \* CUDD: MIT license \* MiniSat: MIT license
+under the following license terms:
+- NuSMV : LGPL (same license as PyNuSMV).
+- CUDD: MIT license
+- MiniSat: MIT license
 
 Credits
 -------
