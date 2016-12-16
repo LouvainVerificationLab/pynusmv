@@ -80,6 +80,7 @@ should proceed with the following command: ``python3 setup.py install``
 
 This will start by unpacking, patching and building the following
 dependencies:
+
 - MiniSat
 - CUDD
 - NuSMV
@@ -154,6 +155,7 @@ Note
 
 Alongside with PyNuSMV, the following dependencies are brought to you
 under the following license terms:
+
 - NuSMV : LGPL (same license as PyNuSMV).
 - CUDD: MIT license
 - MiniSat: MIT license
