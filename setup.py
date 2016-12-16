@@ -22,6 +22,9 @@ import shutil
 import platform
 import subprocess
 
+# This configuration lets you update the version of the package without having
+# to scroll down for about 1k lines of codes.
+VERSION    = '1.0rc2'
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
@@ -451,6 +454,21 @@ class Doc(Command):
     def finalize_options(self):
         self.set_undefined_options('build', ('build_lib', 'build_dir') )
 
+    def replace_in(self, fname, old_str, new_str):
+        '''
+        Replace every occurences of `old_str` by `new_str` in the file `fname`.
+
+        :param fname: the path of the file whose content needs to be migrated
+        :param old_str: the text before migration
+        :param new_str: the text after migration
+        '''
+        lines = []
+        with open(fname, 'r') as f:
+            lines =[ line.replace(old_str, new_str) for line in f.readlines() ]
+
+        with open(fname, 'w') as f:
+            f.write(''.join(lines))
+
     def run(self):
         # The complete system needs to be built before we can proceed to
         # documentation generation
@@ -468,10 +486,18 @@ class Doc(Command):
         # copy the doc folder to the build location
         shutil.copytree("doc", _doc)
 
+        # update the documentation config (the version)
+        _docconf = os.path.join(_doc, "source/conf.py")
+        self.replace_in(_docconf, "${VERSION}", VERSION)
+
         # use the makefile to effectively generate the docs
         pattern = "cd {build_dir:} ; make -C doc {builder:}"
         command = pattern.format(build_dir=self.build_dir, builder=self.builder)
         os.system(command)
+
+        # package the documentation in a zip file that can easily be uploaded
+        # on PyPI for public sharing
+        shutil.make_archive("dist/doc", "zip", os.path.join(_doc, "html"))
 
 class Clean(Command):
     '''
@@ -975,7 +1001,7 @@ EXTENSIONS = [
 
 #
 setup(name             = 'pynusmv',
-      version          = "1.0rc2",
+      version          = VERSION,
       author           = "Simon BUSARD, Xavier GILLARD",
       author_email     = "simon.busard@uclouvain.be, xavier.gillard@uclouvain.be",
       url              = "http://lvl.info.ucl.ac.be/Tools/PyNuSMV",
