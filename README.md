@@ -17,7 +17,7 @@ pip3 install pynusmv
 ## Build
 Building PyNuSMV requires you to have a few standard tools available on your
 computer. Typically the build process should work nice and smooth on all platform
-although only OSX was really tested.
+although only OSX and Ubuntu-Linux have actually been tested.
 
 ### Dependencies
 The first thing the build process performs in before even stating to try building
