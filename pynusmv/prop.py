@@ -21,6 +21,8 @@ from .utils import PointerWrapper
 from . import parser
 from .exception import NuSMVTypeCheckingError
 
+from .sexp.fsm import SexpFsm, BoolSexpFsm
+from .be.fsm import BeFsm
 
 propTypes = {
     'NoType':      nsprop.Prop_NoType,
@@ -35,6 +37,18 @@ propTypes = {
 The possible types of properties. This gives access to NuSMV internal types
 without dealing with `pynusmv.nusmv` modules.
 
+"""
+
+propStatuses = {
+    'NoStatus' :   nsprop.Prop_NoStatus,
+    'Unchecked':   nsprop.Prop_Unchecked,
+    'True'     :   nsprop.Prop_True,
+    'False'    :   nsprop.Prop_False,
+    'Number'   :   nsprop.Prop_Number
+}
+"""
+The possible statuses of a property. This gives access to NuSMV internal types
+without dealing with `pynusmv_lower_interface` modules.
 """
 
 
@@ -56,6 +70,14 @@ class Prop(PointerWrapper):
 
         """
         return nsprop.Prop_get_type(self._ptr)
+
+    @property
+    def status(self):
+        """
+        The status of this property. It is one element of :data:`propStatuses`.
+
+        """
+        return nsprop.Prop_get_status(self._ptr)
 
     @property
     def name(self):
@@ -96,6 +118,46 @@ class Prop(PointerWrapper):
         return BddFsm(nsprop.Prop_get_bdd_fsm(self._ptr))
 
 
+    @property
+    def beFsm(self):
+        """
+        The generic boolean (SEXP) FSM of this property.
+
+        :rtype: :class:`BeFsm <pynusmv.be.fsm.BeFsm>`
+
+        """
+        return BeFsm(nsprop.Prop_get_be_fsm(self._ptr))
+
+    @property
+    def scalarFsm(self):
+        """
+        The generic scalar (SEXP) FSM of this property.
+
+        :rtype: :class:`SexpFsm <pynusmv.sexp.fsm.SexpFsm>`
+
+        """
+        return SexpFsm(nsprop.Prop_get_scalar_sexp_fsm(self._ptr))
+
+    @property
+    def booleanFsm(self):
+        """
+        The generic boolean (SEXP) FSM of this property.
+
+        :rtype: :class:`SexpFsm <pynusmv.sexp.fsm.BoolSexpFsm>`
+
+        """
+        return BoolSexpFsm(nsprop.Prop_get_bool_sexp_fsm(self._ptr))
+
+    @property
+    def need_rewriting(self):
+        """
+        Check if the given property needs rewriting to be checked.
+
+        :return: true iff the property is an invariant that needs to be rewritten
+        """
+        return nsprop.Prop_needs_rewriting(self._ptr)
+
+
 class PropDb(PointerWrapper):
 
     """
@@ -131,6 +193,17 @@ class PropDb(PointerWrapper):
 
         """
         return nsprop.PropDb_get_size(self._ptr)
+
+    def get_props_of_type(self, prop_type):
+        """
+        Return the list of properties of the given `prop_type` in the database
+
+        :param prop_type: one of the value of :data:`propTypes` used to filter
+            the content of the database
+        :return: list of properties of the given `prop_type` in the database
+        """
+        the_type = propTypes[prop_type]
+        return [prop for prop in self if prop.type == the_type ]
 
     def __len__(self):
         """

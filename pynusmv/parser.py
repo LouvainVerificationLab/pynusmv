@@ -27,6 +27,7 @@ __all__ = [
     'parse_next_expression',
     'parse_identifier',
     'parse_ctl_spec',
+    'parse_ltl_spec',
     'identifier',
     'complex_identifier',
     'simple_expression',
@@ -183,6 +184,29 @@ def parse_ctl_spec(spec):
         else:
             return node
 
+def parse_ltl_spec(spec):
+    """
+    Parse a LTL specification
+
+    :param string spec: the specification to parse
+    :raise: a :exc:`NuSMVParsingError <pynusmv.exception.NuSMVParsingError>`
+            if a parsing error occurs
+
+    .. warning:: Returned value is a SWIG wrapper for the NuSMV node_ptr.
+       It is the responsibility of the caller to manage it.
+
+    """
+    node, err = nsparser.ReadCmdFromString("LTLWFF " + spec)
+    if err:
+        errors = nsparser.Parser_get_syntax_errors_list()
+        raise NuSMVParsingError.from_nusmv_errors_list(errors)
+    else:
+        node = nsnode.car(node)  # Get rid of the top CTLWFF node
+        if node.type is nsparser.CONTEXT and nsnode.car(node) is None:
+            # Get rid of the top empty context if any
+            return nsnode.cdr(node)
+        else:
+            return node
 
 def parseAllString(parser, string):
     """
