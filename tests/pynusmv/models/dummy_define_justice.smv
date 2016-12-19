@@ -1,0 +1,23 @@
+MODULE main
+VAR
+    v: boolean;
+    w: boolean;
+IVAR
+    x : boolean;
+INIT
+    v = (FALSE);
+TRANS
+    v <-> !next(v) | x;
+FAIRNESS
+    v = TRUE;
+INVAR
+    v = FALSE;
+LTLSPEC
+    -- this is false but ok....
+    F G v
+
+DEFINE
+    maybe := TRUE | FALSE;
+
+JUSTICE 
+    TRUE;

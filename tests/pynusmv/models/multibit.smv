@@ -1,0 +1,5 @@
+MODULE main
+VAR
+	__bool__ : boolean;
+	one_bit  : {Ok, Ko};
+	two_bits : {Ok, Ko, DontKnow};

@@ -1,0 +1,13 @@
+MODULE main
+VAR x: boolean;
+    y: boolean;
+ASSIGN
+    init(x) := FALSE;
+    init(y) := TRUE;
+    next(x) := !x;
+    next(y) := !y;
+
+-- is valid
+INVARSPEC x <-> !y
+-- not valid
+INVARSPEC x <->  y

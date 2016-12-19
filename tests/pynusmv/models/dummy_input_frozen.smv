@@ -1,0 +1,13 @@
+MODULE main
+VAR       v: boolean;
+          w: boolean;
+
+IVAR      i: boolean;
+
+FROZENVAR f: boolean;
+
+ASSIGN
+    init(v) := FALSE;
+    init(w) := TRUE;
+    next(v) := !v;
+    next(w) := !w;

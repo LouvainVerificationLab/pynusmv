@@ -1,0 +1,8 @@
+MODULE main
+VAR       v: boolean;
+          w: boolean;
+INIT
+  v = TRUE & w = FALSE;
+TRANS
+  next(v) = !v &
+  next(w) = FALSE;

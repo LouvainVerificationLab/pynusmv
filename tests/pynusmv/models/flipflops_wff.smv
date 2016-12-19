@@ -1,0 +1,17 @@
+MODULE main
+-- This is a double flip flop example model.
+VAR
+   x : boolean;
+   y : boolean;
+INVAR
+   x | y;
+ASSIGN
+    init(x) := TRUE;
+    init(y) := FALSE;
+    next(x) := !x;
+    next(y) := !y;
+
+LTLSPEC
+    G x <-> !y
+CTLSPEC
+    AG x <-> !y

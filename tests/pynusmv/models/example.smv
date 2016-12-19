@@ -1,0 +1,17 @@
+MODULE main
+-- A model containing two flip flops (Graphical representation vv )
+--  +==========+ -----------> +=========+
+-- || a & !b  ||             || !a & b ||
+-- +==========+ <----------- +=========+
+VAR
+    a : boolean;
+    b : boolean;
+IVAR
+    i : boolean;
+FROZENVAR
+    f : boolean;
+ASSIGN
+    init(a) := TRUE;
+    init(b) := FALSE;
+    next(a) := !a;
+    next(b) := !b;
