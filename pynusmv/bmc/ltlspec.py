@@ -5,13 +5,13 @@ to the translation of formulas to boolean expressions corresponding to the
 SAT problem necessary to verify these using LTL bounded semantics of the dumping
 of problem to file (in DIMACS format)
 """
-from pynusmv_lower_interface.nusmv.bmc           import bmc as _bmc
-from pynusmv_lower_interface.nusmv.node          import node as _node
-from pynusmv.bmc.lower_intf      import lower_intf as _lower
+from pynusmv_lower_interface.nusmv.bmc  import bmc as _bmc
+from pynusmv_lower_interface.nusmv.node import node as _node
+from pynusmv_lower_interface.bmc_utils  import bmc_utils as _lower
 
-from pynusmv.node                import Node  
-from pynusmv.be.expression       import Be 
-from pynusmv.exception           import NuSmvSatSolverError 
+from pynusmv.node                import Node
+from pynusmv.be.expression       import Be
+from pynusmv.exception           import NuSmvSatSolverError
 from pynusmv.bmc                 import utils
 
 __all__ = ['check_ltl',

@@ -21,27 +21,18 @@
  * then translated in C for performance reason: profiling revealed that
  * these function were real performance bottlenecks of the PyNuSMV BMC
  * addition.
- *
- * The binary is built with the regular Makefile of PyNuSMV.
- * If you need to alter this part of the lower interface and dont want to
- * rebuild the COMPLETE library, you may just use the following commands:
- *
- *  cd $PYNUSMV_HOME/src
- *  make bmc_lower
- *  ./build_libnusmv.sh
- *
  *************************************************************************/
-%module(package="pynusmv.bmc.lower_intf") lower_intf
+%module bmc_utils
 
 %{
-#include "../../../nusmv/nusmv-config.h"
-#include "../../../nusmv/src/utils/defs.h"
-#include "lower_intf.h"
+#include "../../dependencies/NuSMV/NuSMV-2.5.4/nusmv/nusmv-config.h"
+#include "../../dependencies/NuSMV/NuSMV-2.5.4/nusmv/src/utils/defs.h"
+#include "bmc_utils.h"
 %}
 
 %feature("autodoc", 1);
 
-%include ../../nusmv/typedefs.tpl
+%include ../nusmv/typedefs.tpl
 
-%include ../../../nusmv/src/utils/defs.h
-%include lower_intf.h
+%include ../../dependencies/NuSMV/NuSMV-2.5.4/nusmv/src/utils/defs.h
+%include bmc_utils.h

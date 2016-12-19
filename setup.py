@@ -24,7 +24,7 @@ import subprocess
 
 # This configuration lets you update the version of the package without having
 # to scroll down for about 1k lines of codes.
-VERSION    = '1.0rc3'
+VERSION    = '1.0rc4snapshot1'
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
@@ -996,6 +996,15 @@ EXTENSIONS = [
     Extension(
         'pynusmv_lower_interface.nusmv.wff.w2w._w2w',
         sources=['pynusmv_lower_interface/nusmv/wff/w2w/w2w.i'],
+        **EXTENSION_ARGS),
+
+    # BMC additional code for the lower interface
+    Extension(
+        'pynusmv_lower_interface.bmc_utils._bmc_utils',
+        sources=[
+            'pynusmv_lower_interface/bmc_utils/bmc_utils.c',
+            'pynusmv_lower_interface/bmc_utils/bmc_utils.i'
+        ],
         **EXTENSION_ARGS)
 ]
 

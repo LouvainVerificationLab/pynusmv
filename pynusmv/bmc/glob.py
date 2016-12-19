@@ -15,7 +15,7 @@ from pynusmv_lower_interface.nusmv.trace import trace as _trace
 from pynusmv_lower_interface.nusmv.trace.exec_ import exec_ as _trc_exec
 from pynusmv_lower_interface.nusmv.prop import prop as _prop
 
-from pynusmv.bmc.lower_intf import lower_intf as _lower
+from pynusmv_lower_interface.bmc_utils import bmc_utils as _lower
 
 from pynusmv import glob
 from pynusmv.be.fsm import BeFsm

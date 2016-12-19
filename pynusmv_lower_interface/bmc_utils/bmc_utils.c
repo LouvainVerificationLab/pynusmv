@@ -22,7 +22,7 @@
   * these function were real performance bottlenecks of the PyNuSMV BMC
   * addition.
   *************************************************************************/
-#include "lower_intf.h"
+#include "bmc_utils.h"
 
 #include <stdlib.h>
 

@@ -12,10 +12,11 @@ dependencies/libnusmv.a
 
 # Ignore all generated artifacts
 pynusmv_lower_interface/**/*.py
-pynusmv_lower_interface/**/*.c
-pynusmv_lower_interface/**/*.h
+pynusmv_lower_interface/nusmv/**/*.c
+pynusmv_lower_interface/nusmv/**/*.h
 pynusmv_lower_interface/**/*.so
 pynusmv_lower_interface/**/__pycache__/*
+pynusmv_lower_interface/**/*_wrap.c
 
 # Ignore all binary artifacts
 build/*

@@ -12,9 +12,9 @@ These are roughly organized in six categories:
 
 from enum import IntEnum
 
-from pynusmv_lower_interface.nusmv.bmc      import bmc    as _bmc
-from pynusmv_lower_interface.nusmv.parser   import parser as _parser 
-from pynusmv.bmc.lower_intf import lower_intf as _lower
+from pynusmv_lower_interface.nusmv.bmc    import bmc    as _bmc
+from pynusmv_lower_interface.nusmv.parser import parser as _parser
+from pynusmv_lower_interface.bmc_utils    import bmc_utils as _lower
 
 from pynusmv.utils          import indexed
 from pynusmv                import glob
