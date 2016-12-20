@@ -15,6 +15,7 @@ NUSMV=./NuSMV-2.5.4/nusmv/
 
 # The path to the patched and compiled version of minisat
 MINISAT=../../../MiniSat/minisat
+ZCHAFF=../../../ZChaff/zchaff64
 
 # This target goes through all the steps required to compile NuSMV.
 all: nusmv.built
@@ -45,6 +46,9 @@ nusmv.configured: nusmv.patched
 	cd $(NUSMV) && ./configure  --enable-minisat \
 	                            --with-minisat-libdir=$(MINISAT) \
 							                --with-minisat-incdir=$(MINISAT) \
+															--enable-zchaff \
+															--with-zchaff-libdir=$(ZCHAFF) \
+															--with-zchaff-incdir=$(ZCHAFF) \
 															--with-pic \
 															--enable-static \
 															--enable-static-link \

@@ -1,0 +1,49 @@
+--- zchaff64_nusmv/Makefile	2016-12-20 10:15:21.000000000 +0100
++++ zchaff64/Makefile	2016-12-20 10:16:46.000000000 +0100
+@@ -1,9 +1,9 @@
+ CC = g++ -Wall
+ CXX = g++ -Wall
+-CFLAGS = -O3
++CFLAGS = -O3 -fPIC
+ 
+ #CFLAGS = -O3 -DNDEBUG
+-#MFLAGS = 
++#MFLAGS =
+ #LINKFLAGS = --static
+ 
+ ifeq (solaris, $(OSTYPE))
+@@ -13,11 +13,11 @@
+ RANLIB = ranlib
+ AR = ar
+ 
+-.SUFFIXES: .o .cpp 
++.SUFFIXES: .o .cpp
+ 
+ HEADERS = zchaff_base.h zchaff_clsgen.h zchaff_header.h zchaff_version.h zchaff_dbase.h zchaff_solver.h
+ 
+-SOLVER_SRCS = sat_solver.cpp 
++SOLVER_SRCS = sat_solver.cpp
+ SOLVER_OBJS = $(SOLVER_SRCS:.cpp=.o)
+ 
+ LIB_SRCS =  zchaff_utils.cpp \
+@@ -31,7 +31,7 @@
+ 
+ 
+ zchaff:   $(SOLVER_OBJS) libsat.a SAT.h
+-	  $(CXX) $(LINKFLAGS) $(CFLAGS) $(MFLAGS) $(SOLVER_OBJS) libsat.a -o zchaff 
++	  $(CXX) $(LINKFLAGS) $(CFLAGS) $(MFLAGS) $(SOLVER_OBJS) libsat.a -o zchaff
+ 
+ zverify_df: zverify_df.cpp
+ 	  $(CXX) $(LINKFLAGS) $(CFLAGS) $(MFLAGS) zverify_df.cpp -o zverify_df
+@@ -60,9 +60,9 @@
+ 	$(RANLIB) libsat.a
+ 
+ .cpp.o:
+-	$(CXX) $(CFLAGS) $(MFLAGS) -c $< 
++	$(CXX) $(CFLAGS) $(MFLAGS) -c $<
+ 
+-clean:	
++clean:
+ 	rm -f *.o libsat.a zchaff *wrapper.cpp zminimal zverify_df cnf_stats SAT_C.h
+ 
+ all: zchaff zverify_df zminimal cnf_stats

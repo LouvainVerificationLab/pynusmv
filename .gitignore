@@ -4,6 +4,7 @@ pynusmv/__pycache__
 
 # Ignore all unpacked dependencies
 dependencies/MiniSat/minisat/*
+dependencies/ZChaff/zchaff64/*
 dependencies/NuSMV/NuSMV-2.5.4/*
 
 # Ignore compilation dependencies
