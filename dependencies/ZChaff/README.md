@@ -2,11 +2,6 @@
 zChaff is a powerful SAT Solver [1]:http://www.princeton.edu/~chaff/zchaff.html
 that can be optionally used with PyNuSMV to perform BMC.
 
-For information about how to compile and link zChaff within NuSMV, and
-for other important information about zChaff, please refer to the file
-<NuSMV-(version)/zchaff/README> distributed along with the NuSMV
-source code.
-
 ## Legal conflict
 There is currently a legal conflict between pynusmv and ZChaff. Indeed, pynusmv
 is licensed under the terms of LGPL while zchaff is not. As a matter of fact
