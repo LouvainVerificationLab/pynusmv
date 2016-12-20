@@ -1104,7 +1104,7 @@ class SymbTable(PointerWrapper):
         """
         if nssymb_table.SymbTable_get_layer(self._ptr, layer_name) is not None:
             raise NuSMVSymbTableError("Layer %s already exists." % layer_name)
-        nssymb_table.SymbTable_create_layer(self._ptr, layer_name, ins_policy)
+        return nssymb_table.SymbTable_create_layer(self._ptr, layer_name, ins_policy)
 
     def get_variable_type(self, variable):
         """
@@ -1276,7 +1276,7 @@ class SymbTable(PointerWrapper):
                                   ResolveSymbol_get_resolved_name(rs))
         if not nssymb_table.SymbTable_is_symbol_declared(self._ptr, ivar._ptr):
             raise NuSMVSymbTableError(str(ivar) + " is not declared.")
-        return (nssymb_table.SymbTable_is_symbol_state_var(self._ptr,
+        return (nssymb_table.SymbTable_is_symbol_input_var(self._ptr,
                                                            ivar._ptr) != 0)
 
     def is_state_var(self, var):
@@ -1314,7 +1314,7 @@ class SymbTable(PointerWrapper):
                                   ResolveSymbol_get_resolved_name(rs))
         if not nssymb_table.SymbTable_is_symbol_declared(self._ptr, fvar._ptr):
             raise NuSMVSymbTableError(str(fvar) + " is not declared.")
-        return (nssymb_table.SymbTable_is_symbol_state_var(self._ptr,
+        return (nssymb_table.SymbTable_is_symbol_frozen_var(self._ptr,
                                                            fvar._ptr) != 0)
 
     def _get_layer(self, layer_name):
@@ -1379,3 +1379,29 @@ class SymbTable(PointerWrapper):
         else:
             raise NuSMVSymbTableError("Cannot create type for " +
                                       str(type_) + ".")
+
+    def __hash__(self):
+        """
+        Makes this object hashable.
+
+        .. warning::
+
+            Beware it uses the pointer to implement the hashing function.
+            So it is IDENTITY dependent (in C) and not value dependant.
+
+        :return: an object that can serve as key to perform the lookup in a dict.
+        """
+        return self._ptr
+
+    def __eq__(self, other):
+        """
+        Equality test between two objects.
+
+        .. warning::
+
+            Beware it uses the pointer to implement the hashing function.
+            So it is IDENTITY dependent (in C) and not value dependant.
+
+        :return: True iff the two object are the same
+        """
+        return self._ptr == other._ptr 

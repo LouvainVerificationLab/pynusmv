@@ -1,0 +1,11 @@
+MODULE main
+VAR
+    v: boolean;
+INIT
+    v = FALSE;
+TRANS
+    v <-> !next(v);
+FAIRNESS
+    v = TRUE;
+INVAR
+    v = FALSE;

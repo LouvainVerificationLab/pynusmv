@@ -16,7 +16,10 @@ __all__ = ['PyNuSMVError', 'MissingManagerError', 'NuSMVLexerError',
            'NuSMVModelAlreadyBuiltError', 'NuSMVNeedVariablesEncodedError',
            'NuSMVInitError', 'NuSMVParserError', 'NuSMVTypeCheckingError',
            'NuSMVFlatteningError', 'NuSMVBddPickingError',
-           'NuSMVParsingError', 'NuSMVModuleError', 'NuSMVSymbTableError']
+           'NuSMVParsingError', 'NuSMVModuleError', 'NuSMVSymbTableError',
+           'NuSMVBeFsmMasterInstanceNotInitializedError',
+           'NuSMVBmcAlreadyInitializedError', 'NuSMVNeedBooleanModelError',
+           'NuSMVWffError', 'NuSmvIllegalTraceStateError']
 
 
 from collections import namedtuple
@@ -261,5 +264,56 @@ class NuSMVSymbTableError(PyNuSMVError):
     """
     Exception raised when an error occured while working with symbol tables.
 
+    """
+    pass
+
+
+class NuSMVNeedBooleanModelError(PyNuSMVError):
+
+    """
+    Exception raised when the boolean model must be created.
+
+    """
+    pass
+
+class NuSMVBmcAlreadyInitializedError(PyNuSMVError):
+
+    """
+    Exception raised when the bmc sub system is already initialized
+
+    """
+    pass
+
+class NuSMVBeFsmMasterInstanceNotInitializedError(PyNuSMVError):
+    """
+    Exception raised when the one tries to access the global master BeFsm
+    while it is not initialized
+    """
+    pass
+
+class NuSMVBeEncNotInitializedError(PyNuSMVError):
+    """
+    Exception raised when the one tries to access the global BeEnc singleton
+    while it is not initialized
+    """
+    pass
+
+class NuSMVWffError(PyNuSMVError):
+    """
+    Exception raised when one tampers with a WFF in an unauthorized way
+    """
+    pass
+
+class NuSmvSatSolverError(PyNuSMVError):
+    """
+    Exception raised when a sat solver related problem is identified.
+    """
+    pass
+
+class NuSmvIllegalTraceStateError(PyNuSMVError):
+    """
+    Exception raised when an operation is made on a trace which is not in an
+    appropriate state (for instance forcing a step to be considered loopback
+    while the parent trace is frozen).
     """
     pass

@@ -12,10 +12,10 @@
 
 # This target builds the libnusmv shared library which is used by the lower
 # interface of pynusmv
-all: minisat.build nusmv.build
+all: minisat.build zchaff.build nusmv.build
 
 # This target wipes off anything that has been unpacked or compiled
-clean: minisat.clean nusmv.clean
+clean: minisat.clean zchaff.clean nusmv.clean
 
 # This target checks that all the tools and libraries which are required in order
 # to build pynusmv and its dependencies are installed on the target system.
@@ -32,8 +32,14 @@ minisat.build: system.requirement
 minisat.clean:
 	make -C MiniSat clean
 
+zchaff.build: system.requirement
+	make -C ZChaff
+
+zchaff.clean:
+	make -C ZChaff clean
+
 # Builds the nusmv binaries which are required to generate the libnusmv
-nusmv.build: system.requirement minisat.build
+nusmv.build: system.requirement zchaff.build minisat.build
 	make -C NuSMV
 
 # Wipes off anything related to nusmv

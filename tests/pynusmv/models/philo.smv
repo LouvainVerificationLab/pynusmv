@@ -1,0 +1,53 @@
+MODULE main
+VAR
+  forks : array 0..1 of {1, 2, nobody};
+  p1    : process philosopher(1, forks[0], forks[1]);
+  p2    : process philosopher(2, forks[0], forks[1]);
+
+ASSIGN
+  init(forks[0]) := nobody;
+  init(forks[1]) := nobody;
+
+MODULE philosopher(id, left, right)
+-- This module models the behavior of one of the philosopher participating to the dinner.
+VAR
+  status : {thinking, hungry, eating, done};
+DEFINE
+  gotleft := (left=id);
+  gotright:= (right=id);
+  waiting := ((status = hungry) & gotleft & !gotright);
+
+ASSIGN
+  init(status) := thinking;
+
+  next (status) := case
+    status = thinking : {thinking, hungry};
+    status = hungry & gotleft & gotright : eating;
+    status = eating : {eating, done};
+    status = done & !gotleft & !gotright : thinking;
+    TRUE : status;
+    esac;
+
+  next(left) := case
+    status = hungry & left = nobody : id ;
+    status = done & gotleft         : nobody;
+    TRUE                            : left;
+    esac;
+
+  next(right) := case
+    status = hungry & gotleft & right = nobody: id;
+    status = done   & gotright      : nobody;
+    TRUE                            : right;
+    esac;
+
+FAIRNESS 
+  -- This fairness constraint forces NuSMV to consider traces where the 
+  -- philosophers processes actually do run. 
+  -- running is a special variable automatically declared for all processes
+  running;
+
+LTLSPEC -- no deadlock expressed in LTL
+  G (waiting -> F !waiting)
+
+CTLSPEC -- the same property expressed in CTL
+  AG (waiting -> AF !waiting )

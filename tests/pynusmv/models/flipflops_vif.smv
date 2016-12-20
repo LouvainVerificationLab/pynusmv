@@ -1,0 +1,8 @@
+MODULE main
+-- this module has no special meaning, it just features all types of vars
+VAR       v: boolean;
+IVAR      i: boolean;
+FROZENVAR f: boolean;
+ASSIGN
+  init(v) := TRUE;
+  next(v) := !v;

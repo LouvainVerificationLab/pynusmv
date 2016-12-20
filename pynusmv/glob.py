@@ -32,11 +32,14 @@ from pynusmv_lower_interface.nusmv.set import set as nsset
 from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as nsbddfsm
 from pynusmv_lower_interface.nusmv.trace import trace as nstrace
 from pynusmv_lower_interface.nusmv.trace.exec_ import exec_ as nstraceexec
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
+from pynusmv_lower_interface.nusmv.fsm.sexp import sexp as nssexp
 
 from .fsm import BddEnc, SymbTable
 from .node import FlatHierarchy
 from .parser import NuSMVParsingError
 from .prop import PropDb
+from .sexp.fsm import BoolSexpFsm
 from .exception import (NuSMVLexerError,
                         NuSMVNoReadModelError,
                         NuSMVModelAlreadyReadError,
@@ -47,14 +50,47 @@ from .exception import (NuSMVLexerError,
                         NuSMVFlatModelAlreadyBuiltError,
                         NuSMVNeedFlatModelError,
                         NuSMVModelAlreadyBuiltError,
-                        NuSMVNeedVariablesEncodedError)
+                        NuSMVNeedVariablesEncodedError,
+                        NuSMVNeedBooleanModelError)
 
 
 __bdd_encoding = None
 __prop_database = None
 __symb_table = None
 __flat_hierarchy = None
+__bool_sexp_fsm = None
 
+def global_compile_cmps():
+    """
+    This function returns the global cmps instance.
+
+    ..note::
+          using the 'cvar.cmps' was also possible but caused Eclipse IDE to report
+          errors. Therefore, since I like to keep these kind of errors for the
+          places where there is really one, I chose to use that workaround.
+
+          Moreover, since the object returned by getattr(nscompile.cvar, 'cmps')
+          is a proxy to the real object, it is safe to just store this variable
+          once and for all.
+
+    :return: the equivalent of `nscompile.cvar.cmps`
+    """
+    return getattr(nscompile.cvar, 'cmps')
+
+def global_compile_flathierarchy():
+    """
+    This function returns the global mainFlatHierarchy instance.
+
+    ..note:: just as for 'cvar.cmps', 'cvar.mainFlatHierarchy' causes the same error
+          report. Hence, I used the same workaround to get rid of those.
+
+          Moreover, since the object returned by getattr(nscompile.cvar, 'cmps')
+          is a proxy to the real object, it is safe to just store this variable
+          once and for all.
+
+    :return: the equivalent of `nscompile.cvar.mainFlatHierarchy`
+    """
+    return getattr(nscompile.cvar, 'mainFlatHierarchy')
 
 def _reset_globals():
     """
@@ -62,14 +98,15 @@ def _reset_globals():
     structures.
 
     """
-    global __bdd_encoding, __prop_database, __symb_table, __flat_hierarchy
+    global __bdd_encoding, __prop_database, __symb_table, __flat_hierarchy,__bool_sexp_fsm
     __bdd_encoding = None
     __prop_database = None
     __symb_table = None
     __flat_hierarchy = None
+    __bool_sexp_fsm = None
 
     # Reset cmps
-    nscompile.cmp_struct_reset(nscompile.cvar.cmps)
+    nscompile.cmp_struct_reset(global_compile_cmps())
 
 
 def load(*model):
@@ -133,7 +170,7 @@ def load_from_file(filepath):
         raise IOError("File {} does not exist".format(filepath))
 
     # Check cmps. Need reset_nusmv if a model is already read
-    if nscompile.cmp_struct_get_read_model(nscompile.cvar.cmps):
+    if nscompile.cmp_struct_get_read_model(global_compile_cmps()):
         raise NuSMVModelAlreadyReadError("A model is already read.")
 
     # Set the input file
@@ -159,7 +196,7 @@ def load_from_file(filepath):
         raise NuSMVParsingError.from_nusmv_errors_list(errors)
 
     # Update cmps
-    nscompile.cmp_struct_set_read_model(nscompile.cvar.cmps)
+    nscompile.cmp_struct_set_read_model(global_compile_cmps())
 
 
 def flatten_hierarchy(keep_single_enum=False):
@@ -186,10 +223,10 @@ def flatten_hierarchy(keep_single_enum=False):
     """
 
     # Check cmps
-    if not nscompile.cmp_struct_get_read_model(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_read_model(global_compile_cmps()):
         raise NuSMVNoReadModelError("Cannot flatten; no read model.")
 
-    if nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         raise NuSMVModelAlreadyFlattenedError(
             "Model already flattened.")
 
@@ -218,7 +255,7 @@ def symb_table():
     # Flatten hierarchy if needed
     global __symb_table
     if __symb_table is None:
-        if nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+        if nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
             __symb_table = SymbTable(nscompile.Compile_get_global_symb_table())
         else:
             flatten_hierarchy()
@@ -246,9 +283,9 @@ def encode_variables(layers={"model"}, variables_ordering=None):
 
     """
     # Check cmps
-    if not nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         raise NuSMVNeedFlatHierarchyError("Need flat hierarchy.")
-    if nscompile.cmp_struct_get_encode_variables(nscompile.cvar.cmps):
+    if nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
         raise NuSMVModelAlreadyEncodedError(
             "The variables are already encoded.")
 
@@ -259,7 +296,7 @@ def encode_variables(layers={"model"}, variables_ordering=None):
     encode_variables_for_layers(layers, init=True)
 
     # Update cmps
-    nscompile.cmp_struct_set_encode_variables(nscompile.cvar.cmps)
+    nscompile.cmp_struct_set_encode_variables(global_compile_cmps())
 
     # Get global encoding
     global __bdd_encoding
@@ -306,7 +343,7 @@ def bdd_encoding():
     # Encode variables if needed
     global __bdd_encoding
     if __bdd_encoding is None:
-        if nscompile.cmp_struct_get_encode_variables(nscompile.cvar.cmps):
+        if nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
             __bdd_encoding = BddEnc(nsenc.Enc_get_bdd_encoding())
         else:
             encode_variables()
@@ -327,9 +364,9 @@ def build_flat_model():
 
     """
     # Check cmps
-    if not nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         raise NuSMVNeedFlatHierarchyError("Need flat hierarchy.")
-    if nscompile.cmp_struct_get_build_flat_model(nscompile.cvar.cmps):
+    if nscompile.cmp_struct_get_build_flat_model(global_compile_cmps()):
         raise NuSMVFlatModelAlreadyBuiltError(
             "The flat model is already built.")
 
@@ -341,7 +378,7 @@ def build_flat_model():
 
     sexp_fsm = nsfsm.FsmBuilder_create_scalar_sexp_fsm(
         nscompile.Compile_get_global_fsm_builder(),
-        nscompile.cvar.mainFlatHierarchy,
+        global_compile_flathierarchy(),
         variables)
 
     nsset.Set_ReleaseSet(variables)
@@ -351,7 +388,7 @@ def build_flat_model():
         sexp_fsm)
 
     # Update cmps
-    nscompile.cmp_struct_set_build_flat_model(nscompile.cvar.cmps)
+    nscompile.cmp_struct_set_build_flat_model(global_compile_cmps())
 
 
 def build_model():
@@ -371,11 +408,11 @@ def build_model():
 
     """
     # Check cmps
-    if not nscompile.cmp_struct_get_build_flat_model(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_build_flat_model(global_compile_cmps()):
         raise NuSMVNeedFlatModelError("Need flat model.")
-    if not nscompile.cmp_struct_get_encode_variables(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
         raise NuSMVNeedVariablesEncodedError("Need variables encoded.")
-    if nscompile.cmp_struct_get_build_model(nscompile.cvar.cmps):
+    if nscompile.cmp_struct_get_build_model(global_compile_cmps()):
         raise NuSMVModelAlreadyBuiltError("The model is already built.")
 
     # Build the model
@@ -408,8 +445,100 @@ def build_model():
                                                        enc)))
 
     # Update cmps
-    nscompile.cmp_struct_set_build_model(nscompile.cvar.cmps)
+    nscompile.cmp_struct_set_build_model(global_compile_cmps())
 
+def build_boolean_model(force=False):
+    """
+    Compiles the flattened hierarchy into a boolean model (SEXP) and stores it
+    it a global variable.
+
+    .. note::
+        This function is subject to the following requirements:
+
+            - hierarchy must already be flattened (:see:`glob.flatten_hierarchy)
+            - encoding must be already built (:see:`glob.encode_variables`)
+            - boolean model must not exist yet (or the force flag must be on)
+
+    :param force: a flag telling whether or not the boolean model must be built
+       even though the cone of influence option is turned on.
+
+    :raises NuSMVNeedFlatHierarchyError: if the hierarchy wasn't flattened yet.
+    :raises NuSMVNeedVariablesEncodedError: if the variables are not yet encoded
+    :raises NuSMVModelAlreadyBuiltError: if the boolean model is already built and force=False
+    """
+    global __bool_sexp_fsm
+
+    # check the preconditions
+    if not nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
+        raise NuSMVNeedVariablesEncodedError("Need variables encoded.")
+    if nscompile.cmp_struct_get_build_bool_model(global_compile_cmps()) and not force:
+        raise NuSMVModelAlreadyBuiltError("The boolean model is already built and the force flag is off")
+
+    # create the flat model if need be.
+    if not nscompile.cmp_struct_get_build_flat_model(global_compile_cmps()):
+        build_flat_model()
+
+    # Create the boolean model proper (CompileCmd.c/compile_create_boolean_model)
+    propdb        = nsprop.PropPkg_get_prop_database()
+    bool_sexp_fsm = nsprop.PropDb_master_get_bool_sexp_fsm(propdb)
+
+    # even though the force flag is on, a call to this method will have no effect
+    # if the bool sexp_fsm already exists in the propdb (reproduces the behavior
+    # of CompileCmd.c/compile_create_boolean_model() )
+    if bool_sexp_fsm is None:
+        benc = __bdd_encoding
+        symb = benc.symbTable
+        mgr  = benc.DDmanager
+
+        # Temporarily disable reordering (if needed)
+        reord= nsdd.wrap_dd_reordering_status(mgr._ptr)
+        if reord.status == 1:
+            nsdd.dd_autodyn_disable(mgr._ptr)
+
+        # add 'determ' to the default and Artifact classes
+        determ = symb.create_layer("determ", nssymb_table.SYMB_LAYER_POS_BOTTOM)
+        nssymb_table.SymbTable_layer_add_to_class(symb._ptr, "determ", None)
+        nssymb_table.SymbTable_layer_add_to_class(symb._ptr, "determ", "Artifacts Class")
+
+        # THIS IS THE REAL CREATION !!
+        scalar_sexp_fsm = nsprop.PropDb_master_get_scalar_sexp_fsm(propdb)
+        bool_sexp_fsm   = nssexp.BoolSexpFsm_create_from_scalar_fsm(
+                                        scalar_sexp_fsm, benc._ptr, determ);
+
+        __bool_sexp_fsm = BoolSexpFsm(bool_sexp_fsm, freeit=False)
+        nsprop.PropDb_master_set_bool_sexp_fsm(propdb, bool_sexp_fsm)
+        # unfortunately, if the C malloc fails, the C assertion will also fail
+        # and result in a program crash.
+
+        boolenc = nsboolenc.boolenc2baseenc(nsenc.Enc_get_bool_encoding())
+        nsbaseenc.BaseEnc_commit_layer(boolenc,"determ")
+
+        bddenc  = nsbddenc.bddenc2baseenc(nsenc.Enc_get_bdd_encoding())
+        nsbaseenc.BaseEnc_commit_layer(bddenc, "determ")
+
+        # Re-enable reordering if it had been disabled
+        if reord.status == 1:
+            nsdd.dd_autodyn_enable(mgr._ptr, reord.method);
+
+    # Tell NuSMV that the boolean model was built
+    nscompile.cmp_struct_set_build_bool_model(global_compile_cmps())
+
+def master_bool_sexp_fsm():
+    """
+    Return the global boolean SEXP model.
+
+    :rtype: :class:`BoolSexpFsm <pynusmv.sexp.BoolSexpFsm>`
+    """
+    global __bool_sexp_fsm
+
+    if not nscompile.cmp_struct_get_build_bool_model(global_compile_cmps()):
+        raise NuSMVNeedBooleanModelError("boolean model not initialized")
+
+    if __bool_sexp_fsm is None:
+        propdb  = nsprop.PropPkg_get_prop_database()
+        fsm_ptr = nsprop.PropDb_master_get_bool_sexp_fsm(propdb)
+        __bool_sexp_fsm = BoolSexpFsm(fsm_ptr, freeit=False)
+    return __bool_sexp_fsm
 
 def flat_hierarchy():
     """
@@ -417,12 +546,12 @@ def flat_hierarchy():
 
     :rtype: :class:`FlatHierarchy <pynusmv.node.FlatHierarchy>`
     """
-    if not nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         # Need a flat hierarchy
         raise NuSMVNeedFlatHierarchyError("Need flat hierarchy.")
     global __flat_hierarchy
     if __flat_hierarchy is None:
-        __flat_hierarchy = FlatHierarchy(nscompile.cvar.mainFlatHierarchy)
+        __flat_hierarchy = FlatHierarchy(global_compile_flathierarchy())
     return __flat_hierarchy
 
 
@@ -433,7 +562,7 @@ def prop_database():
     :rtype: :class:`PropDb <pynusmv.prop.PropDb>`
 
     """
-    if not nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         # Need a flat hierarchy
         raise NuSMVNeedFlatHierarchyError("Need flat hierarchy.")
     global __prop_database
@@ -458,15 +587,27 @@ def compute_model(variables_ordering=None, keep_single_enum=False):
     :type keep_single_enum: bool
 
     """
-    if not nscompile.cmp_struct_get_read_model(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_read_model(global_compile_cmps()):
         raise NuSMVNoReadModelError("No read model.")
 
     # Check cmps and perform what is needed
-    if not nscompile.cmp_struct_get_flatten_hrc(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_flatten_hrc(global_compile_cmps()):
         flatten_hierarchy(keep_single_enum=keep_single_enum)
-    if not nscompile.cmp_struct_get_encode_variables(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
         encode_variables(variables_ordering=variables_ordering)
-    if not nscompile.cmp_struct_get_build_flat_model(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_build_flat_model(global_compile_cmps()):
         build_flat_model()
-    if not nscompile.cmp_struct_get_build_model(nscompile.cvar.cmps):
+    if not nscompile.cmp_struct_get_build_model(global_compile_cmps()):
         build_model()
+
+def is_cone_of_influence_enabled():
+    """
+    This function returns true iff the cone of influence (coi)  option is
+    enabled.
+
+    :return: true iff the cone of influence (coi) option is enabled
+    """
+    opthandler     = nsopt.OptsHandler_get_instance()
+    is_coi_enabled = nsopt.OptsHandler_get_bool_option_value(
+                                                opthandler, "cone_of_influence")
+    return is_coi_enabled

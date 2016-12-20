@@ -1,0 +1,12 @@
+MODULE main
+VAR       v: boolean; 
+IVAR      i: boolean;
+FROZENVAR f: boolean;
+ASSIGN
+  init(v) := TRUE;
+  next(v) := !v;
+
+FAIRNESS
+    v = TRUE;
+FAIRNESS
+    i = FALSE;
