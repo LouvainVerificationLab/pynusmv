@@ -30,6 +30,27 @@ your computer. Typically the build process should work nice and smooth
 on all platform although only OSX and Ubuntu-Linux have actually been
 tested.
 
+Docker
+~~~~~~
+
+The easiest way to have an environment already setup for you to to build pynusmv
+and tweak pynusmv from the sources is to use our docker container called
+`xgillard/pynusmv`. To get started, you only need to type in the following
+command:
+
+::
+
+    docker run -it xgillard/pynusmv bash
+
+And then:
+
+::
+
+    cd home
+    git clone https://github.com/LouvainVerificationLab/pynusmv.git
+    cd pynusmv
+    python3 setup.py build
+
 Dependencies
 ~~~~~~~~~~~~
 
