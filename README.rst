@@ -158,6 +158,7 @@ under the following license terms:
 - NuSMV : LGPL (same license as PyNuSMV).
 - CUDD: MIT license
 - MiniSat: MIT license
+- ZChaff: Princeton License.
 
 Credits
 -------
