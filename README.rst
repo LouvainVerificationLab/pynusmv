@@ -108,7 +108,7 @@ started, you only need to type in the following command:
 
 ::
 
-    docker run -it xgillard/pynusmv bash
+    docker run -it louvainverificationlab/pynusmv bash
 
 And then:
 
