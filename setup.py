@@ -470,6 +470,37 @@ class Doc(Command):
         with open(fname, 'w') as f:
             f.write(''.join(lines))
 
+    def modules(self, root):
+        '''
+        Lists all the python modules contained in the `root` package and its sub
+        packages.
+        
+        :param root: the root folder where to start listing the python modules
+        '''
+        modules = []
+        for (parent, folders, files) in os.walk(root):
+            package = parent.replace("/", ".")
+            sources = filter(lambda x: x.endswith('.py'), files)
+            modules.extend([ package+'.'+mod[:-3] for mod in sources ])
+        return modules
+
+    def automodule_rst_snippet(self, module_name):
+        '''
+        Generates an rst snippet that tells automodule to consider the module
+        named after `module_name` while generating the documentation.
+        '''
+        pattern = "\n".join([
+            ':mod:`{mod}` Module   ',
+            '------------------    ',
+            '                      ',
+            '.. automodule:: {mod} ',
+            '    :members:         ',
+            '    :undoc-members:   ',
+            '    :show-inheritance:',
+            '                      '
+            ])
+        return pattern.format(mod=module_name)
+
     def run(self):
         # The complete system needs to be built before we can proceed to
         # documentation generation
@@ -490,6 +521,20 @@ class Doc(Command):
         # update the documentation config (the version)
         _docconf = os.path.join(_doc, "source/conf.py")
         self.replace_in(_docconf, "${VERSION}", VERSION)
+        
+        # list all the modules in pynusmv.rst
+        with open(os.path.join(_doc, "source/pynusmv.rst"), 'w') as f:
+            header = "\n".join([
+                ".. _pynusmv-api: ",
+                "                 ",
+                "PyNuSMV Reference",
+                "*****************",
+                "                 "
+            ])
+            f.write(header)
+            
+            for mod in self.modules('pynusmv'):
+                f.write(self.automodule_rst_snippet(mod))
 
         # use the makefile to effectively generate the docs
         pattern = "cd {build_dir:} ; make -C doc {builder:}"
@@ -498,7 +543,7 @@ class Doc(Command):
 
         # package the documentation in a zip file that can easily be uploaded
         # on PyPI for public sharing
-        shutil.make_archive("dist/doc", "zip", os.path.join(_doc, "html"))
+        shutil.make_archive("dist/doc-"+VERSION, "zip", os.path.join(_doc, "html"))
 
 class Clean(Command):
     '''
