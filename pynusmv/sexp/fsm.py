@@ -1,9 +1,10 @@
 '''
 This module defines the classes wrapping the SEXP FSM structures. 
-In particular::
+In particular:
 
     - :class:`SexpFsm` which wraps the basic SEXP fsm
     - :class:`BoolSexpFsm` which wraps a boolean SEXP fsm
+    
 '''
 
 from pynusmv_lower_interface.nusmv.fsm.sexp import sexp as _sexp

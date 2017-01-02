@@ -46,9 +46,12 @@ def check_ltl(ltl_prop,
     This function performs an end to end verification of the given LTL property
     and prints the outcome (satisfaction or violation result) to standard output
     
-    Formally, it tries to determine if the problem [[M,f]]_{k} is satisfiable. 
-    This problem is generated as  
-        [[M]]_{k} & ! ( (!Lk & [[ltl_prop]]_{k}) | _{l}[[ltl_prop]]_{k}^{l} )
+    Formally, it tries to determine if the problem :math:`[[M,f]]_{k}` is satisfiable. 
+    This problem is generated as 
+    
+    .. math::
+    
+        [[M]]_{k} \\wedge \\neg ( (\\neg L_{k} \\wedge [[ltl\\_prop]]_{k}) \\vee {}_{l}[[ltl\\_prop]]_{k}^{l} )
     
     :param ltl_prop: the LTL property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
@@ -59,7 +62,8 @@ def check_ltl(ltl_prop,
     :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
         in the formal definitions). However, this value is not as 'crude' as an
-        absolute moment in time since it may indicate::
+        absolute moment in time since it may indicate:
+        
             - an absolute moment in time (obviously) when the value is positive
             - indicate a relative moment in time (when it is a negative number
               (for instance value -2 indicates that the loops are supposed to
@@ -70,6 +74,7 @@ def check_ltl(ltl_prop,
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
               :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              
     :param one_problem: a flag indicating whether the problem should be verified
         for all possible execution lengths UP TO `bound` or if it should be 
         evaluated only for executions that have the exact length `bound`.
@@ -121,7 +126,7 @@ def check_ltl_incrementally(ltl_prop,
     generates the problem /incrementally/ instead of doing it all at once.
     
     Concretely, this means that it does not compute the complete unrolling of 
-    the transition relation [[M]]_{k} up front but computes each unrolling
+    the transition relation :math:`[[M]]_{k}` up front but computes each unrolling
     step separately and adds it to a group of the incremental sat solver. 
     
     The bounded semantics conversion of `ltl_prop` is done the exact same way 
@@ -139,7 +144,8 @@ def check_ltl_incrementally(ltl_prop,
     :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
         in the formal definitions). However, this value is not as 'crude' as an
-        absolute moment in time since it may indicate::
+        absolute moment in time since it may indicate:
+        
             - an absolute moment in time (obviously) when the value is positive
             - indicate a relative moment in time (when it is a negative number
               (for instance value -2 indicates that the loops are supposed to
@@ -150,6 +156,7 @@ def check_ltl_incrementally(ltl_prop,
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
               :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              
     :param one_problem: a flag indicating whether the problem should be verified
         for all possible execution lengths UP TO `bound` or if it should be 
         evaluated only for executions that have the exact length `bound`.
@@ -174,13 +181,15 @@ def check_ltl_incrementally(ltl_prop,
 def generate_ltl_problem(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
     """
     Generates a (non-incremental) Be expression corresponding to the SAT problem
-    denoted by [[fsm, prop_node]]_{bound}^{loop} 
+    denoted by :math:`[[fsm, prop\\_node]]_{bound}^{loop}`
     
     That is to say it generates the problem that combines both the formula and
     and the model to perform the verification. Put another way, this problem
-    can be read as::
+    can be read as: 
     
-        [[fsm]]_{bound} & ! ( (!Lk & [[ ! prop_node]]_{k}) | _{l}[[ ! prop_node]]_{k}^{l} )
+    .. math::
+    
+        [[fsm]]_{bound} \\wedge \\neg ( (\\neg L_k \\wedge [[ \\neg prop\\_node]]_{k}) \\vee {}_{l}[[ \\neg prop\\_node]]_{k}^{l} )
      
     :param fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 
@@ -196,7 +205,8 @@ def generate_ltl_problem(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
     :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
         in the formal definitions). However, this value is not as 'crude' as an
-        absolute moment in time since it may indicate::
+        absolute moment in time since it may indicate:
+        
             - an absolute moment in time (obviously) when the value is positive
             - indicate a relative moment in time (when it is a negative number
               (for instance value -2 indicates that the loops are supposed to
@@ -207,6 +217,7 @@ def generate_ltl_problem(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
               :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              
     :return: a Be boolean expression representing the satisfiability problem of
         for the verification of this property.
     :raises ValueError: when the bound is infeasible (negative value) or when
@@ -230,11 +241,12 @@ def bounded_semantics(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
     given LTL formula. It combines the bounded semantics of the formula when 
     there is a loop and when there is none with the loop condition.
     
-    In the literature, the resulting formula would be denoted as .. math::
+    In the literature, the resulting formula would be denoted as 
+    
+    .. math::
     
        [[f]]_{k} :=
-           (! L_{k} & [[f]]^{0}_{k} ) \vee 
-           (\bigvee_{j=l}^{k} _{j}L_{k} \wedge _{j}[[f]]_{k}^{0})
+           (\\neg L_{k} \\wedge [[f]]^{0}_{k} ) \\vee (\\bigvee_{j=l}^{k} {}_{j}L_{k} \\wedge {}_{j}[[f]]_{k}^{0})
         
     where l is used to denote `loop`, f for `prop_node` and k for the `bound`.
         
@@ -285,9 +297,7 @@ def bounded_semantics_without_loop(fsm, prop_node, bound):
         possible loops (and the semantics has to be altered slightly).
         
         In the literature, the expression generated by this function is denoted
-        .. math:: 
-            
-            [[f]]^{0}_{k} 
+        :math:`[[f]]^{0}_{k}`
         
         With f used to represent the formula `prop_node`, and k for `bound`
     
@@ -325,9 +335,7 @@ def bounded_semantics_single_loop(fsm, prop_node, bound, loop):
     given LTL formula in the case where the formula is evaluated against a path 
     that contains one single loop starting at position `loop`.
     
-    In the literature, the resulting formula would be denoted as .. math::
-    
-        _{l}L_{k} \wedge _{l}[[f]]_{k}^{0}
+    In the literature, the resulting formula would be denoted as :math:`{}_{l}L_{k} \\wedge {}_{l}[[f]]_{k}^{0}`
         
     where l is used to denote `loop`, f for `prop_node` and k for the `bound`.
     
@@ -413,9 +421,11 @@ def bounded_semantics_all_loops(fsm, prop_node, bound, loop, optimized=True):
     given LTL formula in the case where the formula is evaluated against a path 
     that contains a loop at any of the positions in the range [loop; bound]
     
-    In the literature, the resulting formula would be denoted as .. math::
+    In the literature, the resulting formula would be denoted as 
     
-       \bigvee_{j=l}^{k} _{j}L_{k} \wedge _{j}[[f]]_{k}^{0}
+    .. math::
+    
+        \\bigvee_{j=l}^{k} {}_{j}L_{k} \\wedge {}_{j}[[f]]_{k}^{0}
         
     where l is used to denote `loop`, f for `prop_node` and k for the `bound`.
         
@@ -488,7 +498,7 @@ def cdr(this_node):
 
 def bounded_semantics_without_loop_at_offset(fsm, formula, time, bound, offset):
     """
-    Generates the Be [[formula]]^{time}_{bound} corresponding to the bounded semantic 
+    Generates the Be :math:`[[formula]]^{time}_{bound}` corresponding to the bounded semantic 
     of `formula` when there is no loop on the path but encodes it with an `offset` long shift 
     in the timeline of the encoder.
 
@@ -546,7 +556,7 @@ def bounded_semantics_without_loop_at_offset(fsm, formula, time, bound, offset):
 
 def bounded_semantics_with_loop_at_offset(fsm, formula, time, bound, loop, offset):
     """
-    Generates the Be _{loop}[[formula]]^{time}_{bound} corresponding to the bounded semantic 
+    Generates the Be :math:`{}_{loop}[[formula]]^{time}_{bound}` corresponding to the bounded semantic 
     of `formula` when a loop starts at time 'loop' on the path but encodes it with an `offset`
     long shift in the timeline of the encoder.
     
@@ -610,7 +620,7 @@ def bounded_semantics_with_loop_at_offset(fsm, formula, time, bound, loop, offse
     
 def bounded_semantics_at_offset(fsm, formula, bound, offset, fairness=True):
     """
-    Generates the Be [[formula]]_{bound} corresponding to the bounded semantic 
+    Generates the Be :math:`[[formula]]_{bound}` corresponding to the bounded semantic 
     of `formula` but encodes it with an `offset` long shift in the timeline of the encoder.
 
     .. note:: 

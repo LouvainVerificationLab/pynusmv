@@ -3,6 +3,7 @@ The :mod:`pynusmv.be.manager` module contains classes and functions related
 to the management of boolean expressions in PyNuSMV
 
 In particular it contains:
+
 * :class:`BeManager` which is the abstract interface of a manager
 * :class:`BeRbcManager` which is the sole implementation of the BE manager
 """

@@ -1,5 +1,5 @@
 '''
-The module :mod: `pynusmv.bmc.glob` serves as a reference entry point for the
+The module :mod:`pynusmv.bmc.glob` serves as a reference entry point for the
 bmc-related functions (commands) and global objects.
 
 It has explicitly not been integrated with :mod:`pynusmv.glob` in order to keep

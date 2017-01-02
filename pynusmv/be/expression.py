@@ -3,9 +3,9 @@ The :mod:`pynusmv.be.expression` module contains classes and functions related
 to the operation and manipulation of the boolean expressions in PyNuSMV.
 
 In particular it contains:
-* :class:`Be`
-* :class:`BeCnf`
 
++ :class:`Be`
++ :class:`BeCnf`
 + other utility functions
 """
 from pynusmv.sat import Polarity

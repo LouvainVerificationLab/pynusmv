@@ -1,5 +1,5 @@
 """
-The :module:`pynusmv.enc` provides the BE encoder related functionalities
+The :mod:`pynusmv.be.encoder` module provides the BE encoder related functionalities
 
 * :class: BeWrongVarType a kind of exception thrown when the type of a variable
      does not correspond to what the specification expects.
@@ -9,7 +9,7 @@ The :module:`pynusmv.enc` provides the BE encoder related functionalities
     over the untimed variables managed by the encoder
 * :class:`BeEnc` which provides the encoder related functionalities (i.e: shifts)
 
-..:Note: 
+.. note::
     Most of the documentation comes either from the NuSMV source code BeEnc.c
     or the NuSMV-2.5 User Manual
     

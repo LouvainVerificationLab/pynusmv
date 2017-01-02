@@ -340,7 +340,7 @@ class indexed:
         wraps the given function into a runtime property that can be accessed
         in an indexed way.
 
-        ..:note:
+        .. note::
 
             This method is private and should not be used from the outside.
 
@@ -365,7 +365,7 @@ class indexed:
         returned in order to avoid weird behaviors (case where the given self is
         actually of the right type, albeit not the expected behavior)
 
-        .. :note:
+        .. note::
 
             This method is private and should not be used from the outside.
 
@@ -386,7 +386,7 @@ class indexed:
         returned in order to avoid weird behaviors (case where the given self is
         actually of the right type, albeit not the expected behavior)
 
-        .. :note:
+        .. note::
 
             This method is private and should not be used from the outside.
 
@@ -407,7 +407,7 @@ class indexed:
         returned in order to avoid weird behaviors (case where the given self is
         actually of the right type, albeit not the expected behavior)
 
-        .. :note:
+        .. note::
 
             This method is private and should not be used from the outside.
 

@@ -1,5 +1,6 @@
 '''
-This module implements wrappers around the NuSMV list types
+This module implements wrappers around the NuSMV list types:
+
 * :class:`Slist` which represents a singly linked list as used in many internal 
          functions of NuSMV
 * :class:`NodeList` which is a wrapper for NuSMV's internal NodeList class
@@ -384,7 +385,7 @@ class NodeList(PointerWrapper, Iterable):
     This class implements a pythonic interface to NuSMV's internal version of a
     doubly linked list
     
-    ..:Note: The following apis have not been exposed since they require pointer
+    .. note:: The following apis have not been exposed since they require pointer
       to function (in C) which are considered too low level for this pythonic
       interface. However, these apis are accessible using 
       pynusmv_lower_interface.nusmv.utils.utils.<TheAPI> and passing nodelst._ptr instead of 
@@ -520,7 +521,7 @@ class NodeList(PointerWrapper, Iterable):
         :return: the idx-th item of the list
         :raise: KeyError when the idx is not one of the possible indices of the
           list
-        ..:warning: This implementation is O(idx) despite the syntax sugar making
+        .. warning:: This implementation is O(idx) despite the syntax sugar making
           it look like O(1) 
         """
         counter = 0
@@ -532,10 +533,10 @@ class NodeList(PointerWrapper, Iterable):
 
     def __delitem__(self, idx):
         """
-        ..:warning: This implementation is O(idx) despite the syntax sugar making
+        .. warning:: This implementation is O(idx) despite the syntax sugar making
           it look like O(1) 
           
-        ..:warning: In case no value corresponds to idx, no warning is issued
+        .. warning:: In case no value corresponds to idx, no warning is issued
         """
         iterator = iter(self)
         for _ in range(idx):
@@ -585,8 +586,10 @@ class NodeList(PointerWrapper, Iterable):
 class NodeListIter(Iterator):
     """
     An iterator to iterate over NodeList.
-    ..:Note: Despite the fact that it wraps a pointer, this class does not extend
-      the PointerWrapper class since there is no need to free the pointer.
+    
+    .. note:: 
+       Despite the fact that it wraps a pointer, this class does not extend
+       the PointerWrapper class since there is no need to free the pointer.
     """
     def __init__(self, lst):
         """
@@ -632,10 +635,10 @@ class Assoc(PointerWrapper):
     encapsulated in st_table aka hash_ptr which is often used in the NuSMV
     internals.
     
-    ..:Note: I couldn't find any documentation about the ST_PFSR type. As a 
+    .. note:: I couldn't find any documentation about the ST_PFSR type. As a 
       consequence of this, I couldn't implement the iterable protocol
       
-    ..:warning: BOTH the key AND the value are supposed to be of type Node.
+    .. warning:: BOTH the key AND the value are supposed to be of type Node.
       Hence, the conversion method must take care to return the nodes and 
       objects of the right types. 
     """
@@ -650,7 +653,7 @@ class Assoc(PointerWrapper):
         :param freeit: a flag indicating whether or not this object should be freed
                     upon garbage collection
                     
-        ..:warning: BOTH the key AND the value are supposed to be of type 
+        .. warning:: BOTH the key AND the value are supposed to be of type 
           node_ptr in the undelying collection. Hence, the conversion method 
           must take care to return the nodes and those types.          
         """
@@ -726,7 +729,7 @@ class Assoc(PointerWrapper):
         """
         :return: retrieves the item corresponding to the given key.
         :raise: In case the key wasn't found in this Assoc, raises KeyError
-        ..:warning: key is supposed to be of type Node
+        .. warning:: key is supposed to be of type Node
         """
         result = _utils.find_assoc(self._ptr, self._key_conv.to_pointer(key))
         if result is not None: 
@@ -738,7 +741,7 @@ class Assoc(PointerWrapper):
         """
         Associates key to value in the container
         
-        ..:warning: key is supposed to be of type Node
+        .. warning:: key is supposed to be of type Node
         """
         key_ptr = self._key_conv.to_pointer(key)
         val_ptr = self._val_conv.to_pointer(value)

@@ -1,16 +1,14 @@
 """
-The :mod:`pynusmv.bmc.ltlspec` contains all the functionalities related to the
+The :mod:`pynusmv.bmc.invarspec` contains all the functionalities related to the
 verification of INVARSPEC properties using a technique close to that of 
 SAT-based bounded model checking for LTL.
 
 Most of the techniques exposed in this module have been described
-in the paper by N. Een & N. Sorensson (references, see infra). Therefore 
-reading it is highly recommended in order to understand the purpose, ins and
-outs of the algorithms exposed hereunder.
+in [ES03]_. Therefore, the reading of this paper is highly 
+recommended in order to understand the purpose, ins and outs of the algorithms 
+exposed hereunder.
 
-References::
-
-    Niklas Eén and Niklas Sörensson. 
+.. [ES03] Niklas Eén and Niklas Sörensson.
     "Temporal induction by incremental sat solving." 
     in Ofer Strichman and Armin Biere, editors, 
     Electronic Notes in Theoretical Computer Science, 
@@ -91,6 +89,8 @@ def check_invar_een_sorensson(invar_prop, max_bound,
     and prints the outcome (satisfaction or violation result) to standard output
 
     .. note::
+    
+        This approach to invariant verification is described in [ES03]_ .
         
         This algorithm is *NOT* incremental and performs its verification by 
         the means of temporal induction.
@@ -101,17 +101,6 @@ def check_invar_een_sorensson(invar_prop, max_bound,
          
             - all states encountered must be different.
             - the base case is assumed to hold for n consecutive steps
-
-    
-    .. note::
-    
-        This approach to invariant verification is described in::
-        
-            Niklas Eén and Niklas Sörensson. 
-            "Temporal induction by incremental sat solving." 
-            in OferStrichman and Armin Biere, editors, 
-            Electronic Notes in Theoretical Computer Science, 
-            volume 89. Elsevier, 2004.
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
@@ -178,6 +167,8 @@ def check_invar_incrementally_dual(invar_prop, max_bound, closure_strategy):
 
     .. note::
         
+        This approach to invariant verification is described in [ES03]_ .
+        
         This algorithm is incremental and performs its verification by 
         the means of temporal induction. With this technique (as is the case
         for regular inductive proof), the proof depends on a base case and an 
@@ -186,16 +177,6 @@ def check_invar_incrementally_dual(invar_prop, max_bound, closure_strategy):
          
             - all states encountered must be different.
             - the base case is assumed to hold for n consecutive steps
-
-    .. note::
-    
-        This approach to invariant verification is described in::
-        
-            Niklas Eén and Niklas Sörensson. 
-            "Temporal induction by incremental sat solving." 
-            in OferStrichman and Armin Biere, editors, 
-            Electronic Notes in Theoretical Computer Science, 
-            volume 89. Elsevier, 2004.
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
@@ -221,7 +202,7 @@ def check_invar_incrementally_zigzag(invar_prop, max_bound):
     High level function that performs the verification of an INVAR property 
     (INVARSPEC property as obtained from the :class:`pynusmv.prop.PropDb`)
     using one of the variants of a technique called 'temporal induction' 
-    proposed by N. Een and N. Sorensson.
+    proposed by N. Een and N. Sorensson in [ES03]_ .
     
     This function performs an end to end verification of the given property
     and prints the outcome (satisfaction or violation result) to standard output
@@ -232,6 +213,8 @@ def check_invar_incrementally_zigzag(invar_prop, max_bound):
 
     .. note::
         
+        This approach to invariant verification is described in [ES03]_ .
+        
         This algorithm is incremental and performs its verification by 
         the means of temporal induction alternating between a forward and 
         backward strategy. With this technique (as is the case for regular 
@@ -241,16 +224,6 @@ def check_invar_incrementally_zigzag(invar_prop, max_bound):
          
             - all states encountered must be different.
             - the base case is assumed to hold for n consecutive steps
-
-    .. note::
-    
-        This approach to invariant verification is described in::
-        
-            Niklas Eén and Niklas Sörensson. 
-            "Temporal induction by incremental sat solving." 
-            in OferStrichman and Armin Biere, editors, 
-            Electronic Notes in Theoretical Computer Science, 
-            volume 89. Elsevier, 2004.
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
@@ -283,6 +256,8 @@ def check_invar_incrementally_falsification(invar_prop, max_bound):
 
     .. note::
         
+        This approach to invariant verification is described in [ES03]_ .
+        
         This algorithm is incremental and performs its verification by 
         the means of temporal induction alternating between a forward and 
         backward strategy. With this technique (as is the case for regular 
@@ -293,19 +268,9 @@ def check_invar_incrementally_falsification(invar_prop, max_bound):
             - all states encountered must be different.
             - the base case is assumed to hold for n consecutive steps
 
-    .. note::
-    
-        This approach to invariant verification is described in::
-        
-            Niklas Eén and Niklas Sörensson. 
-            "Temporal induction by incremental sat solving." 
-            in OferStrichman and Armin Biere, editors, 
-            Electronic Notes in Theoretical Computer Science, 
-            volume 89. Elsevier, 2004.
-
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())
+        (:see:`pynusmv.glob.prop_database()`)
     :param max_bound: the maximum length of a trace considered in the generated
         SAT problem.
     :raises NuSmvSatSolverError: when the verification could not be
@@ -327,9 +292,11 @@ def generate_invar_problem(be_fsm, prop_node):
     """
     Builds and returns the invariant problem of the given propositional formula
 
-    Concretely, this is the negation of (which needs to be satisfiable)::
-        
-        (I0 imp P0) and ((P0 and R01) imp P1)
+    Concretely, this is the negation of (which needs to be satisfiable):
+    
+    .. math::
+    
+        (I0 \\implies P0) \\wedge \\left( \\left(P0 \\wedge R01\\right) \\implies P1 \\right)
         
     :param be_fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 

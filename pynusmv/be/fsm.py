@@ -2,8 +2,7 @@
 The :mod:`pynusmv.be.fsm` module contains classes and functions related  
 to PyNuSMV's description of a BE encoded FSM
 
-In particular it contains:
-* :class:`BeFsm` which is the sole implementation of a BE FSM
+In particular it contains: :class:`BeFsm` which is the sole implementation of a BE FSM
 """
 
 __all__ = ['BeFsm']
@@ -154,7 +153,7 @@ class BeFsm(PointerWrapper):
         """
         The list of fairness constraints of this model encoded in BE format.
         
-        ..:Note: accessing this property is not free: use fairness_iterator
+        .. note:: accessing this property is not free: use fairness_iterator
            instead if you don't need to manipulate the list as a list.
         """
         return [ i for i in self.fairness_iterator() ]

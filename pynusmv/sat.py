@@ -412,7 +412,7 @@ class SatIncSolver(SatSolver):
         """
         Tries to solve formulas from the groups in the list.
         
-        ..:note: 
+        .. note::
             - The permanent group is automatically added to the list.
             - the model property may be accessed iff this function returns
               SatSolverResult.SATISFIABLE
@@ -433,7 +433,7 @@ class SatIncSolver(SatSolver):
         Tries to solve formulas in groups belonging to the solver except the 
         groups in the given list `groups_olist`
 
-        ..:note: 
+        .. note::
             - The permanent group may not be in the groups_olist
             - the model property may be accessed iff this function returns
               SatSolverResult.SATISFIABLE

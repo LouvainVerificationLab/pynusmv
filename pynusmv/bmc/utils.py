@@ -103,7 +103,8 @@ def check_consistency(bound, loop):
     :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
         in the formal definitions). However, this value is not as 'crude' as an
-        absolute moment in time since it may indicate::
+        absolute moment in time since it may indicate:
+        
             - an absolute moment in time (obviously) when the value is positive
             - indicate a relative moment in time (when it is a negative number
               (for instance value -2 indicates that the loops are supposed to
@@ -114,6 +115,7 @@ def check_consistency(bound, loop):
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
               :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              
     :raises ValueError: when the `bound` and `loop` are not consistent with one
         another.
     """
@@ -162,7 +164,7 @@ def loop_condition(enc, k, l):
     This function generates a Be expression representing the loop condition
     which is necessary to determine that k->l is a backloop.
     
-    Formally, the returned constraint is denoted _{l}L_{k}
+    Formally, the returned constraint is denoted :math:`{}_{l}L_{k}`
     
     Because the transition relation is encoded in Nusmv as formula (and not as
     a relation per-se), we determine the existence of a backloop between 
@@ -231,23 +233,27 @@ def successor(time, k, l):
     Returns the successor time of `time` in the context of a (loopy) trace 
     (k-l loop) on the interval [loop; bound].
     
+    For a complete definition of the successor relation, check defintion 6 in
+    [BCC+03]_ .
+    
     .. note::
         
         In the particular case where the value of `l` equal to `no_loopback()`, 
         then the sucessor is simply `time` + 1. If on top of that, `time` is 
         equal to `k`. Then there is no sucessor and the value None is returned.  
-    
-    .. note::
-        References, see Definition 6 
-        in Biere et al - ``Bounded Model Checking'' - 2003 
-        
+
     .. warning::
         To be consistent with the way the loop condition is implemented (equiv
         of all the state variables). In the case of a loopy path (k-l loop)
         we have that walking 'k' steps means to be back at step 'l'. Hence, the
         value of i can only vary from 0 to k-1 (and will repeat itself in the 
         range [l; k-1])
-        
+    
+    .. [BCC+03] 
+        A. Biere, A. Cimatti, E. Clarke, O. Strichman, and Y. Zhu. 
+        "Bounded model checking."
+        In Ad- vances in Computers, 
+        volume 58. Academic Press, 2003.
     
     :param time: the time whose successor needs to be computed.
     :param k: the highest time
@@ -663,11 +669,12 @@ def dump_problem(be_enc, be_cnf, prop, bound, loop, dump_type, fname):
         represented in a 'Prop' format (subclass of :see::class:`pynusmv.prop.Prop`)
         which corresponds to the format obtained from the `PropDb`
         (:see:`pynusmv.glob.prop_database`)
-    :param bound : the bound of the problem
-    :param loop  : a loop definition. This is an integer value corresponding to 
+    :param bound: the bound of the problem
+    :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
         in the formal definitions). However, this value is not as 'crude' as an
-        absolute moment in time since it may indicate::
+        absolute moment in time since it may indicate:
+        
             - an absolute moment in time (obviously) when the value is positive
             - indicate a relative moment in time (when it is a negative number
               (for instance value -2 indicates that the loops are supposed to
@@ -678,6 +685,7 @@ def dump_problem(be_enc, be_cnf, prop, bound, loop, dump_type, fname):
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
               :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              
     :param dump_type: the format in which to output the data. (:see:`DumpType`)
     :param fname: a template of the name of the file where the information will
         be dumped.
