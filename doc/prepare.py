@@ -13,6 +13,7 @@
 import os
 import os.path 
 import shutil
+import argparse
 
 class DocPrep:
     '''
@@ -136,6 +137,9 @@ class DocPrep:
                 f.write(self.automodule_rst_snippet(mod))
 
 if __name__ == '__main__':
-    DocPrep('1.0rc4snapshot1').run()
+    parser = argparse.ArgumentParser(description="Prepare a new documentation release")
+    parser.add_argument("version", help="The version number associated with this doc release")
+    args = parser.parse_args()
+    DocPrep(args.version).run()
   
 

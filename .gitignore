@@ -32,3 +32,6 @@ tests/pynusmv/__pycache__/*
 *.built
 *.unpacked
 *.configured
+
+*.DS_Store
+lib/*
