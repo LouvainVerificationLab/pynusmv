@@ -456,6 +456,10 @@ class Doc(Command):
         self.set_undefined_options('build', ('build_lib', 'build_dir') )
 
     def run(self):
+        # prepare the doc generation
+        command = "cd doc && python3 prepare.py {}".format(VERSION)
+        os.system(command)
+        
         # use the makefile to effectively generate the docs
         pattern = "make -C doc {builder:}"
         command = pattern.format(build_dir=self.build_dir, builder=self.builder)
