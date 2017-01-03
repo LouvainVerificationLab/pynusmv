@@ -20,6 +20,10 @@ import sys, os
 #sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../'))
 
+# Mock the lower interface modules so that no native extension compilation is 
+# required in order to produce the docs.
+${MOCK_LOWER_INTERFACE}
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
