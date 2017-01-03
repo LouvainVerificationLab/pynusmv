@@ -106,7 +106,7 @@ class BeFsm(PointerWrapper):
         """
         Creates a new independent copy of the FSM.
         :param freeit: a flag indicating whether or not the system resources 
-          should be freed upon garbage collection.
+        should be freed upon garbage collection.
         """
         return BeFsm(_be.BeFsm_copy(self._ptr), freeit=freeit)
     

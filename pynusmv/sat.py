@@ -71,12 +71,12 @@ class SatSolverFactory():
         Creates a new sat solver corresponding to the given name and capabilities
         :param name: the name of the solver to instanciate 
         :param incremental: a flag indicating whether the instanciated solver
-          should have incremental capabilities
+        should have incremental capabilities
         :param proof: a flag indicating whether the instanciated solver should
-          have proof logging capability.
+        have proof logging capability.
         :return: a new sat solver corresponding to the given name and capabilities
         
-        ..:raise: Given that ZChaff does not support proof logging, this method
+        :raise: Given that ZChaff does not support proof logging, this method
           raises a ValueError when prooflogging is turned on and zchaff is passed
           as name parameter.
         """

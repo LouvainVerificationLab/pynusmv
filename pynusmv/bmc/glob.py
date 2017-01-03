@@ -38,10 +38,10 @@ def bmc_setup(force=False):
     .. note::
         This function is subject to the following requirements:
             
-            - a model must be loaded (:see:`glob.load`)
-            - hierarchy must already be flattened (:see:`glob.flatten_hierarchy)
-            - encoding must be already built (:see:`glob.encode_variables`)
-            - boolean model must be already built (:see:`glob.build_boolean_model`)
+            - a model must be loaded (:func:`pynusmv.glob.load`)
+            - hierarchy must already be flattened (:func:`pynusmv.glob.flatten_hierarchy`)
+            - encoding must be already built (:func:`pynusmv.glob.encode_variables`)
+            - boolean model must be already built (:func:`pynusmv.glob.build_boolean_model`)
                except if cone of influence is enabled and force is false
     
     :param force: a flag telling whether or not the boolean model must exist
@@ -153,7 +153,7 @@ def go_bmc(force=False):
     Performs all the necessary steps to use loaded model and be able to perform
     bmc related operations on it.
     
-    :raises NuSMVNoReadModelError: if no module was read (:see:`glob.load`) 
+    :raises NuSMVNoReadModelError: if no module was read (:func:`pynusmv.glob.load`) 
       before this method was called. 
     """
     cmp = glob.global_compile_cmps() 

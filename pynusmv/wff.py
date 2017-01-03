@@ -51,8 +51,7 @@ class Wff(PointerWrapper):
     @staticmethod
     def decorate(node_like):
         """
-        Creates a new instance from a node_like object 
-        (:see: :mod:`pynusmv.node`).
+        Creates a new instance from a node_like object (:mod:`pynusmv.node`).
         
         :param node_like: an object which behaves as a node (typically subclass)
             which will be wrapped to be considered as a Wff 

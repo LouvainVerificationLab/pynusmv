@@ -1,12 +1,10 @@
 """
 The :mod:`pynusmv.be.encoder` module provides the BE encoder related functionalities
 
-* :class: BeWrongVarType a kind of exception thrown when the type of a variable
-     does not correspond to what the specification expects.
-* :class: BeVarType an enum describing the possible types of variables 
-    (These can be combined)
-* :class: `BeEncUntimedVarIterator` an iterator making for easy custom iteration
-    over the untimed variables managed by the encoder
+* :class:`BeWrongVarType` a kind of exception thrown when the type of a variable
+  does not correspond to what the specification expects.
+* :class:`BeVarType` an enum describing the possible types of variables 
+  (These can be combined)
 * :class:`BeEnc` which provides the encoder related functionalities (i.e: shifts)
 
 .. note::
@@ -146,7 +144,7 @@ class BeVar:
         .. note::
         
             If this property is true, then the name of this variable as it was
-            declared in the SMV text can be retrieved using the :see:`scalar` 
+            declared in the SMV text can be retrieved using the `scalar` 
             property.
         
         :return: True iff this BeVar represents only one bit of a variable in 
@@ -161,7 +159,7 @@ class BeVar:
         Returns the name node of this variable as it was declared in the SMV 
         text (hence not the name of the bit, but the name of the variable).
         
-        :see:`is_bit`
+        .. seealso:: `is_bit`
         :return: the name node corresponding to scalar using this variable.
         """
         bool_enc = self.encoding._bool_enc
@@ -544,6 +542,7 @@ class BeEnc(PointerWrapper):
         A state of the model is an assignment of values to a set of state and 
         frozen variables. State variables (and also instances of modules) are 
         declared by the notation:
+        
             var_declaration :: VAR var_list
         
         :return: number of state variables currently handled by the encoder
@@ -561,10 +560,13 @@ class BeEnc(PointerWrapper):
         Similar to input variables the difference between the syntax for the 
         frozen and state variables declarations is the keyword indicating the 
         beginning of a declaration:
+        
             frozenvar_declaration :: FROZENVAR simple_var_list
+        
         The semantics of some frozen variable a is that of a state variable 
         accompanied by an assignment that keeps its value constant 
         (it is handled more efficiently, though):
+        
             ASSIGN next(a) := a;
 
         :return: number of frozen variables currently handled by the encoder
@@ -580,6 +582,7 @@ class BeEnc(PointerWrapper):
         Finite State Machine. The difference between the syntax for the input 
         and state variables declarations is the keyword indicating the beginning
         of a declaration:
+        
             ivar_declaration :: IVAR simple_var_list
 
         :return: number of input variables currently handled by the encoder
@@ -677,10 +680,13 @@ class BeEnc(PointerWrapper):
         Similar to input variables the difference between the syntax for the 
         frozen and state variables declarations is the keyword indicating the 
         beginning of a declaration:
+        
             frozenvar_declaration :: FROZENVAR simple_var_list
+            
         The semantics of some frozen variable a is that of a state variable 
         accompanied by an assignment that keeps its value constant 
         (it is handled more efficiently, though):
+        
             ASSIGN next(a) := a;
         
         :return: the list of the frozen variables
@@ -696,6 +702,7 @@ class BeEnc(PointerWrapper):
         Finite State Machine. The difference between the syntax for the input 
         and state variables declarations is the keyword indicating the beginning
         of a declaration:
+        
             ivar_declaration :: IVAR simple_var_list
         
         :return: the list of the (untimed) input variables
@@ -713,7 +720,7 @@ class BeEnc(PointerWrapper):
     def shift_curr_to_next(self, expr):
         """
         Returns an *untimed* Be expression corresponding to `expr` in which all 
-        variables v have been shifted to next(v). Example::
+        variables v have been shifted to next(v). Example:
             
             v == True & w == False becomes next(v) == True & next(w) == False
         
@@ -724,10 +731,11 @@ class BeEnc(PointerWrapper):
             expression. Therefore, in order to use it in (ie a transition 
             relation unrolling), it must be shifted again to a time block using
             one of :
-                - :method:`shift_to_time(expr)`
-                - :method:`shift_to_times(expr)`
-                - :method:`or_interval(expr, from, to)`
-                - :method:`and_interval(expr, from,to)`
+            
+                - :meth:`shift_to_time`
+                - :meth:`shift_to_times`
+                - :func:`or_interval`
+                - :func:`and_interval`
         
         .. warning:: 
             argument 'expr' must contain only untimed current state variables 
@@ -853,7 +861,7 @@ class BeEnc(PointerWrapper):
     
     def decode_value(self, list_of_bits_and_value):
         """
-        Returns a node (:see:`pynusmv.node.Node`) corresponding to the value of
+        Returns a node (:class:`pynusmv.node.Node`) corresponding to the value of
         the variable encoded by the list of bits and values.
         
         :param list_of_bits_and_value: a sequence of tuples (BeVar, BooleanValue)

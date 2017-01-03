@@ -311,7 +311,7 @@ class GenerateInitFiles(Command):
             with open(init_script, 'w') as f:
                 f.write(GenerateInitFiles.HEADER_TEXT)
                 _all = self.get_all_var(directory)
-                f.write("all = {}".format(_all))
+                f.write("__all__ = {}".format(_all))
 
         # Then do the same for all the sub folders
         for item in os.listdir(directory):
@@ -455,95 +455,15 @@ class Doc(Command):
     def finalize_options(self):
         self.set_undefined_options('build', ('build_lib', 'build_dir') )
 
-    def replace_in(self, fname, old_str, new_str):
-        '''
-        Replace every occurences of `old_str` by `new_str` in the file `fname`.
-
-        :param fname: the path of the file whose content needs to be migrated
-        :param old_str: the text before migration
-        :param new_str: the text after migration
-        '''
-        lines = []
-        with open(fname, 'r') as f:
-            lines =[ line.replace(old_str, new_str) for line in f.readlines() ]
-
-        with open(fname, 'w') as f:
-            f.write(''.join(lines))
-
-    def modules(self, root):
-        '''
-        Lists all the python modules contained in the `root` package and its sub
-        packages.
-        
-        :param root: the root folder where to start listing the python modules
-        '''
-        modules = []
-        for (parent, folders, files) in os.walk(root):
-            package = parent.replace("/", ".")
-            sources = filter(lambda x: x.endswith('.py'), files)
-            modules.extend([ package+'.'+mod[:-3] for mod in sources ])
-        return modules
-
-    def automodule_rst_snippet(self, module_name):
-        '''
-        Generates an rst snippet that tells automodule to consider the module
-        named after `module_name` while generating the documentation.
-        '''
-        pattern = "\n".join([
-            ':mod:`{mod}` Module   ',
-            '------------------    ',
-            '                      ',
-            '.. automodule:: {mod} ',
-            '    :members:         ',
-            '    :undoc-members:   ',
-            '    :show-inheritance:',
-            '                      '
-            ])
-        return pattern.format(mod=module_name)
-
     def run(self):
-        # The complete system needs to be built before we can proceed to
-        # documentation generation
-        self.get_finalized_command('build').run()
-
-        # ensure it can be done
-        if not os.path.exists(self.build_dir):
-            os.makedirs(self.build_dir)
-
-        # it cant already exist: delete it if needed
-        _doc = os.path.join(self.build_dir, "doc")
-        if os.path.exists(_doc):
-            shutil.rmtree(_doc)
-
-        # copy the doc folder to the build location
-        shutil.copytree("doc", _doc)
-
-        # update the documentation config (the version)
-        _docconf = os.path.join(_doc, "source/conf.py")
-        self.replace_in(_docconf, "${VERSION}", VERSION)
-        
-        # list all the modules in pynusmv.rst
-        with open(os.path.join(_doc, "source/pynusmv.rst"), 'w') as f:
-            header = "\n".join([
-                ".. _pynusmv-api: ",
-                "                 ",
-                "PyNuSMV Reference",
-                "*****************",
-                "                 "
-            ])
-            f.write(header)
-            
-            for mod in self.modules('pynusmv'):
-                f.write(self.automodule_rst_snippet(mod))
-
         # use the makefile to effectively generate the docs
-        pattern = "cd {build_dir:} ; make -C doc {builder:}"
+        pattern = "make -C doc {builder:}"
         command = pattern.format(build_dir=self.build_dir, builder=self.builder)
         os.system(command)
 
         # package the documentation in a zip file that can easily be uploaded
         # on PyPI for public sharing
-        shutil.make_archive("dist/doc-"+VERSION, "zip", os.path.join(_doc, "html"))
+        shutil.make_archive("dist/doc-"+VERSION, "zip", "doc/html")
 
 class Clean(Command):
     '''

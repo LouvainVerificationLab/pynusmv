@@ -14,7 +14,7 @@ from pynusmv_lower_interface.nusmv.node  import node as _node
 from pynusmv.utils import PointerWrapper
 from pynusmv.node  import Node
 
-__all__ = ['Conversion', 'IntConversion','SListOfIntConversion','NodeConversion',
+__all__ = ['Conversion', 'IntConversion', 'NodeConversion',
            'Slist', 'SlistIterator', 'Sentinel', 'NodeIterator', 'NodeList', 
            'NodeListIter', 'Assoc' ]
 

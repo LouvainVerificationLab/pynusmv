@@ -52,15 +52,15 @@ class Trace(PointerWrapper, Iterable):
         Creates a new (empty trace)
         
         :param description: a text describing what the trace is describing
-        :param trace_type: an enumeration value (:see:`TraceType`) describing
+        :param trace_type: an enumeration value (:class:`TraceType`) describing
             how the trace should be interpreted
         :param symb_table: the symbol table used to associate an human
             meaningful symbol to the internal representation of the trace
-        :param symb_list: a NodeList (:see:`pynusmv.collections.NodeList`) 
+        :param symb_list: a NodeList (:class:`pynusmv.collections.NodeList`) 
             containing the various symbols that may appear in the trace.
             Note, this is not a regular python list but you can obtain a NodeList
             using `NodeList.from_list` if you need to. In case you just use
-            SexpFsm (:see:`pynusmv.sexp.fsm.SexpFsm.symbols_list`) then no
+            SexpFsm (:func:`pynusmv.sexp.fsm.SexpFsm.symbols_list`) then no
             conversion is required as it already yields a NodeList
         :param is_volatile: a flag indicating whether or not the created insrance
             should be responsible of the symbol table reference it owns
@@ -116,7 +116,7 @@ class Trace(PointerWrapper, Iterable):
     @property
     def type(self):
         """
-        Returns the TraceType (:see: :class: `TraceType`) explaining how this
+        Returns the TraceType (:class:`TraceType`) explaining how this
         trace should be interpreted
         
         :return: the trace type of this trace
@@ -127,7 +127,7 @@ class Trace(PointerWrapper, Iterable):
     def type(self, trace_type):
         """
         Sets the type of this trace (a value explaining how to interpret this
-        trace (:see: :class: `TraceType`).
+        trace (:class:`TraceType`).
         
         :param trace_type: the new trace type
         """
@@ -262,7 +262,7 @@ class Trace(PointerWrapper, Iterable):
     
     def equals(self, other):
         """
-        Two traces are equals iff::
+        Two traces are equals iff:
 
         1. They're the same object or None.
         2. They have exactly the same language, length, assignments for all 
@@ -317,7 +317,7 @@ class Trace(PointerWrapper, Iterable):
     @property
     def symbols(self):
         """
-        Returns a NodeList (:see: :class:`pynusmv.collections.NodeList`)
+        Returns a NodeList (:class:`pynusmv.collections.NodeList`)
         exposing the symbols of the trace language.
         
         :returns: a NodeList exposing the symbols of the trace language
@@ -327,7 +327,7 @@ class Trace(PointerWrapper, Iterable):
     @property
     def state_vars(self):
         """
-        Returns a NodeList  (:see: :class:`pynusmv.collections.NodeList`)
+        Returns a NodeList  (:class:`pynusmv.collections.NodeList`)
         exposing the state variables that exist in the trace language
         
         :return: a NodeList containing the state variables of the trace language
@@ -337,7 +337,7 @@ class Trace(PointerWrapper, Iterable):
     @property
     def state_frozen_vars(self):
         """
-        Returns a NodeList  (:see: :class:`pynusmv.collections.NodeList`)
+        Returns a NodeList  (:class:`pynusmv.collections.NodeList`)
         exposing the state and frozen variables that exist in the trace language
         
         :return: a NodeList containing the state and frozen variables of the 
@@ -348,7 +348,7 @@ class Trace(PointerWrapper, Iterable):
     @property
     def input_vars(self):
         """
-        Returns a NodeList  (:see: :class:`pynusmv.collections.NodeList`)
+        Returns a NodeList  (:class:`pynusmv.collections.NodeList`)
         exposing the input variables that exist in the trace language
         
         :return: a NodeList containing the input variables of the trace language
@@ -358,7 +358,7 @@ class Trace(PointerWrapper, Iterable):
     def language_contains(self, symbol_node):
         """
         Tests whether the given symbol represented by `symbol_node` 
-        (:see: :class:`pynusmv.node.Node`) belongs to the trace language.
+        (:class:`pynusmv.node.Node`) belongs to the trace language.
         
         .. note::
         
@@ -373,7 +373,7 @@ class Trace(PointerWrapper, Iterable):
     def __contains__(self, symbol_node):
         """
         Tests whether the given symbol represented by `symbol_node` 
-        (:see: :class:`pynusmv.node.Node`) belongs to the trace language.
+        (:class:`pynusmv.node.Node`) belongs to the trace language.
         
         :returns: True iff this symbol_node belongs to the trace language.
         """
@@ -388,16 +388,15 @@ class Trace(PointerWrapper, Iterable):
         .. note::
 
                 * Only input and state section are taken into account.
-                Input vars are not taken into account in the first
-                step. Defines are not taken into account at all.
-
+                  Input vars are not taken into account in the first
+                  step. Defines are not taken into account at all.
                 * If result is false and parameter 'report' is true
-                then a message will be output in nusmv_stderr with
-                some explanation of why the trace is not complete
+                  then a message will be output in nusmv_stderr with
+                  some explanation of why the trace is not complete
                 
         :param vars_nlist: a NodeList of variable symbols that need to have a
             value in order for the trace to be considered complete.
-            (:see: :class:`pynusmv.collections.NodeList`)
+            (:class:`pynusmv.collections.NodeList`)
             
         :return: True iff the trace has a value associated to each of the vars
             in vars_nlist.
@@ -507,9 +506,9 @@ class TraceStep:
             Assignments to symbols not in trace language are silently ignored.
         
         
-        :param symbol_node: a Node (:see: :class: `pynusmv.node.Node`) 
+        :param symbol_node: a Node (:class:`pynusmv.node.Node`) 
             representing the symbol to which a value is assigned
-        :param value_node: a Node (:see: :class: `pynusmv.node.Node`)
+        :param value_node: a Node (:class:`pynusmv.node.Node`)
             representing the value being assigned to the symbol
         
         :return: true iff the assignment worked smoothly.
@@ -535,9 +534,9 @@ class TraceStep:
         
             Assignments to symbols not in trace language are silently ignored.
         
-        :param assignment: is a tuple composed of a symbol_node (:see:`pynusmv.node.Node`)
+        :param assignment: is a tuple composed of a symbol_node (:class:`pynusmv.node.Node`)
             representing the symbol to which an assignment is made and a
-            value_node (:see: `pynusmv.node.Node`) representing the value being
+            value_node (:class:`pynusmv.node.Node`) representing the value being
             assigned to the symbol.
             
         :raises NuSmvIllegalTraceStateError: if the parent trace is frozen
@@ -551,9 +550,9 @@ class TraceStep:
         Retrieves the value that was assigned to `symbol_node` in the current
         trace step.
         
-        :param symbol_node: a Node (:see: :class: `pynusmv.node.Node`) 
+        :param symbol_node: a Node (:class:`pynusmv.node.Node`) 
             representing the symbol to which a value is assigned
-        :return: a value_node, that is to say a Node (:see: :class: `pynusmv.node.Node`)
+        :return: a value_node, that is to say a Node (:class:`pynusmv.node.Node`)
             representing the value being assigned to the requested symbol.   
         """
         return Node.from_ptr(_trace.Trace_step_get_value(

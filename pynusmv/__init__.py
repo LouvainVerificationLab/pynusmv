@@ -91,3 +91,4 @@ from . import utils
 from . import model
 from . import node
 from . import collections
+from . import exception

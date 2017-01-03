@@ -25,6 +25,7 @@ class Be:
     This is the interface of the boolean expression type.
     For obvious reasons, the function names have been kept as close to its
     BDD counterpart. The 'dsl' has also been kept. Hence:
+    
         * ``a + b`` and ``a | b`` compute the disjunction of ``a`` and ``b``
         * ``a * b`` and ``a & b`` compute the conjunction of ``a`` and ``b``
         * ``~a`` and ``-a`` compute the negation of ``a``
@@ -164,54 +165,54 @@ class Be:
         """
         Negates the current expression
         
-        :return: an expression (Be) corresponding to the negation of `self'
+        :return: an expression (Be) corresponding to the negation of `self`
         """
         return Be(_be.Be_Not(self._manager._ptr, self._ptr), self._manager)
 
     def and_(self, other) -> 'Be':
         """
-        Returns an expression (Be) corresponding to the conjunction of `self' and `other'
+        Returns an expression (Be) corresponding to the conjunction of `self` and `other`
         
         :param other: a Be that will be conjuncted with self.
-        :return: Returns an expression (Be) corresponding to the conjunction of `self' and `other'
+        :return: Returns an expression (Be) corresponding to the conjunction of `self` and `other`
         """
         return Be(_be.Be_And(self._manager._ptr, self._ptr, other._ptr), self._manager)
 
     def or_(self, other) -> 'Be':
         """
-        Returns an expression (Be) corresponding to the disjunction of `self' and `other'
+        Returns an expression (Be) corresponding to the disjunction of `self` and `other`
         
         :param other: a Be that will be disjuncted with self.
-        :return: Returns an expression (Be) corresponding to the disjunction of `self' and `other'
+        :return: Returns an expression (Be) corresponding to the disjunction of `self` and `other`
         """
         return Be(_be.Be_Or(self._manager._ptr, self._ptr, other._ptr), self._manager)
 
     def xor(self, other) -> 'Be':
         """
-        Returns an expression (Be) corresponding (`self' exclusive or `other')
+        Returns an expression (Be) corresponding (`self` exclusive or `other`)
         
         :param other: a Be that will be xor'ed with self.
-        :return: Returns an expression (Be) corresponding (`self' exclusive or `other')
+        :return: Returns an expression (Be) corresponding (`self` exclusive or `other`)
         """
         return Be(_be.Be_Xor(self._manager._ptr, self._ptr, other._ptr), self._manager)
 
     def imply(self, other) -> 'Be':
         """
-        Returns an expression (Be) corresponding (`self' ==> `other'). That is
-        to say: (not `self' or `other') 
+        Returns an expression (Be) corresponding :math:`(self \\implies other)`. That is
+        to say: :math:`(\\neg self \\vee other)` 
         
-        :param other: a Be that will have to be implied by `self'
-        :return: Returns an expression (Be) corresponding (`self' ==> `other')
+        :param other: a Be that will have to be implied by `self`
+        :return: Returns an expression (Be) corresponding :math:`(self \\implies other)`
         """
         return Be(_be.Be_Implies(self._manager._ptr, self._ptr, other._ptr), self._manager)
 
     def iff(self, other) -> 'Be':
         """
-        Returns an expression (Be) corresponding (`self' <==> `other'). That is
-        to say : (`self' ==> `other') and (`other' ==> `self') 
+        Returns an expression (Be) corresponding :math:`(self \\iff other)`. That is
+        to say: :math:`(self \\implies other) \\wedge (other \\implies self)` 
         
-        :param other: a Be that will have to be equivalent to `self'
-        :return: Returns an expression (Be) corresponding (`self' <==> `other')
+        :param other: a Be that will have to be equivalent to `self`
+        :return: Returns an expression (Be) corresponding :math:`(self \\iff other)`
         """
         return Be(_be.Be_Iff(self._manager._ptr, self._ptr, other._ptr), self._manager)
 

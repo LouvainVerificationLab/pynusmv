@@ -40,14 +40,14 @@ def check_invar_induction(invar_prop,
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())
+        (:func:`pynusmv.glob.prop_database()`)
     :param solve: a flag indicating whether or not the verification should 
         actually be performed. (when this flag is turned off, no sat solver is 
         not used to perform the verification and the function can serve to
         simply dump the problem to file). 
     :param dump_type: the format in which to perform a dump of the generated sat
         problem (ie dimacs). By default, this parameter takes the value 
-        :see:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
+        :data:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
         not dumped to file. Should you want to change this behavior, then this
         parameter is used to specify a file format in conjunction with 
         `fname_template` which is used to specify the name of the location where
@@ -104,12 +104,12 @@ def check_invar_een_sorensson(invar_prop, max_bound,
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())
+        (:func:`pynusmv.glob.prop_database()`)
     :param max_bound: the maximum length of a trace considered in the generated
         SAT problem.
     :param dump_type: the format in which to perform a dump of the generated sat
         problem (ie dimacs). By default, this parameter takes the value 
-        :see:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
+        :data:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
         not dumped to file. Should you want to change this behavior, then this
         parameter is used to specify a file format in conjunction with 
         `fname_template` which is used to specify the name of the location where
@@ -180,7 +180,7 @@ def check_invar_incrementally_dual(invar_prop, max_bound, closure_strategy):
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())
+        (:func:`pynusmv.glob.prop_database()`)
     :param max_bound: the maximum length of a trace considered in the generated
         SAT problem.
     :param closure_strategy: an enum value that configures the way the problem
@@ -227,7 +227,7 @@ def check_invar_incrementally_zigzag(invar_prop, max_bound):
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())
+        (:func:`pynusmv.glob.prop_database()`)
     :param max_bound: the maximum length of a trace considered in the generated
         SAT problem.
     :raises NuSmvSatSolverError: when the verification could not be
@@ -270,7 +270,7 @@ def check_invar_incrementally_falsification(invar_prop, max_bound):
 
     :param invar_prop: the property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database()`)
+        (:func:`pynusmv.glob.prop_database()`)
     :param max_bound: the maximum length of a trace considered in the generated
         SAT problem.
     :raises NuSmvSatSolverError: when the verification could not be
@@ -300,9 +300,9 @@ def generate_invar_problem(be_fsm, prop_node):
         
     :param be_fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 
-        :see:`pynusmv.bmc.glob.master_be_fsm()` )
+        :func:`pynusmv.bmc.glob.master_be_fsm()` )
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -323,9 +323,9 @@ def generate_base_step(be_fsm, prop_node):
         
     :param be_fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 
-        :see:`pynusmv.bmc.glob.master_be_fsm()` )
+        :func:`pynusmv.bmc.glob.master_be_fsm()` )
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -347,9 +347,9 @@ def generate_inductive_step(be_fsm, prop_node):
         
     :param be_fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 
-        :see:`pynusmv.bmc.glob.master_be_fsm()` )
+        :func:`pynusmv.bmc.glob.master_be_fsm()` )
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -368,14 +368,14 @@ def dump_dimacs_filename(be_enc, be_cnf, fname):
     
     .. note::
         
-        Calling this function is strictly equivalent to the following snippet::
+        Calling this function is strictly equivalent to the following snippet:
         
             with StdioFile.for_name(fname) as f:
                 dump_dimacs(be_enc, be_cnf, f.handle)
     
     :param be_enc: the encoding of the problem (typically fsm.encoding)
     :param be_cnf: the LTL problem represented in CNF
-    :param fname : the name of the file in which to dump the DIMACS output.
+    :param  fname: the name of the file in which to dump the DIMACS output.
     """
     _bmc.Bmc_Dump_DimacsInvarProblemFilename(be_enc._ptr, 
                                         be_cnf._ptr,
@@ -387,7 +387,7 @@ def dump_dimacs(be_enc, be_cnf, stdio_file):
     
     :param be_enc: the encoding of the problem (typically fsm.encoding)
     :param be_cnf: the LTL problem represented in CNF
-    :param stdio_file : the the file in which to dump the DIMACS output.
+    :param stdio_file: the the file in which to dump the DIMACS output.
     """
     _bmc.Bmc_Dump_DimacsInvarProblem(be_enc._ptr, 
                                 be_cnf._ptr,

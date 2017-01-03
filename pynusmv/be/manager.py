@@ -24,7 +24,7 @@ class BeManager(PointerWrapper):
     level encoding of the variables. As a consequence, the objects manipulated
     through its interface are fairly low level as well (integers instead of
     variables). If you are not implementing a new boolean encoding, you will
-    probably want to focus and use the boolean encoding (:see: :class:`BeEnc`)
+    probably want to focus and use the boolean encoding (:class:`pynusmv.be.encoder.BeEnc`)
     which offers roughly the same services but with an higher level interface. 
     
     .. note:: 
@@ -33,6 +33,8 @@ class BeManager(PointerWrapper):
         literal and a cnf literal.
     
     .. warning:: Subclassing this class imposes to implement _free
+    
+    .. seealso:: :class:`pynusmv.be.encoder.BeEnc`
     """
 
     def __init__(self, ptr, freeit=False):
@@ -129,7 +131,7 @@ class BeManager(PointerWrapper):
         
         :param literal: the literal (may not be zero)
         :return: converts a BE literal to its index
-        :raise: ValueError if `literal`is zero
+        :raise: ValueError if `literal` is zero
         """
         if literal == 0:
             raise ValueError("Literal cannot be zero: this is used as an error marker by NuSMV")
@@ -203,7 +205,7 @@ class BeManager(PointerWrapper):
         
         :param literal: the literal (may not be zero)
         :return: converts a CNF literal to its corresponding index
-        :raise: ValueError if `literal`is zero
+        :raise: ValueError if `literal` is zero
         """
         if literal == 0:
             raise ValueError("Litteral cannot be ZERO (this is used as an error marker by NuSMV)")

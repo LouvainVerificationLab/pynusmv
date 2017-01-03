@@ -55,7 +55,7 @@ def check_ltl(ltl_prop,
     
     :param ltl_prop: the LTL property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())s
+        (:func:`pynusmv.glob.prop_database()`)
     :param bound: the bound of the problem, that is to say the maximum number of 
         times the problem will be unrolled. This parameter corresponds to the 
         value `k` used in the formal definitions of a bmc problem.
@@ -70,10 +70,10 @@ def check_ltl(ltl_prop,
               start 2 states ago)
             - that NO loop at all must be considered (ignore infinite behaviors)
               when this parameter takes the special value defined in 
-              :see:`pynusmv.bmc.utils.no_loopback()`
+              :func:`pynusmv.bmc.utils.no_loopback()`
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
-              :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              :func:`pynusmv.bmc.utils.all_loopback()` (this is the default)
               
     :param one_problem: a flag indicating whether the problem should be verified
         for all possible execution lengths UP TO `bound` or if it should be 
@@ -86,7 +86,7 @@ def check_ltl(ltl_prop,
         simply dump the ltl problem to files). 
     :param dump_type: the format in which to perform a dump of the generated sat
         problem (ie dimacs). By default, this parameter takes the value 
-        :see:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
+        :data:`pynusmv.bmc.utils.DumpType.NONE` which means that the problem is
         not dumped to file. Should you want to change this behavior, then this
         parameter is used to specify a file format in conjunction with 
         `fname_template` which is used to specify the name of the location where
@@ -137,7 +137,7 @@ def check_ltl_incrementally(ltl_prop,
     
     :param ltl_prop: the LTL property to be verified. This should be an instance
         of Prop similar to what you obtain querying PropDb 
-        (:see:`pynusmv.glob.prop_database())s
+        (:func:`pynusmv.glob.prop_database()`)
     :param bound: the bound of the problem, that is to say the maximum number of 
         times the problem will be unrolled. This parameter corresponds to the 
         value `k` used in the formal definitions of a bmc problem.
@@ -152,10 +152,10 @@ def check_ltl_incrementally(ltl_prop,
               start 2 states ago)
             - that NO loop at all must be considered (ignore infinite behaviors)
               when this parameter takes the special value defined in 
-              :see:`pynusmv.bmc.utils.no_loopback()`
+              :func:`pynusmv.bmc.utils.no_loopback()`
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
-              :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              :func:`pynusmv.bmc.utils.all_loopback()` (this is the default)
               
     :param one_problem: a flag indicating whether the problem should be verified
         for all possible execution lengths UP TO `bound` or if it should be 
@@ -193,9 +193,9 @@ def generate_ltl_problem(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
      
     :param fsm: the BeFsm object that represents the model against which the 
         property will be verified. (if in doubt, it can be obtained via 
-        :see:`pynusmv.bmc.glob.master_be_fsm()` )
+        :func:`pynusmv.bmc.glob.master_be_fsm()` )
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -213,10 +213,10 @@ def generate_ltl_problem(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
               start 2 states ago)
             - that NO loop at all must be considered (ignore infinite behaviors)
               when this parameter takes the special value defined in 
-              :see:`pynusmv.bmc.utils.no_loopback()`
+              :func:`pynusmv.bmc.utils.no_loopback()`
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
-              :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              :func:`pynusmv.bmc.utils.all_loopback()` (this is the default)
               
     :return: a Be boolean expression representing the satisfiability problem of
         for the verification of this property.
@@ -260,7 +260,7 @@ def bounded_semantics(fsm, prop_node, bound=10, loop=utils.all_loopbacks()):
         is used to determine to generate fairness constraints for this model
         which are combined with `prop_node` constraint.
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast.(remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -311,7 +311,7 @@ def bounded_semantics_without_loop(fsm, prop_node, bound):
         is used to determine to generate fairness constraints for this model
         which are combined with `prop_node` constraint.
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast.(remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -353,7 +353,7 @@ def bounded_semantics_single_loop(fsm, prop_node, bound, loop):
         is used to determine to generate fairness constraints for this model
         which are combined with `prop_node` constraint.
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast.(remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -378,7 +378,7 @@ def bounded_semantics_all_loops_optimisation_depth1(fsm, prop_node, bound):
     Generates a Be expression corresponding to the bounded semantics of the
     given LTL formula in the case where the formula is evaluated against a path 
     that contains a loop at any of the positions in the range [0; bound] and 
-    *the 'depth'(:see:`Wff.depth`) of the formula is 1 and no fairness 
+    *the 'depth'(:attr:`pynusmv.wff.Wff.depth`) of the formula is 1 and no fairness 
     constraint comes into play*.
     
     .. note::
@@ -386,16 +386,13 @@ def bounded_semantics_all_loops_optimisation_depth1(fsm, prop_node, bound):
         Unless you know precisely why you are using this function, it is 
         probably safer to just use bounded_semantics_all_loops with the 
         optimized flag turned on.
-        
-    This optimized generation scheme was proposed by R. Sebastiani in 
-    
             
     :param fsm: the fsm against which the formula will be evaluated. It is not
         directly relevant to the generation of the formula for `prop_node` but
         is used to determine to generate fairness constraints for this model
         which are combined with `prop_node` constraint.
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast.(remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -439,7 +436,7 @@ def bounded_semantics_all_loops(fsm, prop_node, bound, loop, optimized=True):
         is used to determine to generate fairness constraints for this model
         which are combined with `prop_node` constraint.
     :param prop_node: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast.(remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -527,7 +524,7 @@ def bounded_semantics_without_loop_at_offset(fsm, formula, time, bound, offset):
         provide the encoder used to assign the variables to some time blocks. The api was kept 
         this ways to keep uniformity with its non-offsetted counterpart.
     :param formula: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -585,7 +582,7 @@ def bounded_semantics_with_loop_at_offset(fsm, formula, time, bound, loop, offse
         provide the encoder used to assign the variables to some time blocks. The api was kept 
         this ways to keep uniformity with its non-offsetted counterpart.
     :param formula: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -640,7 +637,7 @@ def bounded_semantics_at_offset(fsm, formula, bound, offset, fairness=True):
         provide the encoder used to assign the variables to some time blocks. The api was kept 
         this ways to keep uniformity with its non-offsetted counterpart.
     :param formula: the property for which to generate a verification problem
-        represented in a 'node' format (subclass of :see::class:`pynusmv.node.Node`)
+        represented in a 'node' format (subclass of :class:`pynusmv.node.Node`)
         which corresponds to the format obtained from the ast. (remark: if you
         need to manipulate [ie negate] the formula before passing it, it is
         perfectly valid to pass a node decorated by `Wff.decorate`).
@@ -693,8 +690,8 @@ def dump_dimacs_filename(be_enc, be_cnf, bound, fname):
     
     :param be_enc: the encoding of the problem (typically fsm.encoding)
     :param be_cnf: the LTL problem represented in CNF
-    :param bound : the bound of the problem
-    :param fname : the name of the file in which to dump the DIMACS output.
+    :param  bound: the bound of the problem
+    :param  fname: the name of the file in which to dump the DIMACS output.
     """
     _bmc.Bmc_Dump_DimacsProblemFilename(be_enc._ptr, 
                                         be_cnf._ptr,
@@ -713,8 +710,8 @@ def dump_dimacs(be_enc, be_cnf, bound, stdio_file):
     
     :param be_enc: the encoding of the problem (typically fsm.encoding)
     :param be_cnf: the LTL problem represented in CNF
-    :param bound : the bound of the problem
-    :param stdio_file : the the file in which to dump the DIMACS output.
+    :param  bound: the bound of the problem
+    :param stdio_file: the the file in which to dump the DIMACS output.
     """
     _bmc.Bmc_Dump_DimacsProblem(be_enc._ptr, 
                                 be_cnf._ptr,

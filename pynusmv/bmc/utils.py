@@ -111,10 +111,10 @@ def check_consistency(bound, loop):
               start 2 states ago)
             - that NO loop at all must be considered (ignore infinite behaviors)
               when this parameter takes the special value defined in 
-              :see:`pynusmv.bmc.utils.no_loopback()`
+              :func:`pynusmv.bmc.utils.no_loopback()`
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
-              :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              :func:`pynusmv.bmc.utils.all_loopback()` (this is the default)
               
     :raises ValueError: when the `bound` and `loop` are not consistent with one
         another.
@@ -146,7 +146,7 @@ def convert_relative_loop_to_absolute(l, k):
         Similarly, l=12 and k=10 will get you 12 which should be forbidden by
         BMC semantics.
         
-        If you need such consistency, check :see:`check_consistency`
+        If you need such consistency, check :func:`check_consistency`
 
     :param l: the relative loop value (which may actually be absolute)
     :param k: the bound on the considered problem
@@ -282,7 +282,7 @@ def successor(time, k, l):
 ###############################################################################
 def apply_inlining(be_expr):
     """
-    Performs the inlining of `be_expr` (same effect as :see:`pynusmv.be.expression.Be.inline`)
+    Performs the inlining of `be_expr` (same effect as :func:`pynusmv.be.expression.Be.inline`)
     but uses the global user's settings in order to determine the value that 
     should be given to the `add_conj` parameter.
     
@@ -380,7 +380,7 @@ def is_constant_expr(node):
     (true or false).
     
     :param node: the expression in node format (that is to say, the format 
-        obtained after parsing an expression :see: :class:`pynusmv.node.Node`) 
+        obtained after parsing an expression :class:`pynusmv.node.Node`) 
         for which we want to determinate whether or not it is a constant 
         expression.
     :return: True iff the given node represents a constant expression.
@@ -392,7 +392,7 @@ def is_variable(node):
     Returns True iff the given node type corresponds to a variable expression.
     
     :param node: the expression in node format (that is to say, the format 
-        obtained after parsing an expression :see: :class:`pynusmv.node.Node`) 
+        obtained after parsing an expression :class:`pynusmv.node.Node`) 
         for which we want to determinate whether or not it denotes a variable.
     :return: True iff the given node represents a variable.
     """
@@ -404,7 +404,7 @@ def is_past_operator(node):
     past operator.
     
     :param node: the expression in node format (that is to say, the format 
-        obtained after parsing an expression :see: :class:`pynusmv.node.Node`) 
+        obtained after parsing an expression :class:`pynusmv.node.Node`) 
         for which we want to determinate whether or not it denotes an expression
         using a past operator.
     :return: True iff the given node represents a past operator expression.
@@ -418,7 +418,7 @@ def is_binary_operator(node):
     Returns True iff the given node denotes a binary expression.
     
     :param node: the expression in node format (that is to say, the format 
-        obtained after parsing an expression :see: :class:`pynusmv.node.Node`) 
+        obtained after parsing an expression :class:`pynusmv.node.Node`) 
         for which we want to determinate whether or not it denotes binary
         expression.
     :return: True iff the given node represents a binary expression.
@@ -448,9 +448,9 @@ def operator_class(node):
         connective.
     
     :param node: the expression in node format (that is to say, the format 
-        obtained after parsing an expression :see: :class:`pynusmv.node.Node`) 
+        obtained after parsing an expression :class:`pynusmv.node.Node`) 
         for whose kind needs to be determined.
-    :return: the :see:`OperatorType` corresponding to the expression represented
+    :return: the :class:`OperatorType` corresponding to the expression represented
         by `node`.
     """
     if is_constant_expr(node): 
@@ -659,16 +659,16 @@ def dump_problem(be_enc, be_cnf, prop, bound, loop, dump_type, fname):
     .. warning::
     
         In order to call this function, `prop` *MUST* be a property as returned
-        from the `PropDb` (:see:`pynusmv.prop.PropDb`). That is to say, it
+        from the `PropDb` (:class:`pynusmv.prop.PropDb`). That is to say, it
         should correspond to a property which was specified in the SMV input
         text as LTLSPEC or INVARSPEC.
     
     :param be_enc: the encoding of the problem (typically fsm.encoding)
     :param be_cnf: the problem represented in CNF (may be LTL or INVAR problem)
     :param prop_node: the property being verified (the translation of be_cnf)
-        represented in a 'Prop' format (subclass of :see::class:`pynusmv.prop.Prop`)
+        represented in a 'Prop' format (subclass of :class:`pynusmv.prop.Prop`)
         which corresponds to the format obtained from the `PropDb`
-        (:see:`pynusmv.glob.prop_database`)
+        (:func:`pynusmv.glob.prop_database`)
     :param bound: the bound of the problem
     :param loop: a loop definition. This is an integer value corresponding to 
         the moment in time where the loop might be starting (the parameter `l`
@@ -681,12 +681,12 @@ def dump_problem(be_enc, be_cnf, prop, bound, loop, dump_type, fname):
               start 2 states ago)
             - that NO loop at all must be considered (ignore infinite behaviors)
               when this parameter takes the special value defined in 
-              :see:`pynusmv.bmc.utils.no_loopback()`
+              :func:`pynusmv.bmc.utils.no_loopback()`
             - that ALL possible loops in the model must be taken into account
               when this parameter takes the special value defined in
-              :see:`pynusmv.bmc.utils.all_loopback()` (this is the default)
+              :func:`pynusmv.bmc.utils.all_loopback()` (this is the default)
               
-    :param dump_type: the format in which to output the data. (:see:`DumpType`)
+    :param dump_type: the format in which to output the data. (:class:`DumpType`)
     :param fname: a template of the name of the file where the information will
         be dumped.
     :raise ValueError: in case the given parameters are incorrect.
@@ -721,7 +721,7 @@ def print_counter_example(fsm, problem, solver, k, descr="BMC counter example"):
     .. note::
         
         If you are looking for something more advanced, you might want to look
-        at :see:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
+        at :func:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
         thing but is more complete.
     
     :param fsm: the FSM against which problem was evaluated
@@ -755,7 +755,7 @@ def generate_counter_example(fsm, problem, solver, k, descr="BMC counter example
     .. note::
         
         If you are looking for something more advanced, you might want to look
-        at :see:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
+        at :func:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
         thing but is more complete.
     
     :param fsm: the FSM against which problem was evaluated
@@ -787,7 +787,7 @@ def fill_counter_example(fsm, solver, k, trace):
     .. note::
         
         If you are looking for something more advanced, you might want to look
-        at :see:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
+        at :func:`pynusmv.be.encoder.BeEnc.decode_sat_model` which does the same
         thing but is more complete.
     
     .. note::

@@ -13,7 +13,7 @@ and the propositions database.
 __all__ = ['load', 'symb_table', 'bdd_encoding', 'prop_database',
            'flatten_hierarchy', 'encode_variables', 'build_flat_model',
            'build_model', 'compute_model', 'encode_variables_for_layers',
-           'flat_hierarchy']
+           'flat_hierarchy', 'build_boolean_model']
 
 import tempfile
 import os
@@ -455,8 +455,8 @@ def build_boolean_model(force=False):
     .. note::
         This function is subject to the following requirements:
 
-            - hierarchy must already be flattened (:see:`glob.flatten_hierarchy)
-            - encoding must be already built (:see:`glob.encode_variables`)
+            - hierarchy must already be flattened (:func:`flatten_hierarchy`)
+            - encoding must be already built (:func:`encode_variables`)
             - boolean model must not exist yet (or the force flag must be on)
 
     :param force: a flag telling whether or not the boolean model must be built
