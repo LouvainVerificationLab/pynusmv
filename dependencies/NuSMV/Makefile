@@ -41,6 +41,7 @@ clean:
 	rm nusmv.unpacked
 	rm nusmv.patched
 	rm nusmv.configured
+	rm last_config.pickle
 	rm nusmv.built
 
 # This target just unpacks the archive containing nusmv

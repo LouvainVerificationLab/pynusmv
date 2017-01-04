@@ -26,7 +26,7 @@ import subprocess
 
 # This configuration lets you update the version of the package without having
 # to scroll down for about 1k lines of codes.
-VERSION    = '1.0rc4'
+VERSION    = '1.0rc5'
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
@@ -1013,7 +1013,7 @@ setup(name             = 'pynusmv',
       ],
       ext_modules      = EXTENSIONS,
       packages         = find_packages(),
-      install_requires = ['pyparsing', 'requests'],
+      install_requires = ['pyparsing>=2.0.2', 'requests>=2.11.1'],
       # This is how we actually extend the setuptools framework with extra
       # commands (in particular, we enrich the build_ext command) to take
       # care of building NuSMV and packing it all into a sharedlib called

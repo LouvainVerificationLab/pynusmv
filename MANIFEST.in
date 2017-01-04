@@ -14,6 +14,7 @@ include *.py
 
 # Include all what is necessary to rebuild the lower interface extensions
 recursive-include pynusmv_lower_interface *.i *.tpl
+recursive-include pynusmv_lower_interface/bmc_utils *.h *.c *.i
 
 # Include all what is necessary to rebuild the dependencies upon which all the
 # rest relies.
@@ -23,6 +24,8 @@ recursive-include pynusmv_lower_interface *.i *.tpl
 include dependencies/README.rst
 include dependencies/Makefile
 include dependencies/system_requirements.py
+include dependencies/NuSMV/reconfiguration_needed.py
+include dependencies/ZChaff/download_zchaff.py
 
 # -- MINISAT --
 include dependencies/MiniSat/Makefile
