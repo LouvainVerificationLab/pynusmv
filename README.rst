@@ -91,6 +91,14 @@ package the python modules that build above that lower interface. As
 usual, depending on the command you pass to setuptools, the output will
 be produced under ``build`` or ``dist``.
 
+Note: Using ZChaff
+^^^^^^^^^^^^^^^^^^^
+
+Should you want to have your version of pynusmv be built and linked against the
+ZChaff SAT solver; then, all you need to do is to add the ``--with-zchaff`` flag
+to your build/installation command. Hence, the command becomes:
+``python3 setup.py install --with-zchaff``.
+
 Verifying your build
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -180,7 +188,7 @@ under the following license terms:
 - NuSMV : LGPL (same license as PyNuSMV).
 - CUDD: MIT license
 - MiniSat: MIT license
-- ZChaff: Princeton License.
+- ZChaff: Princeton License (Optional: Iff you decide to use it, `--with-zchaff`).
 
 Credits
 -------

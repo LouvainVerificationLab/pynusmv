@@ -7,9 +7,13 @@ dependencies/MiniSat/minisat/*
 dependencies/ZChaff/zchaff64/*
 dependencies/NuSMV/NuSMV-2.5.4/*
 
+# Ignore zchaff zip file
+dependencies/ZChaff/zchaff.64bit.2007.3.12.zip
+
 # Ignore compilation dependencies
 system.requirement
 dependencies/libnusmv.a
+dependencies/NuSMV/last_config.pickle
 
 # Ignore all generated artifacts
 pynusmv_lower_interface/**/*.py
@@ -20,6 +24,7 @@ pynusmv_lower_interface/**/__pycache__/*
 pynusmv_lower_interface/**/*_wrap.c
 
 # Ignore all binary artifacts
+lib/*
 build/*
 dist/*
 pynusmv.egg-info/*
@@ -32,6 +37,7 @@ tests/pynusmv/__pycache__/*
 *.built
 *.unpacked
 *.configured
+*.downloaded
 
 *.DS_Store
-lib/*
+

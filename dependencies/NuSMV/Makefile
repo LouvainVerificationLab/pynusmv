@@ -17,6 +17,21 @@ NUSMV=./NuSMV-2.5.4/nusmv/
 MINISAT=../../../MiniSat/minisat
 ZCHAFF=../../../ZChaff/zchaff64
 
+RECONFIGURE := $(shell python3 ./reconfiguration_needed.py --test)
+
+ifeq ($(WITH_ZCHAFF), 1)
+	solvers_config= --enable-minisat \
+									--with-minisat-libdir=$(MINISAT) \
+									--with-minisat-incdir=$(MINISAT) \
+									--enable-zchaff \
+									--with-zchaff-libdir=$(ZCHAFF) \
+									--with-zchaff-incdir=$(ZCHAFF)
+else
+	solvers_config= --enable-minisat \
+									--with-minisat-libdir=$(MINISAT) \
+									--with-minisat-incdir=$(MINISAT) 
+endif
+
 # This target goes through all the steps required to compile NuSMV.
 all: nusmv.built
 
@@ -40,21 +55,19 @@ nusmv.patched: nusmv.unpacked
 
 # This target configures nusmv for proper compilation on your system
 nusmv.configured: nusmv.patched
+ifeq ($(RECONFIGURE), yes)
 	# Note: because we didn't build the (nusmv-patched) version of CUDD explicitly
 	#       the configuration script will schedule a compilation of that library
 	#       before proceeding to the rest of the compilation.
-	cd $(NUSMV) && ./configure  --enable-minisat \
-	                            --with-minisat-libdir=$(MINISAT) \
-							                --with-minisat-incdir=$(MINISAT) \
-															--enable-zchaff \
-															--with-zchaff-libdir=$(ZCHAFF) \
-															--with-zchaff-incdir=$(ZCHAFF) \
+	cd $(NUSMV) && ./configure  $(solvers_config) \
 															--with-pic \
 															--enable-static \
 															--enable-static-link \
 															CFLAGS="-g -O2 -fPIC" \
 														  CXXFLAGS="-g -O2 -fPIC"
-	touch nusmv.configured
+
+	python3 ./reconfiguration_needed.py --save
+endif
 
 # This target proceeds to the build (proper) of the nusmv codebase
 #

@@ -18,6 +18,8 @@ from setuptools.command.test       import test
 
 import os
 import os.path
+import sys
+import argparse
 import shutil
 import platform
 import subprocess
@@ -978,7 +980,19 @@ EXTENSIONS = [
         **EXTENSION_ARGS)
 ]
 
-#
+################ HANDLING OF THE CROSS COMMAND OPTIONS #######################
+# 1. Parse the global configuration options (which are not recognised by setup)
+parser   = argparse.ArgumentParser()
+parser.add_argument("--with-zchaff", action="store_true", help="build zchaff and link pynusmv against it")
+args,unk = parser.parse_known_args()
+
+# 2. reset sys.argv for further processing by the setup script
+sys.argv = [sys.argv[0]] + unk
+
+# 3. process the global options
+os.environ['WITH_ZCHAFF'] = "1" if args.with_zchaff else "0"
+
+########################## THE 'MAIN PROGRAM' ################################
 setup(name             = 'pynusmv',
       version          = VERSION,
       author           = "Simon BUSARD, Xavier GILLARD",
@@ -999,7 +1013,7 @@ setup(name             = 'pynusmv',
       ],
       ext_modules      = EXTENSIONS,
       packages         = find_packages(),
-      install_requires = ['pyparsing'],
+      install_requires = ['pyparsing', 'requests'],
       # This is how we actually extend the setuptools framework with extra
       # commands (in particular, we enrich the build_ext command) to take
       # care of building NuSMV and packing it all into a sharedlib called

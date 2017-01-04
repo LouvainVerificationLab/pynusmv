@@ -15,18 +15,19 @@ all: zchaff.built
 
 # This target wipes off everything that has been unpacked and built.
 clean:
+	rm -rf zchaff.64bit.2007.3.12.zip
 	rm -rf zchaff64
-	rm zchaff.unpacked
+	rm zchaff.downloaded
 	rm zchaff.patched
 
 # This target just unpacks the zip containing zchaff
-zchaff.unpacked:
-	unzip zchaff.64bit.2007.3.12.zip
-	touch zchaff.unpacked
+zchaff.downloaded:
+	python3 ./download_zchaff.py
+	touch zchaff.downloaded
 
 # This target successively applies the patches required to make zchaff linkable
 # with nusmv and to ensure its smooth compilation on all (tested) platforms.
-zchaff.patched: zchaff.unpacked
+zchaff.patched: zchaff.downloaded
 	# Patch nusmv to make it linkable with NuSMV
 	patch -p0 -N < nusmv.patch
 	# Patch nusmv so that it build smoothly on all (tested) platforms

@@ -10,12 +10,20 @@
 # Author: X. Gillard <xavier.gillard [at] uclouvain.be>
 ################################################################################
 
+ifeq ($(WITH_ZCHAFF), 1)
+	solvers.build=minisat.build zchaff.build
+	solvers.clean=minisat.clean zchaff.clean
+else
+	solvers.build=minisat.build
+	solvers.clean=minisat.clean
+endif
+
 # This target builds the libnusmv shared library which is used by the lower
 # interface of pynusmv
-all: minisat.build zchaff.build nusmv.build
+all: $(solvers.build) nusmv.build
 
 # This target wipes off anything that has been unpacked or compiled
-clean: minisat.clean zchaff.clean nusmv.clean
+clean: $(solvers.clean) nusmv.clean
 
 # This target checks that all the tools and libraries which are required in order
 # to build pynusmv and its dependencies are installed on the target system.
@@ -39,7 +47,7 @@ zchaff.clean:
 	make -C ZChaff clean
 
 # Builds the nusmv binaries which are required to generate the libnusmv
-nusmv.build: system.requirement zchaff.build minisat.build
+nusmv.build: system.requirement $(solvers.build)
 	make -C NuSMV
 
 # Wipes off anything related to nusmv
