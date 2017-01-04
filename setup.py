@@ -26,7 +26,7 @@ import subprocess
 
 # This configuration lets you update the version of the package without having
 # to scroll down for about 1k lines of codes.
-VERSION    = '1.0rc4snapshot1'
+VERSION    = '1.0rc4'
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
