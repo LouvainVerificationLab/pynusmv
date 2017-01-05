@@ -107,8 +107,8 @@ class SharedLibBuilder:
         :return: True iff libname is a system library available at link time
         '''
         cmd = "ld -l{}".format(libname)
-        sub = subprocess.run(cmd, shell=True, check=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        return self.lib_not_found() not in str(sub.stderr)
+        sub = subprocess.getoutput(cmd)
+        return self.lib_not_found() not in str(sub)
 
     def list_artifacts(self, what, where, excl):
         '''
@@ -658,14 +658,13 @@ LIBRARIES = {
 
 # This is a list of generic arguments that need to be repeated over and over
 # for each of the extensions we generate
-EXTENSION_ARGS = {
-  # The swig specific arguments
-  'swig_opts'         : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
-  'include_dirs'      : INCLUDES,
-  'extra_compile_args': ['-g', '-fPIC'],
-  'extra_link_args'   : ['-Llib'],
-  **LIBRARIES
-}
+EXTENSION_ARGS = dict({
+    # The swig specific arguments
+    'swig_opts'         : ['-py3'] + [ '-I{}'.format(inc) for inc in INCLUDES ],
+    'include_dirs'      : INCLUDES,
+    'extra_compile_args': ['-g', '-fPIC'],
+    'extra_link_args'   : ['-Llib']
+  }, **LIBRARIES)
 
 # Plug-in the platform specific linking flags
 if platform.system() == 'Darwin':
@@ -680,322 +679,380 @@ if platform.system() == 'Linux':
 EXTENSIONS = [
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core._addons_core',
-        sources=['pynusmv_lower_interface/nusmv/addons_core/addons_core.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/addons_core/addons_core.i']},
+            **EXTENSION_ARGS )),
 
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core.compass._compass',
-        sources=['pynusmv_lower_interface/nusmv/addons_core/compass/compass.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/addons_core/compass/compass.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core.compass.compile._compile',
-        sources=['pynusmv_lower_interface/nusmv/addons_core/compass/compile/compile.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/addons_core/compass/compile/compile.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core.compass.parser.ap._ap',
-        sources=['pynusmv_lower_interface/nusmv/addons_core/compass/parser/ap/ap.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/addons_core/compass/parser/ap/ap.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.addons_core.compass.parser.prob._prob',
-        sources=['pynusmv_lower_interface/nusmv/addons_core/compass/parser/prob/prob.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/addons_core/compass/parser/prob/prob.i']},
+            **EXTENSION_ARGS)),
 
     # be module
     Extension(
         'pynusmv_lower_interface.nusmv.be._be',
-        sources=['pynusmv_lower_interface/nusmv/be/be.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/be/be.i']},
+            **EXTENSION_ARGS)),
 
     # bmc modules
     Extension(
         'pynusmv_lower_interface.nusmv.bmc._bmc',
-        sources=['pynusmv_lower_interface/nusmv/bmc/bmc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/bmc/bmc.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.bmc.sbmc._sbmc',
-        sources=['pynusmv_lower_interface/nusmv/bmc/sbmc/sbmc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/bmc/sbmc/sbmc.i']},
+            **EXTENSION_ARGS)),
 
     # cinit module
     Extension(
         'pynusmv_lower_interface.nusmv.cinit._cinit',
-        sources=['pynusmv_lower_interface/nusmv/cinit/cinit.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/cinit/cinit.i']},
+            **EXTENSION_ARGS)),
 
     # cmd module
     Extension(
         'pynusmv_lower_interface.nusmv.cmd._cmd',
-        sources=['pynusmv_lower_interface/nusmv/cmd/cmd.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/cmd/cmd.i']},
+            **EXTENSION_ARGS)),
 
     # compile modules
     Extension(
         'pynusmv_lower_interface.nusmv.compile._compile',
-        sources=['pynusmv_lower_interface/nusmv/compile/compile.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/compile/compile.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.compile.symb_table._symb_table',
-        sources=['pynusmv_lower_interface/nusmv/compile/symb_table/symb_table.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/compile/symb_table/symb_table.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.compile.type_checking._type_checking',
-        sources=['pynusmv_lower_interface/nusmv/compile/type_checking/type_checking.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/compile/type_checking/type_checking.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.compile.type_checking.checkers._checkers',
-        sources=['pynusmv_lower_interface/nusmv/compile/type_checking/checkers/checkers.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/compile/type_checking/checkers/checkers.i']},
+            **EXTENSION_ARGS)),
 
     # dag module
     Extension(
         'pynusmv_lower_interface.nusmv.dag._dag',
-        sources=['pynusmv_lower_interface/nusmv/dag/dag.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/dag/dag.i']},
+            **EXTENSION_ARGS)),
 
     # dd module
     Extension(
         'pynusmv_lower_interface.nusmv.dd._dd',
-        sources=['pynusmv_lower_interface/nusmv/dd/dd.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/dd/dd.i']},
+            **EXTENSION_ARGS)),
 
     # enc modules
     Extension(
         'pynusmv_lower_interface.nusmv.enc._enc',
-        sources=['pynusmv_lower_interface/nusmv/enc/enc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/enc.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.enc.base._base',
-        sources=['pynusmv_lower_interface/nusmv/enc/base/base.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/base/base.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.enc.bdd._bdd',
-        sources=['pynusmv_lower_interface/nusmv/enc/bdd/bdd.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/bdd/bdd.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.enc.be._be',
-        sources=['pynusmv_lower_interface/nusmv/enc/be/be.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/be/be.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.enc.bool._bool',
-        sources=['pynusmv_lower_interface/nusmv/enc/bool/bool.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/bool/bool.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.enc.utils._utils',
-        sources=['pynusmv_lower_interface/nusmv/enc/utils/utils.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/enc/utils/utils.i']},
+            **EXTENSION_ARGS)),
 
     # fsm modules
     Extension(
         'pynusmv_lower_interface.nusmv.fsm._fsm',
-        sources=['pynusmv_lower_interface/nusmv/fsm/fsm.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/fsm/fsm.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.fsm.bdd._bdd',
-        sources=['pynusmv_lower_interface/nusmv/fsm/bdd/bdd.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/fsm/bdd/bdd.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.fsm.be._be',
-        sources=['pynusmv_lower_interface/nusmv/fsm/be/be.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/fsm/be/be.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.fsm.sexp._sexp',
-        sources=['pynusmv_lower_interface/nusmv/fsm/sexp/sexp.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/fsm/sexp/sexp.i']},
+            **EXTENSION_ARGS)),
 
     # hrc modules
     Extension(
         'pynusmv_lower_interface.nusmv.hrc._hrc',
-        sources=['pynusmv_lower_interface/nusmv/hrc/hrc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/hrc/hrc.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.hrc.dumpers._dumpers',
-        sources=['pynusmv_lower_interface/nusmv/hrc/dumpers/dumpers.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/hrc/dumpers/dumpers.i']},
+            **EXTENSION_ARGS)),
 
     # ltl modules
     Extension(
         'pynusmv_lower_interface.nusmv.ltl._ltl',
-        sources=['pynusmv_lower_interface/nusmv/ltl/ltl.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/ltl/ltl.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.ltl.ltl2smv._ltl2smv',
-        sources=['pynusmv_lower_interface/nusmv/ltl/ltl2smv/ltl2smv.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/ltl/ltl2smv/ltl2smv.i']},
+            **EXTENSION_ARGS)),
 
     # mc module
     Extension(
         'pynusmv_lower_interface.nusmv.mc._mc',
-        sources=['pynusmv_lower_interface/nusmv/mc/mc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/mc/mc.i']},
+            **EXTENSION_ARGS)),
 
     # node modules
     Extension(
         'pynusmv_lower_interface.nusmv.node._node',
-        sources=['pynusmv_lower_interface/nusmv/node/node.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/node/node.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.node.normalizers._normalizers',
-        sources=['pynusmv_lower_interface/nusmv/node/normalizers/normalizers.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/node/normalizers/normalizers.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.node.printers._printers',
-        sources=['pynusmv_lower_interface/nusmv/node/printers/printers.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/node/printers/printers.i']},
+            **EXTENSION_ARGS)),
 
     # opt module
     Extension(
         'pynusmv_lower_interface.nusmv.opt._opt',
-        sources=['pynusmv_lower_interface/nusmv/opt/opt.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/opt/opt.i']},
+            **EXTENSION_ARGS)),
 
     # parser modules
     Extension(
         'pynusmv_lower_interface.nusmv.parser._parser',
-        sources=['pynusmv_lower_interface/nusmv/parser/parser.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/parser/parser.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.parser.idlist._idlist',
-        sources=['pynusmv_lower_interface/nusmv/parser/idlist/idlist.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/parser/idlist/idlist.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.parser.ord._ord',
-        sources=['pynusmv_lower_interface/nusmv/parser/ord/ord.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/parser/ord/ord.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.parser.psl._psl',
-        sources=['pynusmv_lower_interface/nusmv/parser/psl/psl.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/parser/psl/psl.i']},
+            **EXTENSION_ARGS)),
 
     # prop module
     Extension(
         'pynusmv_lower_interface.nusmv.prop._prop',
-        sources=['pynusmv_lower_interface/nusmv/prop/prop.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/prop/prop.i']},
+            **EXTENSION_ARGS)),
 
     # rbc modules
     Extension(
         'pynusmv_lower_interface.nusmv.rbc._rbc',
-        sources=['pynusmv_lower_interface/nusmv/rbc/rbc.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/rbc/rbc.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.rbc.clg._clg',
-        sources=['pynusmv_lower_interface/nusmv/rbc/clg/clg.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/rbc/clg/clg.i']},
+            **EXTENSION_ARGS)),
 
     # sat module
     Extension(
         'pynusmv_lower_interface.nusmv.sat._sat',
-        sources=['pynusmv_lower_interface/nusmv/sat/sat.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/sat/sat.i']},
+            **EXTENSION_ARGS)),
 
     # set module
     Extension(
         'pynusmv_lower_interface.nusmv.set._set',
-        sources=['pynusmv_lower_interface/nusmv/set/set.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/set/set.i']},
+            **EXTENSION_ARGS)),
 
     # sexp module
     Extension(
         'pynusmv_lower_interface.nusmv.sexp._sexp',
-        sources=['pynusmv_lower_interface/nusmv/sexp/sexp.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/sexp/sexp.i']},
+            **EXTENSION_ARGS)),
 
     # simulate module
     Extension(
         'pynusmv_lower_interface.nusmv.simulate._simulate',
-        sources=['pynusmv_lower_interface/nusmv/simulate/simulate.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/simulate/simulate.i']},
+            **EXTENSION_ARGS)),
 
     # trace modules
     Extension(
         'pynusmv_lower_interface.nusmv.trace._trace',
-        sources=['pynusmv_lower_interface/nusmv/trace/trace.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trace/trace.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trace.eval._eval',
-        sources=['pynusmv_lower_interface/nusmv/trace/eval/eval.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trace/eval/eval.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trace.exec_._exec_',
-        sources=['pynusmv_lower_interface/nusmv/trace/exec_/exec_.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trace/exec_/exec_.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trace.loaders._loaders',
-        sources=['pynusmv_lower_interface/nusmv/trace/loaders/loaders.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trace/loaders/loaders.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trace.plugins._plugins',
-        sources=['pynusmv_lower_interface/nusmv/trace/plugins/plugins.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trace/plugins/plugins.i']},
+            **EXTENSION_ARGS)),
 
     # trans modules
     Extension(
         'pynusmv_lower_interface.nusmv.trans._trans',
-        sources=['pynusmv_lower_interface/nusmv/trans/trans.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trans/trans.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trans.bdd._bdd',
-        sources=['pynusmv_lower_interface/nusmv/trans/bdd/bdd.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trans/bdd/bdd.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.trans.generic._generic',
-        sources=['pynusmv_lower_interface/nusmv/trans/generic/generic.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/trans/generic/generic.i']},
+            **EXTENSION_ARGS)),
 
     # utils module
     Extension(
         'pynusmv_lower_interface.nusmv.utils._utils',
-        sources=['pynusmv_lower_interface/nusmv/utils/utils.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/utils/utils.i']},
+            **EXTENSION_ARGS)),
 
     # wff modules
     Extension(
         'pynusmv_lower_interface.nusmv.wff._wff',
-        sources=['pynusmv_lower_interface/nusmv/wff/wff.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/wff/wff.i']},
+            **EXTENSION_ARGS)),
 
     Extension(
         'pynusmv_lower_interface.nusmv.wff.w2w._w2w',
-        sources=['pynusmv_lower_interface/nusmv/wff/w2w/w2w.i'],
-        **EXTENSION_ARGS),
+        **dict(
+            {'sources':['pynusmv_lower_interface/nusmv/wff/w2w/w2w.i']},
+            **EXTENSION_ARGS)),
 
     # BMC additional code for the lower interface
     Extension(
         'pynusmv_lower_interface.bmc_utils._bmc_utils',
-        sources=[
-            'pynusmv_lower_interface/bmc_utils/bmc_utils.c',
-            'pynusmv_lower_interface/bmc_utils/bmc_utils.i'
-        ],
-        **EXTENSION_ARGS)
+        **dict(
+            {'sources':[
+                'pynusmv_lower_interface/bmc_utils/bmc_utils.c',
+                'pynusmv_lower_interface/bmc_utils/bmc_utils.i'
+            ]},
+            **EXTENSION_ARGS))
 ]
 
 ########################## THE 'MAIN PROGRAM' ################################
@@ -1010,6 +1067,7 @@ setup(name             = 'pynusmv',
         'Development Status :: 3 - Alpha',
         'Topic :: Scientific/Engineering',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Operating System :: POSIX :: Linux',

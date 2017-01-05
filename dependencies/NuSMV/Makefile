@@ -38,10 +38,10 @@ all: nusmv.built
 # This target wipes off everything that has been unpacked and built.
 clean:
 	rm -rf NuSMV-2.5.4
+	rm last_config.pickle
 	rm nusmv.unpacked
 	rm nusmv.patched
 	rm nusmv.configured
-	rm last_config.pickle
 	rm nusmv.built
 
 # This target just unpacks the archive containing nusmv

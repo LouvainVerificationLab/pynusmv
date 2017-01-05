@@ -49,7 +49,7 @@ sufficient.
 -  GNU ar and ranlib to create static libraries
 -  GNU ln command
 -  SWIG version 2.0.6 or higher -- http://www.swig.org/
--  Python3 (version 3.5 or higher) -- http://python.org/
+-  Python3 (version 3.4 or higher) -- http://python.org/
 -  Setuptools 2.1 or higher -- https://pypi.python.org/pypi/setuptools
 -  pyparsing version 2.0.2 or higher -- http://pyparsing.wikispaces.com/
 -  Sphinx if you intend to re-build the project documentation.

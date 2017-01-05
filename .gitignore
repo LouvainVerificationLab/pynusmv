@@ -40,4 +40,4 @@ tests/pynusmv/__pycache__/*
 *.downloaded
 
 *.DS_Store
-
+*.python-version
