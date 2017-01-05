@@ -26,11 +26,29 @@ import subprocess
 
 # This configuration lets you update the version of the package without having
 # to scroll down for about 1k lines of codes.
-VERSION    = '1.0rc5'
+VERSION    = '1.0rc6snapshot'
 # This configuration simply tells the name of the folder which will contain the
 # dependencies sharedlib.
 LIB_FOLDER = 'lib'
+# The libraries required for a successful installation of pynusmv
+INSTALL_REQUIRES = ['pyparsing']
 
+################ HANDLING OF THE CROSS COMMAND OPTIONS #######################
+# 1. Parse the global configuration options (which are not recognised by setup)
+parser   = argparse.ArgumentParser()
+parser.add_argument("--with-zchaff", action="store_true", help="build zchaff and link pynusmv against it")
+args,unk = parser.parse_known_args()
+
+# 2. reset sys.argv for further processing by the setup script
+sys.argv = [sys.argv[0]] + unk
+
+# 3. process the global options
+os.environ['WITH_ZCHAFF'] = "1" if args.with_zchaff else "0"
+
+# 4. Require requests installation when zchaff option is enabled
+INSTALL_REQUIRES.append('requests')
+
+################ IMPLEMENTATION OF THE CUSTOM COMMANDS #######################
 class SharedLibBuilder:
     '''
     This class is a simple builder that I developed to ease the creation of the
@@ -980,18 +998,6 @@ EXTENSIONS = [
         **EXTENSION_ARGS)
 ]
 
-################ HANDLING OF THE CROSS COMMAND OPTIONS #######################
-# 1. Parse the global configuration options (which are not recognised by setup)
-parser   = argparse.ArgumentParser()
-parser.add_argument("--with-zchaff", action="store_true", help="build zchaff and link pynusmv against it")
-args,unk = parser.parse_known_args()
-
-# 2. reset sys.argv for further processing by the setup script
-sys.argv = [sys.argv[0]] + unk
-
-# 3. process the global options
-os.environ['WITH_ZCHAFF'] = "1" if args.with_zchaff else "0"
-
 ########################## THE 'MAIN PROGRAM' ################################
 setup(name             = 'pynusmv',
       version          = VERSION,
@@ -1013,7 +1019,7 @@ setup(name             = 'pynusmv',
       ],
       ext_modules      = EXTENSIONS,
       packages         = find_packages(),
-      install_requires = ['pyparsing>=2.0.2', 'requests>=2.11.1'],
+      install_requires = INSTALL_REQUIRES,
       # This is how we actually extend the setuptools framework with extra
       # commands (in particular, we enrich the build_ext command) to take
       # care of building NuSMV and packing it all into a sharedlib called

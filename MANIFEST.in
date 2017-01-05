@@ -12,9 +12,16 @@
 include *.md
 include *.py
 
-# Include all what is necessary to rebuild the lower interface extensions
+# For the tests, include the smv modules
+recursive-include tests/ *.smv
+
+# Include all what is necessary to rebuild the nusmv lower interface extensions
 recursive-include pynusmv_lower_interface *.i *.tpl
-recursive-include pynusmv_lower_interface/bmc_utils *.h *.c *.i
+
+# -- BMC utils lower interface --
+include pynusmv_lower_interface/bmc_utils/bmc_utils.h
+include pynusmv_lower_interface/bmc_utils/bmc_utils.c
+include pynusmv_lower_interface/bmc_utils/bmc_utils.i
 
 # Include all what is necessary to rebuild the dependencies upon which all the
 # rest relies.
@@ -24,8 +31,6 @@ recursive-include pynusmv_lower_interface/bmc_utils *.h *.c *.i
 include dependencies/README.rst
 include dependencies/Makefile
 include dependencies/system_requirements.py
-include dependencies/NuSMV/reconfiguration_needed.py
-include dependencies/ZChaff/download_zchaff.py
 
 # -- MINISAT --
 include dependencies/MiniSat/Makefile
@@ -34,9 +39,17 @@ include dependencies/MiniSat/nusmv.patch
 include dependencies/MiniSat/pynusmv.patch
 include dependencies/MiniSat/makefiles.patch
 
+# -- ZCHAFF --
+include dependencies/ZChaff/Makefile
+include dependencies/ZChaff/download_zchaff.py
+include dependencies/ZChaff/nusmv.patch
+include dependencies/ZChaff/pynusmv.patch
+include dependencies/ZChaff/README.md
+
 # -- NUSMV --
 include dependencies/NuSMV/README.md
 include dependencies/NuSMV/Makefile
+include dependencies/NuSMV/reconfiguration_needed.py
 include dependencies/NuSMV/NuSMV-2.5.4.tar.gz
 include dependencies/NuSMV/pynusmv.patch
 include dependencies/NuSMV/cudd.patch
