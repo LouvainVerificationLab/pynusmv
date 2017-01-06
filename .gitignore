@@ -28,6 +28,7 @@ lib/*
 build/*
 dist/*
 pynusmv.egg-info/*
+.eggs/*
 
 # Ignore all compiled test artifacts
 tests/__pycache__/*

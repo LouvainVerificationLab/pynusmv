@@ -46,7 +46,8 @@ sys.argv = [sys.argv[0]] + unk
 os.environ['WITH_ZCHAFF'] = "1" if args.with_zchaff else "0"
 
 # 4. Require requests installation when zchaff option is enabled
-INSTALL_REQUIRES.append('requests')
+if args.with_zchaff:
+    INSTALL_REQUIRES.append('requests')
 
 ################ IMPLEMENTATION OF THE CUSTOM COMMANDS #######################
 class SharedLibBuilder:
