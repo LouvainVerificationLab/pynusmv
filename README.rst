@@ -15,12 +15,20 @@ PyNuSMV does NOT work with Python 2 !
 Installation
 ------------
 
-Give some instructions for the installation. Should revolve around a
-plain
+If you are used to installing python packages, installing pynusmv should really
+be dead simple: indeed, on most platforms it should suffice to simply open up 
+a terminal and type in the following command:
 
 ::
 
     pip3 install pynusmv
+
+This will download a pre-compiled binary version of the project from PyPI and 
+install it on your machine. In the unlikely event that no binary version is 
+available for your platform, it will download the sources from PyPI and try to
+compile and install them on your system. If you prefer to download the sources
+from this repository, tweak them and compile them (ie if you want to link 
+pynusmv agains ZChaff), simply follow the instructions below.
 
 Build
 -----
@@ -118,6 +126,10 @@ And then:
     git clone https://github.com/LouvainVerificationLab/pynusmv.git
     cd pynusmv
     python3 setup.py install
+    
+If you intend to build a tweaked version of your copy of pynusmv that should be
+able to run on different versions of linux, you might also want to check out 
+our other docker image `louvainverificationlab/pynusmv-manylinux`.
 
 
 DOCUMENTATION
