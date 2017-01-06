@@ -30,20 +30,21 @@ compile and install them on your system. If you prefer to download the sources
 from this repository, tweak them and compile them (ie if you want to link 
 pynusmv agains ZChaff), simply follow the instructions below.
 
-.. note::
+Note
+~~~~
 
-  In case there is no suitable pre-compiled binary available for your platform 
-  and you still want to get started instantly to avoid the hassle of compiling
-  pynusmv for yourself: just give a look at our docker images
-  (https://github.com/LouvainVerificationLab/pynusmv-docker)
+In case there is no suitable pre-compiled binary available for your platform 
+and you still want to get started instantly to avoid the hassle of compiling
+pynusmv for yourself: just give a look at our docker images
+(https://github.com/LouvainVerificationLab/pynusmv-docker)
   
-  In particular, you might want to check the `louvainverificationlab/pynusmv`
-  image which gives you an access to a running python shell having pynusmv installed.
-  To use it, just
+In particular, you might want to check the `louvainverificationlab/pynusmv`
+image which gives you an access to a running python shell having pynusmv installed.
+To use it, just
   
-  ::
+::
     
-      docker run -it louvainverificationlab/pynusmv
+    docker run -it louvainverificationlab/pynusmv
 
 Build
 -----
@@ -132,8 +133,10 @@ sources; the easiest way is to use one of our preconfigured docker container
 In particular, you will probably be interessed by one of the following two 
 containers:
 
-  * `louvainverificationlab/pynusmv-build` if you intend to make a build that works just for you.
-  * `louvainverificationlab/pynusmv-manylinux` if you intend to make a build that can possibly run on many different linux flavors.
+*louvainverificationlab/pynusmv-build*
+   if you intend to make a build that works just for you.
+*louvainverificationlab/pynusmv-manylinux*
+   if you intend to make a build that can possibly run on many different linux flavors.
 
 
 DOCUMENTATION
