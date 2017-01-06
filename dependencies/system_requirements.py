@@ -27,7 +27,7 @@ REQUIRED_TOOLS = [
 
 # The set of library necessary to ensure smooth compilation of the tools
 REQUIRED_LIBS = [
-    'libexpat'
+    #'libexpat'
     # -- these two are optional actually --
     #'libreadline',
     #'libncurses'

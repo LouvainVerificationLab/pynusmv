@@ -62,10 +62,8 @@ ifeq ($(RECONFIGURE), yes)
 	#       before proceeding to the rest of the compilation.
 	cd $(NUSMV) && ./configure  $(solvers_config) \
 															--with-pic \
-															--enable-static \
-															--enable-static-link \
-															CFLAGS="-g -O2 -fPIC" \
-														  CXXFLAGS="-g -O2 -fPIC"
+															CFLAGS="-g -fPIC" \
+														  CXXFLAGS="-g -fPIC"
 
 	python3 ./reconfiguration_needed.py --save
 endif

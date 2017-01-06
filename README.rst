@@ -64,14 +64,6 @@ which is used for the same purpose. This should however not be a big
 problem since a package for patchelf exists for all major Linux
 distributions.
 
-Extra libraries
-^^^^^^^^^^^^^^^
-
-In addition to these, you will need to have ``libexpat`` installed on
-your system (SWIG on OSX also requires ``pcre`` but this might not be
-mandatory on all platforms moreover, you can simply your swig installed
-with ``brew install swig`` and that should be enough).
-
 Build process
 ~~~~~~~~~~~~~
 
