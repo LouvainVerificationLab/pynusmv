@@ -30,6 +30,21 @@ compile and install them on your system. If you prefer to download the sources
 from this repository, tweak them and compile them (ie if you want to link 
 pynusmv agains ZChaff), simply follow the instructions below.
 
+.. note::
+
+  In case there is no suitable pre-compiled binary available for your platform 
+  and you still want to get started instantly to avoid the hassle of compiling
+  pynusmv for yourself: just give a look at our docker images
+  (https://github.com/LouvainVerificationLab/pynusmv-docker)
+  
+  In particular, you might want to check the `louvainverificationlab/pynusmv`
+  image which gives you an access to a running python shell having pynusmv installed.
+  To use it, just
+  
+  ::
+    
+      docker run -it louvainverificationlab/pynusmv
+
 Build
 -----
 
@@ -111,25 +126,14 @@ Docker
 
 If you don't want to mess with the details of properly provisioning your
 environment to build pynusmv and simply want to tweak it and build it from the
-sources; the easiest way is to use our preconfigured docker container. To get
-started, you only need to type in the following command:
+sources; the easiest way is to use one of our preconfigured docker container 
+(https://github.com/LouvainVerificationLab/pynusmv-docker). 
 
-::
+In particular, you will probably be interessed by one of the following two 
+containers:
 
-    docker run -it louvainverificationlab/pynusmv bash
-
-And then:
-
-::
-
-    cd home
-    git clone https://github.com/LouvainVerificationLab/pynusmv.git
-    cd pynusmv
-    python3 setup.py install
-    
-If you intend to build a tweaked version of your copy of pynusmv that should be
-able to run on different versions of linux, you might also want to check out 
-our other docker image `louvainverificationlab/pynusmv-manylinux`.
+  * `louvainverificationlab/pynusmv-build` if you intend to make a build that works just for you.
+  * `louvainverificationlab/pynusmv-manylinux` if you intend to make a build that can possibly run on many different linux flavors.
 
 
 DOCUMENTATION
