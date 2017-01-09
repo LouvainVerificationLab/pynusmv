@@ -57,7 +57,8 @@ install:
   - pip install coveralls
 
 script:
-  - coverage run --source=pynusmv setup.py test
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then coverage run --source=pynusmv setup.py test ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then python3 setup.py test                       ; fi
 
 after_success:
-  coveralls
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then coveralls                                   ; fi

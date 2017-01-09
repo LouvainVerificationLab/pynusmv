@@ -4,13 +4,36 @@ PyNuSMV
 PyNuSMV is a Python binding for NuSMV. It is intended to provide a
 Python interface to NuSMV, allowing to use NuSMV as a library.
 
-.. image:: https://travis-ci.org/LouvainVerificationLab/pynusmv.svg?branch=master
-    :target: https://travis-ci.org/LouvainVerificationLab/pynusmv
-    
-.. image:: https://coveralls.io/repos/github/LouvainVerificationLab/pynusmv/badge.svg?branch=master
-    :target: https://coveralls.io/github/LouvainVerificationLab/pynusmv?branch=master
+.. start-bages
+.. list-table::
+  :stub-columns: 1
+  
+  * - Latest release 
+    - |Release| |Doc| |Downloads|
+  * - Status
+    - |Build| |Heath| |Coverage|
 
-.. image:: https://readthedocs.org/projects/pynusmv-/badge/?version=latest
+.. |Release| image:: https://img.shields.io/pypi/v/pynusmv.svg
+    :target:  https://pypi.python.org/pypi/pynusmv/
+    :alt: Latest release on PyPI
+    
+.. |Downloads| image:: https://img.shields.io/pypi/dm/pynusmv.svg
+    :target: https://pypi.python.org/pypi/pynusmv/
+    :alt: Number of PyPI downloads
+    
+.. |Build| image:: https://travis-ci.org/LouvainVerificationLab/pynusmv.svg?branch=master
+    :target: https://travis-ci.org/LouvainVerificationLab/pynusmv
+    :alt: Continuous Integration Status
+    
+.. |Coverage| image:: https://coveralls.io/repos/github/LouvainVerificationLab/pynusmv/badge.svg?branch=master
+    :target: https://coveralls.io/github/LouvainVerificationLab/pynusmv?branch=master
+    :alt: Coverage report
+
+.. |Heath| image:: https://landscape.io/github/LouvainVerificationLab/pynusmv/master/landscape.svg?style=plastic
+    :target: https://landscape.io/github/LouvainVerificationLab/pynusmv/master
+    :alt: Code Health
+
+.. |Doc| image:: https://readthedocs.org/projects/pynusmv-/badge/?version=latest
     :target: http://pynusmv-.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
