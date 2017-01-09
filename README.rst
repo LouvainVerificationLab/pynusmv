@@ -4,6 +4,16 @@ PyNuSMV
 PyNuSMV is a Python binding for NuSMV. It is intended to provide a
 Python interface to NuSMV, allowing to use NuSMV as a library.
 
+.. image:: https://travis-ci.org/LouvainVerificationLab/pynusmv.svg?branch=master
+    :target: https://travis-ci.org/LouvainVerificationLab/pynusmv
+    
+.. image:: https://coveralls.io/repos/github/LouvainVerificationLab/pynusmv/badge.svg?branch=master
+    :target: https://coveralls.io/github/LouvainVerificationLab/pynusmv?branch=master
+
+.. image:: https://readthedocs.org/projects/pynusmv-/badge/?version=latest
+    :target: http://pynusmv-.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 More details about this tool are provided in the PyNuSMV documentation
 (see the DOCUMENTATION section below).
 
