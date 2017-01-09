@@ -1095,5 +1095,8 @@ setup(name             = 'pynusmv',
           'fix-load-path': FixLoadPath,
           'mk_init'      : GenerateInitFiles,
           'copy_swig_mod': CopySwiggedModules
-      }
+      },
+      # TESTS
+      test_suite='nose.collector',
+      tests_require=['nose']
 )

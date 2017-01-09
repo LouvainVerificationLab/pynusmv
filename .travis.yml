@@ -1,0 +1,29 @@
+language: python
+
+python:
+  - 3.4
+  - 3.5
+  - 3.6
+  
+before_install:
+  - sudo apt-get install -y zip
+  - sudo apt-get install -y build-essential
+  - sudo apt-get install -y flex
+  - sudo apt-get install -y bison
+  - sudo apt-get install -y zlib1g-dev
+  - sudo apt-get install -y libexpat-dev
+  - sudo apt-get install -y wget
+  - sudo apt-get install -y swig
+  # Install patchelf since it isn't already present on ubuntu precise
+  - wget https://nixos.org/releases/patchelf/patchelf-0.9/patchelf-0.9.tar.gz
+  - tar -xpf patchelf-0.9.tar.gz
+  - cd patchelf-0.9 && ./configure && make && sudo make install && cd ..
+  # all of the below are assumed to be already installed
+  #- sudo apt-get install -y python3
+  #- sudo apt-get install -y python3-dev
+  #- sudo apt-get install -y libpython3-dev
+  #- sudo apt-get install -y python3-pip
+  #- pip3 install setuptools
+  
+script:
+  - python3 setup.py test
