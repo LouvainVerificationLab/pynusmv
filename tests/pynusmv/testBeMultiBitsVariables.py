@@ -123,5 +123,6 @@ class TestMultiBitsVariables(TestCase):
             # it's true iff all bits are on, that is to day Ko at both times
             expect = "{0: {'two_bits': Ko}, 1: {'two_bits': Ok}}"
             
-            self.assertEqual(expect, str(decoded))
+            self.assertEqual("{'two_bits': Ko}", str(decoded[0]))
+            self.assertEqual("{'two_bits': Ok}", str(decoded[1]))
         
