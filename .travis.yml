@@ -52,6 +52,12 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install bison   ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install swig    ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install python3 ; fi
-  
+
+install:
+  - pip install coveralls
+
 script:
-  - python3 setup.py test
+  - coverage run --source=pynusmv setup.py test
+
+after_success:
+  coveralls

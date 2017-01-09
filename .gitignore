@@ -33,6 +33,7 @@ pynusmv.egg-info/*
 # Ignore all compiled test artifacts
 tests/__pycache__/*
 tests/pynusmv/__pycache__/*
+.coverage
 
 *.patched
 *.built
