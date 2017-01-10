@@ -9,7 +9,7 @@ Python interface to NuSMV, allowing to use NuSMV as a library.
   :stub-columns: 1
   
   * - Latest release 
-    - |Release| |Doc| |Downloads|
+    - |Release| |Doc|
   * - Status
     - |Build| |Heath| |Coverage|
 
@@ -33,12 +33,10 @@ Python interface to NuSMV, allowing to use NuSMV as a library.
     :target: https://landscape.io/github/LouvainVerificationLab/pynusmv/master
     :alt: Code Health
 
-.. |Doc| image:: https://readthedocs.org/projects/pynusmv-/badge/?version=latest
-    :target: http://pynusmv-.readthedocs.io/en/latest/?badge=latest
+.. |Doc| image:: https://readthedocs.org/projects/pynusmv/badge/?version=latest
+    :target: http://pynusmv.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-More details about this tool are provided in the PyNuSMV documentation
-(see the DOCUMENTATION section below).
 
 Preliminary warning
 -------------------
