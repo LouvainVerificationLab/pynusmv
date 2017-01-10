@@ -34,7 +34,7 @@ Python interface to NuSMV, allowing to use NuSMV as a library.
     :alt: Code Health
 
 .. |Doc| image:: https://readthedocs.org/projects/pynusmv/badge/?version=latest
-    :target: http://pynusmv.readthedocs.io/en/latest/?badge=latest
+    :target: http://pynusmv.readthedocs.io/?badge=latest
     :alt: Documentation Status
 
 
