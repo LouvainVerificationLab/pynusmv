@@ -4,11 +4,11 @@ nodes, as well as a class :class:`FlatHierarchy` to represent a NuSMV flat
 hierarchary.
 """
 
-import re
 try:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping
 except ImportError:
-    from collections import Mapping, Sequence
+    from collections import Mapping
+    
 from collections import OrderedDict
 import string
 import random
@@ -20,7 +20,6 @@ from pynusmv_lower_interface.nusmv.compile import compile as nscompile
 from pynusmv_lower_interface.nusmv.node import node as nsnode
 from pynusmv_lower_interface.nusmv.utils import utils as nsutils
 from pynusmv_lower_interface.nusmv.set import set as nsset
-from pynusmv_lower_interface.nusmv.parser import parser as nsparser
 from pynusmv_lower_interface.nusmv.parser.parser import (TRANS, INIT, INVAR, ASSIGN, FAIRNESS,
                                   JUSTICE, COMPASSION, SPEC, LTLSPEC, PSLSPEC,
                                   INVARSPEC, COMPUTE, DEFINE, ISA, GOTO,
@@ -146,7 +145,7 @@ class Node(PointerWrapper):
 
     @staticmethod
     def from_ptr(ptr, freeit=False):
-        if ptr == None:
+        if ptr is None:
             return None
         cls = type_to_class[ptr.type]
         new_node = cls.__new__(cls)

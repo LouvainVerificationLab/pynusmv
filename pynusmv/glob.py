@@ -262,7 +262,7 @@ def symb_table():
     return __symb_table
 
 
-def encode_variables(layers={"model"}, variables_ordering=None):
+def encode_variables(layers=None, variables_ordering=None):
     """
     Encode the BDD variables of the current model and store it in global data
     structures.
@@ -288,7 +288,11 @@ def encode_variables(layers={"model"}, variables_ordering=None):
     if nscompile.cmp_struct_get_encode_variables(global_compile_cmps()):
         raise NuSMVModelAlreadyEncodedError(
             "The variables are already encoded.")
-
+    
+    # See to understand why setting a default set value is not a good idea
+    # http://pylint-messages.wikidot.com/messages:w0102
+    layers = layers or {"model"}
+    
     if variables_ordering is not None:
         nsopt.set_input_order_file(nsopt.OptsHandler_get_instance(),
                                    variables_ordering)
@@ -303,7 +307,7 @@ def encode_variables(layers={"model"}, variables_ordering=None):
     __bdd_encoding = BddEnc(nsenc.Enc_get_bdd_encoding())
 
 
-def encode_variables_for_layers(layers={"model"}, init=False):
+def encode_variables_for_layers(layers=None, init=False):
     """
     Encode the BDD variables of the given layers and store them in global data
     structures.
@@ -320,6 +324,11 @@ def encode_variables_for_layers(layers={"model"}, init=False):
     """
     if init:
         nsenc.Enc_init_bool_encoding()
+    
+    # See to understand why setting a default set value is not a good idea
+    # http://pylint-messages.wikidot.com/messages:w0102
+    layers   = layers or {"model"}
+    
     bool_enc = nsenc.Enc_get_bool_encoding()
     base_enc = nsboolenc.boolenc2baseenc(bool_enc)
     for layer in layers:

@@ -1366,7 +1366,7 @@ class SymbTable(PointerWrapper):
 
             res = None
             for i in range(stop, start - 1, -1):
-                res = node.Cons(Number(i), res)
+                res = node.Cons(node.Number(i), res)
             return (nssymb_table.SymbType_create(nssymb_table.SYMB_TYPE_ENUM,
                                                  res._ptr))
 

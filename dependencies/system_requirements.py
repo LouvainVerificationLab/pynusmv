@@ -78,7 +78,7 @@ def list_installed_libs(path):
     Returns the list of all the libraries installed on this system.
     '''
     results = []
-    for path, dirs, files in os.walk(path):
+    for path, _, files in os.walk(path):
         results.extend(files)
     return results
 

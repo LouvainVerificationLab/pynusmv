@@ -12,7 +12,6 @@ from pynusmv.sat import Polarity
 from pynusmv_lower_interface.nusmv.utils.utils import _utils
 __all__ = ['Be', 'BeCnf']
 
-from pynusmv.utils       import PointerWrapper
 from pynusmv.collections import Slist, IntConversion, Conversion
 
 import pynusmv_lower_interface.nusmv.be.be as _be
@@ -511,6 +510,6 @@ class ArrayOfClauses(Conversion):
             # seamlessly translated from an int* to a python list PyListObject
             return _utils.void_star_to_int_star(x)
         def o2p(x):
-            raise NotImplemented("Direct alteration of the list of clauses is not allowed")
+            raise NotImplementedError("Direct alteration of the list of clauses is not allowed")
         super().__init__(p2o, o2p)
         

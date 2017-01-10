@@ -1860,7 +1860,7 @@ class ArrayExpr(Element):
     def __hash__(self):
         return 17 + 23 * hash("ArrayExpr") + 23 ** 2 * hash(self.array)
 
-    def __deepcopy__(sef, memo):
+    def __deepcopy__(self, memo):
         return ArrayExpr(deepcopy(self.array, memo))
 
 

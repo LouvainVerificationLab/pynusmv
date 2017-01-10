@@ -46,7 +46,7 @@ class _PyNuSMVContext(object):
     def __exit__(self, exc_type, exc_value, traceback):
         # FIXME Why should we avoid shut NuSMV down if an exception occurs?
         #if exc_type is None:
-            deinit_nusmv()
+        deinit_nusmv()
 
 
 def init_nusmv(collecting=True):
@@ -134,15 +134,17 @@ def is_nusmv_init():
     Return whether NuSMV is initialized.
 
     """
-    global __collector
+    # It isn't required to declare that __collector is global since no 
+    # assignment is made to that variable.
+    #global __collector
     return __collector is not None
 
 
 class _WeakWrapper():
 
-    def __init__(self, object, collector):
+    def __init__(self, obj, collector):
         self.collector = collector
-        self.object = weakref.ref(object, self._unref)
+        self.object = weakref.ref(obj, self._unref)
 
     def _unref(self, o):
         self.collector.discard(self)
@@ -162,7 +164,9 @@ def _register_wrapper(wrapper):
     :type wrapper: :class:`PointerWrapper <pynusmv.utils.PointerWrapper>`
 
     """
-    global __collector, __collecting
+    # It isn't required to declare that these variables be delcared global since
+    # no assignment is made to any of them.
+    #global __collector, __collecting
     if __collector is None:
         raise NuSMVInitError("Cannot register before initializing NuSMV.")
     else:

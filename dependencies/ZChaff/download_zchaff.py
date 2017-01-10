@@ -23,8 +23,8 @@ def download_file(url, fname):
     response = requests.get(url, stream=True)
     
     with open(fname, "wb") as f:
-      for chunk in response.iter_content(chunk_size=128):
-        f.write(chunk)
+        for chunk in response.iter_content(chunk_size=128):
+            f.write(chunk)
 
 if __name__ == "__main__":
     archive = "zchaff.64bit.2007.3.12.zip"

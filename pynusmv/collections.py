@@ -63,9 +63,12 @@ class IntConversion(Conversion):
     def __init__(self):
         """Creates a new IntConversion"""
         # void* -> int
-        p2i = lambda p: _utils.void_star_to_int(p)
+        def p2i(p):
+            return _utils.void_star_to_int(p)
+        
         # int -> void*
-        i2p = lambda i: _utils.int_to_void_star(i)
+        def i2p(i):
+            return _utils.int_to_void_star(i)
           
         super().__init__(p2i, i2p)
 
@@ -75,8 +78,12 @@ class NodeConversion(Conversion):
     """
     def __init__(self):
         """Creates a simple node conversion"""
-        p2n = lambda x: Node.from_ptr(x)
-        n2p = lambda x: x._ptr
+        def p2n(x):
+            return Node.from_ptr(x)
+        
+        def n2p(x):
+            return x._ptr
+            
         super().__init__(p2n, n2p)
 
 #===============================================================================
