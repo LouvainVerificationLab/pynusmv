@@ -1,3 +1,8 @@
+# pylint: skip-file
+# pylint: disable-all
+# R0401 is reported unduly. Moreover, it isn't really part of the codebase,
+# this script is only used during the build phase to determine whether or not
+# all the system requirements are met on this platform to proceed to a build.
 '''
 # This script checks that all the system tools and libraries required to proceed
 # to the compilation of pynusmv and its native dependencies are installed on your

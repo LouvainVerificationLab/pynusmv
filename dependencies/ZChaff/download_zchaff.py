@@ -1,8 +1,8 @@
 # pylint: skip-file
 # pylint: disable-all
 # R0401 is reported unduly. Moreover, it isn't really part of the codebase,
-# this script is only used during the build phase to determine whether or not
-# a re configuration of NuSMV should be issued.
+# this script is only used during the build phase to download zchaff from
+# the internet in case it needs to be built.
 '''
 # This script is used to download the appropriate version of zchaff for you to
 # build and link pynusmv.
@@ -21,12 +21,12 @@ def download_file(url, fname):
     '''
     Downloads the file located at `url` and dumps it into a local file named
     `fname`.
-    
+
     :param url: the url of the file to be downloaded
     :param fname: the name of the file to be saved locally
     '''
     response = requests.get(url, stream=True)
-    
+
     with open(fname, "wb") as f:
         for chunk in response.iter_content(chunk_size=128):
             f.write(chunk)

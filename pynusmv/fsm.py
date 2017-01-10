@@ -32,12 +32,10 @@ from pynusmv_lower_interface.nusmv.utils import utils as nsutils
 
 from pynusmv_lower_interface.nusmv.fsm import fsm as nsfsm
 from pynusmv_lower_interface.nusmv.opt import opt as nsopt
-from pynusmv_lower_interface.nusmv.compile.type_checking import type_checking as nstype_checking
 
 from .dd import BDD, State, Inputs, StateInputs, DDManager, Cube
 from .utils import PointerWrapper, AttributeDict
-from .exception import (NuSMVBddPickingError, NuSMVFlatteningError,
-                        NuSMVTypeCheckingError, NuSMVSymbTableError)
+from .exception import NuSMVBddPickingError, NuSMVFlatteningError, NuSMVSymbTableError
 from .parser import parse_next_expression
 from . import node
 
@@ -109,6 +107,12 @@ class BddFsm(PointerWrapper):
         Set this FSM transition to `new_trans`.
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
+
         # Copy the transition such that this FSM is the owner
         new_trans_ptr = nsbddtrans.BddTrans_copy(new_trans._ptr)
         # Get old trans
@@ -169,6 +173,11 @@ class BddFsm(PointerWrapper):
 
     @reachable_states.setter
     def reachable_states(self, reachable_states):
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         self._reachable = reachable_states
         bddFsm.BddFsm_set_reachable_states(self._ptr, reachable_states._ptr)
 
@@ -208,6 +217,11 @@ class BddFsm(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         if inputs is None:
             return BDD(bddFsm.BddFsm_get_backward_image(
                        self._ptr,states._ptr),
@@ -229,6 +243,11 @@ class BddFsm(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         return BDD(bddFsm.BddFsm_get_weak_backward_image(self._ptr,
                                                          states._ptr),
                    self.bddEnc.DDmanager, freeit=True)
@@ -246,6 +265,11 @@ class BddFsm(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         if inputs is None:
             return BDD(bddFsm.BddFsm_get_forward_image(self._ptr,
                                                        states._ptr),
@@ -275,6 +299,11 @@ class BddFsm(PointerWrapper):
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick state from false BDD.")
 
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         state = bddEnc.pick_one_state(self.bddEnc._ptr, bdd._ptr)
         if state is None:
             raise NuSMVBddPickingError("Cannot pick state from BDD.")
@@ -300,6 +329,11 @@ class BddFsm(PointerWrapper):
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick state from false BDD.")
 
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         state = bddEnc.pick_one_state_rand(self.bddEnc._ptr, bdd._ptr)
         if state is None:
             raise NuSMVBddPickingError("Cannot pick state from BDD.")
@@ -324,6 +358,12 @@ class BddFsm(PointerWrapper):
         # The BDD contains no states
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick inputs from false BDD.")
+
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         inputs = bddEnc.pick_one_input(self.bddEnc._ptr, bdd._ptr)
         if inputs is None:
             raise NuSMVBddPickingError("Cannot pick inputs from BDD.")
@@ -348,6 +388,12 @@ class BddFsm(PointerWrapper):
         # The BDD contains no states
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick inputs from false BDD.")
+
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         inputs = bddEnc.pick_one_input_rand(self.bddEnc._ptr, bdd._ptr)
         if inputs is None:
             raise NuSMVBddPickingError("Cannot pick inputs from BDD.")
@@ -368,6 +414,12 @@ class BddFsm(PointerWrapper):
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick state/inputs"
                                        " from false BDD.")
+
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         si = bddEnc.pick_one_state_input(self.bddEnc._ptr, bdd._ptr)
         if si is None:
             raise NuSMVBddPickingError("Cannot pick state/inputs from BDD.")
@@ -389,6 +441,11 @@ class BddFsm(PointerWrapper):
         if bdd.is_false():
             raise NuSMVBddPickingError("Cannot pick state/inputs"
                                        " from false BDD.")
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         si = bddEnc.pick_one_state_input_rand(self.bddEnc._ptr, bdd._ptr)
         if si is None:
             raise NuSMVBddPickingError("Cannot pick state/inputs from BDD.")
@@ -406,6 +463,11 @@ class BddFsm(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         inputs = bddFsm.BddFsm_states_to_states_get_inputs(self._ptr,
                                                            current._ptr,
                                                            next_._ptr)
@@ -422,6 +484,11 @@ class BddFsm(PointerWrapper):
         """
         # Apply mask before counting states
         bdd = bdd & self.bddEnc.statesMask
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         return int(bddEnc.
                    BddEnc_count_states_of_bdd(self.bddEnc._ptr, bdd._ptr))
 
@@ -435,6 +502,11 @@ class BddFsm(PointerWrapper):
         """
         # Apply mask before counting inputs
         bdd = bdd & self.bddEnc.inputsMask
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         return int(bddEnc.
                    BddEnc_count_inputs_of_bdd(self.bddEnc._ptr, bdd._ptr))
 
@@ -448,6 +520,11 @@ class BddFsm(PointerWrapper):
         """
         # Apply mask before counting inputs
         bdd = bdd & self.bddEnc.statesInputsMask
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         return int(
             bddEnc. BddEnc_count_states_inputs_of_bdd(
                 self.bddEnc._ptr,
@@ -471,6 +548,12 @@ class BddFsm(PointerWrapper):
         # Apply mask
         bdd = bdd.forsome(self.bddEnc.inputsCube) & self.bddEnc.statesMask
         # Get all states
+        #
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         (err, t) = bddEnc.pick_all_terms_states(self.bddEnc._ptr, bdd._ptr)
         if err:
             raise NuSMVBddPickingError("Cannot pick all states.")
@@ -497,6 +580,12 @@ class BddFsm(PointerWrapper):
         if bdd.is_false():
             return frozenset()
         # Get all inputs
+        #
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         (err, t) = bddEnc.pick_all_terms_inputs(self.bddEnc._ptr, bdd._ptr)
         if err:
             raise NuSMVBddPickingError("Cannot pick all inputs.")
@@ -525,6 +614,12 @@ class BddFsm(PointerWrapper):
             return frozenset()
 
         # Get all states inputs
+        #
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         (err, t) = bddEnc.pick_all_terms_states_inputs(self.bddEnc._ptr,
                                                        bdd._ptr)
         if err:
@@ -637,6 +732,11 @@ class BddTrans(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         nexts = BDD(
             bddEnc.BddEnc_state_var_to_next_state_var(self._enc._ptr,
                                                       states._ptr),
@@ -659,6 +759,11 @@ class BddTrans(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         if inputs is not None:
             states = states & inputs
         img = nsbddtrans.BddTrans_get_forward_image_state(
@@ -686,7 +791,11 @@ class BddTrans(PointerWrapper):
                 if `trans` cannot be flattened under `context`
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         trans = node.find_hierarchy(trans)
         flattrans, err = nscompile.FlattenSexp(symb_table._ptr, trans,
                                                context)
@@ -735,6 +844,11 @@ class BddTrans(PointerWrapper):
                 if `strtrans` is wrongly typed under `context`
 
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         type_checker = nssymb_table.SymbTable_get_type_checker(symb_table._ptr)
 
         if strcontext is not None:
@@ -852,7 +966,11 @@ class BddEnc(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         from . import glob
 
         master = glob.prop_database().master
@@ -891,7 +1009,11 @@ class BddEnc(PointerWrapper):
         :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         from . import glob
 
         master = glob.prop_database().master
@@ -930,7 +1052,11 @@ class BddEnc(PointerWrapper):
         :rtype: frozenset(str)
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         from . import glob
 
         master = glob.prop_database().master
@@ -960,7 +1086,11 @@ class BddEnc(PointerWrapper):
         :rtype: frozenset(str)
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         from . import glob
 
         master = glob.prop_database().master
@@ -990,7 +1120,11 @@ class BddEnc(PointerWrapper):
         :rtype: frozenset(str)
 
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         from . import glob
 
         master = glob.prop_database().master
@@ -1116,6 +1250,11 @@ class SymbTable(PointerWrapper):
 
         .. warning:: The returned pointer must not be altered or freed.
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, variable._ptr,
                                                    None)
         variable = node.Node.from_ptr(nssymb_table.
@@ -1133,6 +1272,11 @@ class SymbTable(PointerWrapper):
         :type variable: :class:`Node <pynusmv.node.Node>`
         :rtype: :class:`bool`
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, variable._ptr,
                                                    None)
         variable = node.Node.from_ptr(nssymb_table.
@@ -1158,7 +1302,11 @@ class SymbTable(PointerWrapper):
         .. warning:: `type_` must be already resolved, that is, the body
                      of `type_` must be leaf values.
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, ivar._ptr,
                                                    None)
         ivar = node.Node.from_ptr(nssymb_table.
@@ -1189,7 +1337,11 @@ class SymbTable(PointerWrapper):
         .. warning:: `type_` must be already resolved, that is, the body
                      of `type_` must be leaf values.
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, var._ptr,
                                                    None)
         var = node.Node.from_ptr(node.find_hierarchy
@@ -1221,7 +1373,11 @@ class SymbTable(PointerWrapper):
         .. warning:: `type_` must be already resolved, that is, the body
                      of `type_` must be leaf values.
         """
-
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, fvar._ptr,
                                                    None)
         fvar = node.Node.from_ptr(nssymb_table.
@@ -1270,6 +1426,11 @@ class SymbTable(PointerWrapper):
             <pynusmv.exception.NuSMVSymbTableError>` if the variable is not
             defined in this symbol table
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, ivar._ptr,
                                                    None)
         ivar = node.Node.from_ptr(nssymb_table.
@@ -1289,6 +1450,11 @@ class SymbTable(PointerWrapper):
             <pynusmv.exception.NuSMVSymbTableError>` if the variable is not
             defined in this symbol table
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, var._ptr,
                                                    None)
         var = node.Node.from_ptr(nssymb_table.
@@ -1308,6 +1474,11 @@ class SymbTable(PointerWrapper):
             <pynusmv.exception.NuSMVSymbTableError>` if the variable is not
             defined in this symbol table
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
         rs = nssymb_table.SymbTable_resolve_symbol(self._ptr, fvar._ptr,
                                                    None)
         fvar = node.Node.from_ptr(nssymb_table.
@@ -1340,6 +1511,11 @@ class SymbTable(PointerWrapper):
         .. warning:: `type_` must be already resolved, that is, the body
                      of `type_` must be leaf values.
         """
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
 
         # Boolean
         if isinstance(type_, node.Boolean):
@@ -1404,4 +1580,9 @@ class SymbTable(PointerWrapper):
 
         :return: True iff the two object are the same
         """
-        return self._ptr == other._ptr 
+        # Accessing the protected pointers of the objects is perfectly normal
+        # from the framework perspective. However, we don't want to expose these
+        # pointers to the rest of the world. This violation can safely be ignored
+        # in this case.
+        # pylint: disable=W0212
+        return self._ptr == other._ptr
