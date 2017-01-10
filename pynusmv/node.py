@@ -402,6 +402,8 @@ class Scalar(Type):
             ptr = nsnode.find_node(CONS, value._ptr, ptr)
 
         ptr = nsnode.find_node(SCALAR, ptr, None)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = SCALAR
 
@@ -464,6 +466,8 @@ class Modtype(Type):
         for argument in self._arguments[1:]:
             ptr = nsnode.find_node(CONS, argument._ptr, ptr)
         ptr = nsnode.find_node(MODTYPE, name._ptr, ptr)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = MODTYPE
 
@@ -906,6 +910,8 @@ class Atom(Leaf):
         """
         name_ptr = nsnode.string2node(nsutils.find_string(name))
         ptr = nsnode.find_node(ATOM, name_ptr, None)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = ATOM
 
@@ -927,6 +933,8 @@ class Number(Leaf):
         """
         value_ptr = nsnode.int2node(value)
         ptr = nsnode.find_node(NUMBER, value_ptr, None)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = NUMBER
 
@@ -949,6 +957,8 @@ class NumberUnsignedWord(Leaf):
         value_ptr = nsnode.word2node(
             nsutils.WordNumber_from_parsed_string(value, None))
         ptr = nsnode.find_node(NUMBER_UNSIGNED_WORD, value_ptr, None)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = NUMBER_UNSIGNED_WORD
 
@@ -972,6 +982,8 @@ class NumberSignedWord(Leaf):
         value_ptr = nsnode.word2node(
             nsutils.WordNumber_from_parsed_string(value, None))
         ptr = nsnode.find_node(NUMBER_SIGNED_WORD, value_ptr, None)
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = NUMBER_SIGNED_WORD
 
@@ -1489,6 +1501,8 @@ class Count(Expression):
         ptr = find_hierarchy(parse_next_expression(
             "count(" + ", ".join(str(value)
                                  for value in self.values) + ")"))
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = COUNT
 
@@ -1527,6 +1541,8 @@ class Set(CustomExpression):
         ptr = find_hierarchy(parse_next_expression(
             "{" + ", ".join(str(value)
                             for value in self.values) + "}"))
+        # Initialization using PointerWrapper iso parent class is made on purpose
+        # pylint: disable=W0233
         PointerWrapper.__init__(self, ptr, freeit=False)
         self.type = UNION
 
