@@ -1,3 +1,7 @@
+# This one is reported unduly. Moreover, it isn't really part of the codebase,
+# this script is only used during the build phase to determine whether or not
+# a re configuration of NuSMV should be issued.
+# pylint: disable=R0401
 '''
 # This script is used to download the appropriate version of zchaff for you to
 # build and link pynusmv.
