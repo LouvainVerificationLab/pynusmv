@@ -29,7 +29,7 @@ Python interface to NuSMV, allowing to use NuSMV as a library.
     :target: https://coveralls.io/github/LouvainVerificationLab/pynusmv?branch=master
     :alt: Coverage report
 
-.. |Heath| image:: https://landscape.io/github/LouvainVerificationLab/pynusmv/master/landscape.svg?style=plastic
+.. |Heath| image:: https://landscape.io/github/LouvainVerificationLab/pynusmv/master/landscape.svg?style=flat
     :target: https://landscape.io/github/LouvainVerificationLab/pynusmv/master
     :alt: Code Health
 
