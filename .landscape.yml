@@ -1,0 +1,9 @@
+# This configuration file tells landscape.io what warnings should be ignored and
+# not reported for the whole pynusmv project.
+pylint:
+  disable:
+    # Accessing the protected pointers of the objects is perfectly normal
+    # from the framework perspective. However, we don't want to expose these
+    # pointers to the rest of the world. Hence, the pylint warning W0212 (Accessing
+    # protected field of client class) should be ignored in this context.
+    - W0212
