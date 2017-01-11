@@ -7,3 +7,5 @@ pylint:
     # pointers to the rest of the world. Hence, the pylint warning W0212 (Accessing
     # protected field of client class) should be ignored in this context.
     - W0212
+    # This one is almost always a false positive when reported in pynusmv.
+    - R0401

@@ -63,11 +63,6 @@ def eval_ctl_spec(fsm, spec, context=None):
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
 
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     enc = fsm.bddEnc
     specbdd = BDD(nsmc.eval_ctl_spec(fsm._ptr, enc._ptr,
                                      spec._ptr,
@@ -85,11 +80,6 @@ def ef(fsm, states):
     :type states: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     return BDD(nsmc.ef(fsm._ptr, states._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
@@ -103,11 +93,6 @@ def eg(fsm, states):
     :type states: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     return BDD(nsmc.eg(fsm._ptr, states._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
@@ -121,11 +106,6 @@ def ex(fsm, states):
     :type states: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     return BDD(nsmc.ex(fsm._ptr, states._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
@@ -141,11 +121,6 @@ def eu(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     return BDD(nsmc.eu(fsm._ptr, s1._ptr, s1._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
@@ -161,11 +136,6 @@ def au(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     return BDD(nsmc.au(fsm._ptr, s1._ptr, s1._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
@@ -190,11 +160,6 @@ def explain(fsm, state, spec, context=None):
     previous state along the path.
 
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     if context is not None:
         context_ptr = context._ptr
     else:
@@ -240,11 +205,6 @@ def explainEX(fsm, state, a):
     is the inputs to go from `s` to `s'` in `fsm`.
 
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     enc = fsm.bddEnc
     manager = enc.DDmanager
     path = nsnode.cons(nsnode.bdd2node(nsdd.bdd_dup(state._ptr)), None)
@@ -282,11 +242,6 @@ def explainEU(fsm, state, a, b):
     Furthermore, `t` represents a path in `fsm`.
 
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     enc = fsm.bddEnc
     manager = enc.DDmanager
     path = nsnode.cons(nsnode.bdd2node(nsdd.bdd_dup(state._ptr)), None)
@@ -328,11 +283,6 @@ def explainEG(fsm, state, a):
     i.e. `t[-1]` can lead to `loop` through `i`, and `loop` is a state of `t`.
 
     """
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     enc = fsm.bddEnc
     manager = enc.DDmanager
     path = nsnode.cons(nsnode.bdd2node(nsdd.bdd_dup(state._ptr)), None)

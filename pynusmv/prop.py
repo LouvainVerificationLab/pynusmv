@@ -315,11 +315,6 @@ class Spec(PointerWrapper):
         Return whether self is equal to other.
 
         """
-        # Accessing the protected pointers of the objects is perfectly normal
-        # from the framework perspective. However, we don't want to expose these
-        # pointers to the rest of the world. This violation can safely be ignored
-        # in this case.
-        # pylint: disable=W0212
         if isinstance(self, type(other)):
             return nsnode.node_equal(self._ptr, other._ptr) != 0
         else:
@@ -335,11 +330,6 @@ class Spec(PointerWrapper):
         :rtype: :class:`Spec`
 
         """
-        # Accessing the protected pointers of the objects is perfectly normal
-        # from the framework perspective. However, we don't want to expose these
-        # pointers to the rest of the world. This violation can safely be ignored
-        # in this case.
-        # pylint: disable=W0212
         if other is None:
             raise ValueError()
         # freeit=True seems to be erroneous
@@ -360,12 +350,6 @@ class Spec(PointerWrapper):
             raise ValueError()
 
         # freeit=True seems to be erroneous
-        #
-        # Accessing the protected pointers of the objects is perfectly normal
-        # from the framework perspective. However, we don't want to expose these
-        # pointers to the rest of the world. This violation can safely be ignored
-        # in this case.
-        # pylint: disable=W0212
         s = Spec(nsnode.find_node(nsparser.AND, self._ptr, other._ptr),
                  freeit=False)
         s._car = self
@@ -380,12 +364,6 @@ class Spec(PointerWrapper):
 
         """
         # freeit=True seems to be erroneous
-        #
-        # Accessing the protected pointers of the objects is perfectly normal
-        # from the framework perspective. However, we don't want to expose these
-        # pointers to the rest of the world. This violation can safely be ignored
-        # in this case.
-        # pylint: disable=W0212
         s = Spec(nsnode.find_node(nsparser.NOT, self._ptr, None),
                  freeit=False)
         s._car = self
@@ -424,12 +402,6 @@ def not_(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.NOT, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -445,12 +417,6 @@ def and_(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AND, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -468,12 +434,6 @@ def or_(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.OR, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -491,12 +451,6 @@ def imply(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.IMPLIES, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -514,12 +468,6 @@ def iff(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.IFF, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -537,12 +485,6 @@ def ex(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.EX, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -558,12 +500,6 @@ def eg(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.EG, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -579,12 +515,6 @@ def ef(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.EF, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -600,12 +530,6 @@ def eu(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.EU, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -623,12 +547,6 @@ def ew(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.EW, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -646,12 +564,6 @@ def ax(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AX, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -667,12 +579,6 @@ def ag(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AG, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -688,12 +594,6 @@ def af(spec):
     if spec is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AF, spec._ptr, None), freeit=False)
     s._car = spec
     return s
@@ -709,12 +609,6 @@ def au(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AU, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -732,12 +626,6 @@ def aw(left, right):
     if left is None or right is None:
         raise ValueError()
     # freeit=True seems to be erroneous
-    #
-    # Accessing the protected pointers of the objects is perfectly normal
-    # from the framework perspective. However, we don't want to expose these
-    # pointers to the rest of the world. This violation can safely be ignored
-    # in this case.
-    # pylint: disable=W0212
     s = Spec(nsnode.find_node(nsparser.AW, left._ptr, right._ptr),
              freeit=False)
     s._car = left
@@ -771,11 +659,6 @@ def atom(strrep, type_checking=True):
     if type_checking:
         # TODO Prevent printing a message on stderr
         symb_table = glob.bdd_encoding().symbTable
-        # Accessing the protected pointers of the objects is perfectly normal
-        # from the framework perspective. However, we don't want to expose these
-        # pointers to the rest of the world. This violation can safely be ignored
-        # in this case.
-        # pylint: disable=W0212
         # TODO Type check only if symb_table is not None? With a Warning?
         type_checker = nssymb_table.SymbTable_get_type_checker(symb_table._ptr)
         expr_type = nstype_checking.TypeChecker_get_expression_type(
