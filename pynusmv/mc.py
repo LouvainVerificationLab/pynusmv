@@ -53,6 +53,7 @@ def check_ltl_spec(spec):
                                      global_compile_flathierarchy()) is None
         and
         o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+        
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
     else:
@@ -117,6 +118,7 @@ def check_explain_ltl_spec(spec):
                                      global_compile_flathierarchy()) is None
         and
         o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+        
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
     else:
@@ -134,10 +136,8 @@ def check_explain_ltl_spec(spec):
     if not result:
         # Extract explanation
         sexp_fsm = nsprop.Prop_get_scalar_sexp_fsm(prop)
-        symbols = nsfsmsexp.SexpFsm_get_symbols_list(sexp_fsm)
         bdd_fsm = BddFsm(ltl_struct.fsm)
         
-        # TODO --------------------------- Fix this and the rest --------------
         full_fairness = (not nsfsmbdd.FairnessList_is_empty(
                              nsfsmbdd.compassionList2fairnessList(
                              nsfsmbdd.BddFsm_get_compassion(bdd_fsm._ptr))))
