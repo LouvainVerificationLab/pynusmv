@@ -8,6 +8,7 @@ from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv import mc
 from pynusmv import glob
 from pynusmv import prop
+from pynusmv import parser
 
 
 class TestMC(unittest.TestCase):
@@ -53,3 +54,52 @@ class TestMC(unittest.TestCase):
             if p.type == prop.propTypes["CTL"]:
                 spec = p.expr
                 self.assertEqual(mc.check_ctl_spec(fsm, spec), ret[str(spec)])
+    
+    def test_mc_ltl_true(self):
+        # Initialize the model
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        spec = prop.Spec(parser.parse_ltl_spec("G admin = none"))
+        self.assertEqual(mc.check_ltl_spec(spec), False)
+    
+    def test_mc_ltl_false(self):
+        # Initialize the model
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        spec = prop.Spec(parser.parse_ltl_spec(
+                         "(F admin = alice) | (F admin = bob)"))
+        self.assertEqual(mc.check_ltl_spec(spec), True)
+    
+    def test_mc_explain_ltl_true(self):
+        # Initialize the model
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        
+        spec = prop.Spec(parser.parse_ltl_spec(
+                            "(F admin = alice) | (F admin = bob)"))
+        
+        result, explanation = mc.check_explain_ltl_spec(spec)
+        self.assertTrue(result)
+        self.assertIsNone(explanation)
+    
+    def test_mc_explain_ltl_false(self):
+        # Initialize the model
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        
+        spec = prop.Spec(parser.parse_ltl_spec("G admin = none"))
+        
+        result, explanation = mc.check_explain_ltl_spec(spec)
+        self.assertFalse(result)
+        self.assertIsNotNone(explanation)
+        
+        #print(explanation[0])
+        #for inputs, state in zip(explanation[1::2], explanation[2::2]):
+        #    print(inputs)
+        #    print(state)
+        self.assertTrue(any(state["admin"] != "none"
+                            for state in explanation[::2]))

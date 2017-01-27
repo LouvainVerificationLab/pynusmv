@@ -53,6 +53,10 @@ FairnessList_ptr justiceList2fairnessList(JusticeList_ptr l) {
     return (FairnessList_ptr) l;
 }
 
+FairnessList_ptr compassionList2fairnessList(CompassionList_ptr l) {
+    return (FairnessList_ptr) l;
+}
+
 %}
 
 
