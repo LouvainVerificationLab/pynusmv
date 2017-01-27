@@ -7,7 +7,8 @@ from pynusmv_lower_interface.nusmv.parser import parser
 from pynusmv.prop import Spec
 from pynusmv.node import Node, find_hierarchy
 from pynusmv.prop import (true as sptrue, false as spfalse, imply, iff,
-                               ex, eg, ef, eu, ew, ax, ag, af, au, aw, atom)
+                               ex, eg, ef, eu, ew, ax, ag, af, au, aw, atom,
+                               x, f, g, u)
 
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.parser import parse_ctl_spec
@@ -157,6 +158,34 @@ class TestSpec(unittest.TestCase):
         self.assertEqual(awspec.type, parser.AW)
         self.assertIsNotNone(awspec.car)
         self.assertIsNotNone(awspec.cdr)
+        
+        
+    def test_x(self):
+        xspec = x(sptrue())
+        self.assertEqual(xspec.type, parser.OP_NEXT)
+        self.assertIsNotNone(xspec.car)
+        self.assertIsNone(xspec.cdr)
+        
+
+    def test_f(self):
+        fspec = f(sptrue())
+        self.assertEqual(fspec.type, parser.OP_FUTURE)
+        self.assertIsNotNone(fspec.car)
+        self.assertIsNone(fspec.cdr)
+        
+
+    def test_gg(self):
+        gspec = g(sptrue())
+        self.assertEqual(gspec.type, parser.OP_GLOBAL)
+        self.assertIsNotNone(gspec.car)
+        self.assertIsNone(gspec.cdr)
+        
+        
+    def test_u(self):
+        uspec = u(sptrue(), spfalse())
+        self.assertEqual(uspec.type, parser.UNTIL)
+        self.assertIsNotNone(uspec.car)
+        self.assertIsNotNone(uspec.cdr)
     
     def test_car_cdr(self):
         spec = au(atom("s", type_checking=False),

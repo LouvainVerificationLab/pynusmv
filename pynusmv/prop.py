@@ -633,6 +633,70 @@ def aw(left, right):
     return s
 
 
+def x(spec):
+    """
+    Return a new specification corresponding to `X spec`.
+
+    :rtype: :class:`Spec`
+
+    """
+    if spec is None:
+        raise ValueError()
+    # freeit=True seems to be erroneous
+    s = Spec(nsnode.find_node(nsparser.OP_NEXT, spec._ptr, None), freeit=False)
+    s._car = spec
+    return s
+
+
+def g(spec):
+    """
+    Return a new specification corresponding to `G spec`.
+
+    :rtype: :class:`Spec`
+
+    """
+    if spec is None:
+        raise ValueError()
+    # freeit=True seems to be erroneous
+    s = Spec(nsnode.find_node(nsparser.OP_GLOBAL, spec._ptr, None),
+             freeit=False)
+    s._car = spec
+    return s
+
+
+def f(spec):
+    """
+    Return a new specification corresponding to `F spec`.
+
+    :rtype: :class:`Spec`
+
+    """
+    if spec is None:
+        raise ValueError()
+    # freeit=True seems to be erroneous
+    s = Spec(nsnode.find_node(nsparser.OP_FUTURE, spec._ptr, None),
+             freeit=False)
+    s._car = spec
+    return s
+
+
+def u(left, right):
+    """
+    Return a new specification corresponding to `left U right`.
+
+    :rtype: :class:`Spec`
+
+    """
+    if left is None or right is None:
+        raise ValueError()
+    # freeit=True seems to be erroneous
+    s = Spec(nsnode.find_node(nsparser.UNTIL, left._ptr, right._ptr),
+             freeit=False)
+    s._car = left
+    s._cdr = right
+    return s
+
+
 def atom(strrep, type_checking=True):
     """
     Return a new specification corresponding to the given atom.
