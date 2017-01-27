@@ -16,7 +16,6 @@ from pynusmv_lower_interface.nusmv.prop import prop as nsprop
 from pynusmv_lower_interface.nusmv.compile import compile as nscompile
 from pynusmv_lower_interface.nusmv.opt import opt as nsopt
 from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as nsfsmbdd
-from pynusmv_lower_interface.nusmv.fsm.sexp import sexp as nsfsmsexp
 from pynusmv_lower_interface.nusmv.enc.bdd import bdd as nsencbdd
 from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as \
                                                              nssymb_table
@@ -135,7 +134,6 @@ def check_explain_ltl_spec(spec):
     # explain
     if not result:
         # Extract explanation
-        sexp_fsm = nsprop.Prop_get_scalar_sexp_fsm(prop)
         bdd_fsm = BddFsm(ltl_struct.fsm)
         
         full_fairness = (not nsfsmbdd.FairnessList_is_empty(
