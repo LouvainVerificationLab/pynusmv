@@ -43,3 +43,5 @@ tests/pynusmv/__pycache__/*
 
 *.DS_Store
 *.python-version
+.project
+.pydevproject
