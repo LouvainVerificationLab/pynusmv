@@ -76,6 +76,76 @@ This (very) short tutorial showed the main functionalities of PyNuSMV. More of t
 Defining and loading a model
 ============================
 
+As explained above, a model can be defined in SMV format and loaded into PyNuSMV through a file. PyNuSMV also provides a set of classes in the :mod:`model module <pynusmv.model>` to define an SMV model directly in Python. For instance, the two-counter model above can befined with ::
+
+    from pynusmv.model import *
+    class counter(Module):
+        COMMENT = """
+            A modulo counter
+            Go from start (inclusive) to stop (exclusive) by 1-increments
+            Run only when run is true
+        """
+        run, start, stop = (Identifier(id_) for id_ in ("run", "start", "stop"))
+        
+        ARGS = [run, start, stop]
+        c = Var(Range(start, stop))
+        INIT = [c == start]
+        TRANS = [c.next() == (Case(((run, Case((((c + 1) == stop, start),
+                                                (Trueexp(), c + 1)))),
+                                    (~run, c))))]
+    class main(Module):
+        start = Def(0)
+        stop = Def(3)
+        run = IVar(Scalar(("rc1", "rc2")))
+        c1 = Var(counter(run == "rc1", start, stop))
+        c2 = Var(counter(run == "rc2", start, stop))
+    print(counter)
+    print(main)
+
+This prints the following ::
+
+    -- A modulo counter
+    -- Go from start (inclusive) to stop (exclusive) by 1-increments
+    -- Run only when run is true
+    MODULE counter(run, start, stop)
+        VAR
+            c: start .. stop;
+        INIT
+            c = start
+        TRANS
+            next(c) =
+            case
+                run:
+                case
+                    c + 1 = stop: start;
+                    TRUE: c + 1;
+                esac;
+                ! run: c;
+            esac
+    MODULE main
+        DEFINE
+            start := 0;
+            stop := 3;
+        IVAR
+            run: {rc1, rc2};
+        VAR
+            c1: counter(run = rc1, start, stop);
+            c2: counter(run = rc2, start, stop);
+
+The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write `c1.c` for the `c` variable of the `c1` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with `c + 1` above. Also, all sections of an SMV module can be defined through the members of a :class:`Module <pynusmv.model.Module>` sub-class (see its documentation for more details).
+
+The defined modules can then be loaded in PyNuSMV in a similar way to SMV files::
+
+    pynusmv.glob.load(counter, main)
+
+This :func:`load <pynusmv.glob.load>` function accepts either sub-classes of :class:`Module <pynusmv.model.Module>`, a single path to an SMV file, or a string containing the definition of the model. Once the model is loaded, the corresponding internal data structures such as the BDD-encoded finite-state machine can be built with ::
+
+    pynusmv.glob.compute_model()
+
+This :func:`compute_model <pynusmv.glob.compute_model>` function accepts the path to a file containing the BDD variable order to use for building the BDD FSM, and whether or not single enumerations should be kept as they are, or converted into defines. Once the model is built, the BDD-encoded FSM can be accessed via ::
+
+    fsm = pynusmv.glob.prop_database().master.bddFsm
+
 
 Manipulating the BDD-encoded finite-state machine
 =================================================
