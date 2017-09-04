@@ -390,6 +390,13 @@ class Expression(Element):
         else:
             return Subscript(self, key)
 
+    def __getattr__(self, name):
+        if name not in self.__dict__:
+            return Dot(self, Identifier(name))
+        else:
+            raise AttributeError("'{}' object ha no attribute '{}'"
+                                 .format(type(self).__name__, name))
+
     def word1(self):
         return Conversion("word1", self)
 
@@ -493,13 +500,6 @@ class Identifier(Expression):
 
     def __hash__(self):
         return 17 + 23 * hash("Identifier") + 23 ** 2 * hash(self.name)
-
-    def __getattr__(self, name):
-        if name is not "name":
-            return Dot(self, Identifier(name))
-        else:
-            raise AttributeError("'{}' object ha no attribute '{}'"
-                                 .format(type(self).__name__, name))
 
     def __deepcopy__(self, memo):
         return Identifier(self.name)
