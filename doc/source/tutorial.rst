@@ -86,7 +86,6 @@ As explained above, a model can be defined in SMV format and loaded into PyNuSMV
             Run only when run is true
         """
         run, start, stop = (Identifier(id_) for id_ in ("run", "start", "stop"))
-        
         ARGS = [run, start, stop]
         c = Var(Range(start, stop))
         INIT = [c == start]
@@ -137,6 +136,8 @@ Note that SMV state and input variables can be declared as members of the `Modul
 The different sections of an SMV module are declared as members with special names such as `INIT`, `TRANS`, or `ASSIGN`. Some must be iterables (such as `INIT` and `TRANS`), others must be mappings (such as `ASSIGN`).
 
 The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write `c1.c` for the `c` variable of the `c1` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with `c + 1` above.
+
+Another way to produce a Python-defined NuSMV model is to parse an existing SMV model (as a string or as a file) with the :mod:`parser <pynusmv.parser>` module functionalities. It contains the :func:`parseAllString <pynusmv.parser.parseAllString>` function to parse a string according to a pre-defined parser. Several parsers are provided to parse identifiers (:data:`parser.identifier <pynusmv.parser.identifier>`), expressions (:data:`parser.next_expression <pynusmv.parser.next_expression>`), modules (:data:`parser.module <pynusmv.parser.module>`), etc.
 
 The defined modules can then be loaded in PyNuSMV in a similar way to SMV files::
 
