@@ -2774,7 +2774,8 @@ class ModuleMetaClass(type):
 
         # Add comment if it exists
         if cls.COMMENT:
-            representation.append("-- " + cls.COMMENT)
+            comment = cls._trim(cls.COMMENT, indentation="-- ")
+            representation.append(comment)
 
         representation.append("MODULE " + str(cls.NAME) + args)
         for section in [member for member in cls.members
