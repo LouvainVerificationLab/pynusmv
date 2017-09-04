@@ -1,9 +1,16 @@
 .. _tutorial:
 
-Getting started
-***************
+Tutorial
+********
 
-This page presents a short overview of PyNuSMV capabilities with a small example.
+This page presents a short overview of PyNuSMV capabilities with a small example. It then goes deeper into these capabilities and explains how to use them.
+
+.. contents:: Contents
+    :local:
+
+Getting started
+===============
+
 Let's consider the following SMV model. This model is composed of two counters, incrementing from 0 to 3, and looping. They run asynchronously and the running one is defined at each step by the ``run`` action.
 
 .. include:: models/counters.smv
@@ -52,4 +59,27 @@ AF c1.c = stop - 1
 >>> pynusmv.init.deinit_nusmv()
 
 
-This (very) short tutorial showed the main functionalities of PyNuSMV. More of them are available (to parse and evaluate a simple expression, to build new CTL specifications or to perform operations on BDDs); the :ref:`full reference <pynusmv-api>` of the library is given beside this tutorial.
+This (very) short tutorial showed the main functionalities of PyNuSMV. More of them are available, such as functionalities to parse and evaluate a simple expression, to build new CTL specifications, or to perform operations on BDDs. The rest of this page gives more details on these functionalities; the :ref:`full documentation <pynusmv-api>` of the library is also given beside this tutorial.
+
+
+Defining and loading a model
+============================
+
+
+Manipulating the BDD-encoded finite-state machine
+=================================================
+
+
+Manipulating BDDs
+=================
+
+
+Defining properties
+===================
+
+
+Verifying properties
+====================
+
+
+
