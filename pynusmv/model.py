@@ -25,6 +25,7 @@ __all__ = [
     "Self",
     "Dot",
     "ArrayAccess",
+    "NumericalConst",
     "Trueexp",
     "Falseexp",
     "NumberWord",
@@ -583,6 +584,32 @@ class ArrayAccess(ComplexIdentifier):
 class Constant(Expression):
 
     """A generic constant."""
+
+
+class NumericalConst(Constant):
+
+    """A numerical constant."""
+
+    def __init__(self, value, *args, **kwargs):
+        super(NumericalConst, self).__init__(*args, **kwargs)
+        self.value = str(value)
+
+    def __str__(self):
+        string = self.value
+        return super(NumericalConst, self).__str__(string=string)
+
+    def _equals(self, other):
+        """Return whether `self` is equals to `other`."""
+        if isinstance(self, type(other)):
+            return self.value == other.value
+        else:
+            return False
+
+    def __hash__(self):
+        return 17 + 23 * hash("NumericalConst") + 23 ** 2 * hash(self.value)
+
+    def __deepcopy__(self, memo):
+        return NumericalConst(deepcopy(self.value, memo))
 
 
 class BooleanConst(Constant):

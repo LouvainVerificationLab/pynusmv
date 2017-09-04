@@ -55,7 +55,7 @@ from .exception import NuSMVParsingError, _Error
 
 from .utils import update
 from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
-                    NumberWord, RangeConst,
+                    NumericalConst, NumberWord, RangeConst,
                     Conversion, WordFunction, Count, Next, Smallinit, Case,
                     Subscript, BitSelection, Set, Not, Concat,
                     Minus, Mult, Div, Mod, Add, Sub, LShift, RShift, Union, In,
@@ -285,7 +285,7 @@ _variable_identifier = complex_identifier
 
 # Integer numbers
 _integer_number = Combine(Optional("-") + PWord(nums))
-_integer_number.setParseAction(lambda s, l, t: int(t[0]))
+_integer_number.setParseAction(lambda s, l, t: NumericalConst(int(t[0])))
 
 # Constants
 _boolean_constant = oneOf("TRUE FALSE")
