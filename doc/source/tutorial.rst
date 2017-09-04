@@ -132,7 +132,11 @@ This prints the following ::
             c1: counter(run = rc1, start, stop);
             c2: counter(run = rc2, start, stop);
 
-The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write `c1.c` for the `c` variable of the `c1` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with `c + 1` above. Also, all sections of an SMV module can be defined through the members of a :class:`Module <pynusmv.model.Module>` sub-class (see its documentation for more details).
+Note that SMV state and input variables can be declared as members of the `Module` sub-class defining the module by instantiating :class:`Var <pynusmv.model.Var>` and :class:`IVar <pynusmv.model.IVar>` classes. The argument to the constructor is the type of the variable, and can be either a primitive one (:class:`Range <pynusmv.model.Range>` or :class:`Boolean <pynusmv.model.Boolean>`), or instances of another module. All these instantiated objects can then be used as identifiers everywhere in the module definition.
+
+The different sections of an SMV module are declared as members with special names such as `INIT`, `TRANS`, or `ASSIGN`. Some must be iterables (such as `INIT` and `TRANS`), others must be mappings (such as `ASSIGN`).
+
+The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write `c1.c` for the `c` variable of the `c1` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with `c + 1` above.
 
 The defined modules can then be loaded in PyNuSMV in a similar way to SMV files::
 
