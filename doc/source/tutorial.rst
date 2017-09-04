@@ -28,6 +28,17 @@ The following Python session shows the basics of PyNuSMV. After importing pynusm
 >>> pynusmv.init.deinit_nusmv()
 
 
+Another way to initialize and release NuSMV resources is to use the result of the :func:`init_nusmv <pynusmv.init.init_nusmv>` function as a context with the `with` statement. The following code is equivalent to the one above:
+
+
+>>> import pynusmv
+>>> with pynusmv.init.init_nusmv():
+...     pynusmv.glob.load_from_file("counters.smv")
+...     pynusmv.glob.compute_model()
+
+All NuSMV resources are automatically released when the context is exited.
+
+
 The next Python session shows functionalities of FSMs, access to specifications of the model, calls to CTL model checking and manipulation of BDDs. First, NuSMV is initialized and the model is read. Then the model encoded with BDDs is retrieved from the main propositions database. The first (and only) proposition is then retrieved from the same database, and the specification of this proposition is isolated.
 
 From the BDD-encoded FSM ``fsm`` and the specification ``spec``, we call the :func:`eval_ctl_spec <pynusmv.mc.eval_ctl_spec>` function to get all the states of ``fsm`` satisfying ``spec``. Conjuncted with the set of reachables states of the model, we get ``bdd``, a BDD representing all the reachable states of ``fsm`` satisfying ``spec``. Finally, from this BDD we extract all the single states and display them, that is, we display, for each of them, the value of each state variable of the model.
