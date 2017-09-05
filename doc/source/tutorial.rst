@@ -211,6 +211,18 @@ Finally, the :mod:`dd <pynusmv.dd>` module contains some function to enable or d
 Defining properties
 ===================
 
+A NuSMV property ``prop`` is a structure containing useful information about a given specification: its type ``prop.type`` (LTL or CTL specification, etc.), its name ``prop.name``, its actual temoral-logic formula ``prop.expr``, its status ``prop.status`` (unchecked, true, false), etc. These properties are represented in PyNuSMV with :class:`Prop <pynusmv.prop.Prop>` instances. They come from a property database (:class:`PropDb <pynusmv.prop.PropDb>`) built and populated by NuSMV. The property database associated to the model built by NuSMV can be obtained through the :mod:`glob <pynusmv.glob>` module::
+
+    prop_db = pynusmv.glob.prop_database()
+
+once the model has been built with :func:`compute_model <pynusmv.glob.compute_model()>`. The property database contains all properties defined beside the loaded model, such as the specification ``AF c1.c = stop - 1`` defined in the ``counters.smv`` model at the beginning of this tutorial. It acts as an iterable.
+
+Property expressions ``spec`` are instances of the :class:`Spec <pynusmv.prop.Spec>` class. They reflect NuSMV internal structures, so they have a type ``spec.type``, a left child ``spec.car`` and a right child ``spec.cdr`` (both can be ``None``, depending on the type of the expression). New specifications can be defined thanks to :mod:`prop <pynusmv.prop>` module functions such as atomic propositions with the :func:`atom <pynusmv.prop.atom>` function, Boolean operators (``&``, ``|``, etc.), CTL operators (:func:`ag <pynusmv.prop.ag>`, :func:`ef <pynusmv.prop.ef>`, etc.), and LTL ones (:func:`x <pynusmv.prop.x>`, :func:`u <pynusmv.prop.u>`, etc.) For instance, the specification ``AF c1.c = stop - 1`` can be obtained with ::
+
+    from pynusmv import prop
+    spec = prop.af(prop.atom("c1.c = stop - 1"))
+
+
 
 Verifying properties
 ====================
