@@ -223,9 +223,16 @@ Property expressions ``spec`` are instances of the :class:`Spec <pynusmv.prop.Sp
     spec = prop.af(prop.atom("c1.c = stop - 1"))
 
 
-
 Verifying properties
 ====================
 
+Once a model is loaded into PyNuSMV and a specification is defined, the latter can be checked on the former. The :mod:`mc <pynusmv.mc>` module provides all functionalities to perform this verification. It contains high-level functions as :func:`check_ltl_spec <pynusmv.mc.check_ltl_spec>` and :func:`check_ctl_spec <pynusmv.mc.check_ctl_spec>` for directly checking formulas. For instance, the specification above can be checked with ::
+
+    from pynusmv.mc import check_ctl_spec
+    print(check_ctl_spec(fsm, spec))
 
 
+It also gives access to lower-level functions to evaluate the BDD representing the states satisfying some CTL formula (:func:`eval_ctl_spec <pynusmv.mc.eval_ctl_spec>`), or to evaluate particular operators (:func:`mc.eg <pynusmv.mc.eg>`, etc.) It can also explain why a given specification is not satisfied by a given model::
+
+    from pynusmv.mc import explain, eval_ctl_spec
+    explanation = explain(fsm, fsm.init & ~eval_ctl_spec(fsm, spec)), spec)
