@@ -73,8 +73,8 @@ AF c1.c = stop - 1
 This (very) short tutorial showed the main functionalities of PyNuSMV. More of them are available, such as functionalities to parse and evaluate a simple expression, to build new CTL specifications, or to perform operations on BDDs. The rest of this page gives more details on these functionalities; the :ref:`full documentation <pynusmv-api>` of the library is also given beside this tutorial.
 
 
-Defining and loading a model
-============================
+Defining a model
+================
 
 As explained above, a model can be defined in SMV format and loaded into PyNuSMV through a file. PyNuSMV also provides a set of classes in the :mod:`model <pynusmv.model>` module to define an SMV model directly in Python. For instance, the two-counter model above can befined with ::
 
@@ -138,11 +138,15 @@ Note that SMV state and input variables can be declared as members of the ``Modu
 
 The different sections of an SMV module are declared as members with special names such as ``INIT``, ``TRANS``, or ``ASSIGN``. Some must be iterables (such as ``INIT`` and ``TRANS``), others must be mappings (such as ``ASSIGN``).
 
-The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write ``c1.c`` for the ``c`` variable of the ``c1`` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with ``c + 1`` above.
+The :mod:`model <pynusmv.model>` module supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write ``c1.c`` for the ``c`` variable of the ``c1`` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with ``c + 1`` above.
 
 Another way to produce a Python-defined NuSMV model is to parse an existing SMV model (as a string or as a file) with the :mod:`parser <pynusmv.parser>` module functionalities. It contains the :func:`parseAllString <pynusmv.parser.parseAllString>` function to parse a string according to a pre-defined parser. Several parsers are provided to parse identifiers (:data:`parser.identifier <pynusmv.parser.identifier>`), expressions (:data:`parser.next_expression <pynusmv.parser.next_expression>`), modules (:data:`parser.module <pynusmv.parser.module>`), etc.
 
-The defined modules can then be loaded in PyNuSMV in a similar way to SMV files::
+
+Loading a model
+===============
+
+The defined modules can be loaded in PyNuSMV in a similar way to SMV files::
 
     import pynusmv
     pynusmv.init.init_nusmv()
