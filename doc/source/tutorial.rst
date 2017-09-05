@@ -76,9 +76,10 @@ This (very) short tutorial showed the main functionalities of PyNuSMV. More of t
 Defining and loading a model
 ============================
 
-As explained above, a model can be defined in SMV format and loaded into PyNuSMV through a file. PyNuSMV also provides a set of classes in the :mod:`model module <pynusmv.model>` to define an SMV model directly in Python. For instance, the two-counter model above can befined with ::
+As explained above, a model can be defined in SMV format and loaded into PyNuSMV through a file. PyNuSMV also provides a set of classes in the :mod:`model <pynusmv.model>` module to define an SMV model directly in Python. For instance, the two-counter model above can befined with ::
 
     from pynusmv.model import *
+
     class counter(Module):
         COMMENT = """
             A modulo counter
@@ -92,12 +93,14 @@ As explained above, a model can be defined in SMV format and loaded into PyNuSMV
         TRANS = [c.next() == (Case(((run, Case((((c + 1) == stop, start),
                                                 (Trueexp(), c + 1)))),
                                     (~run, c))))]
+
     class main(Module):
         start = Def(0)
         stop = Def(3)
         run = IVar(Scalar(("rc1", "rc2")))
         c1 = Var(counter(run == "rc1", start, stop))
         c2 = Var(counter(run == "rc2", start, stop))
+
     print(counter)
     print(main)
 
@@ -131,16 +134,18 @@ This prints the following ::
             c1: counter(run = rc1, start, stop);
             c2: counter(run = rc2, start, stop);
 
-Note that SMV state and input variables can be declared as members of the `Module` sub-class defining the module by instantiating :class:`Var <pynusmv.model.Var>` and :class:`IVar <pynusmv.model.IVar>` classes. The argument to the constructor is the type of the variable, and can be either a primitive one (:class:`Range <pynusmv.model.Range>` or :class:`Boolean <pynusmv.model.Boolean>`), or instances of another module. All these instantiated objects can then be used as identifiers everywhere in the module definition.
+Note that SMV state and input variables can be declared as members of the ``Module`` sub-class defining the module by instantiating :class:`Var <pynusmv.model.Var>` and :class:`IVar <pynusmv.model.IVar>` classes. The argument to the constructor is the type of the variable, and can be either a primitive one (:class:`Range <pynusmv.model.Range>`, :class:`Boolean <pynusmv.model.Boolean>`, etc.), or instances of another module. All these instantiated objects can then be used as identifiers everywhere in the module definition.
 
-The different sections of an SMV module are declared as members with special names such as `INIT`, `TRANS`, or `ASSIGN`. Some must be iterables (such as `INIT` and `TRANS`), others must be mappings (such as `ASSIGN`).
+The different sections of an SMV module are declared as members with special names such as ``INIT``, ``TRANS``, or ``ASSIGN``. Some must be iterables (such as ``INIT`` and ``TRANS``), others must be mappings (such as ``ASSIGN``).
 
-The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write `c1.c` for the `c` variable of the `c1` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with `c + 1` above.
+The :mod:`model module <pynusmv.model>` supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write ``c1.c`` for the ``c`` variable of the ``c1`` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with ``c + 1`` above.
 
 Another way to produce a Python-defined NuSMV model is to parse an existing SMV model (as a string or as a file) with the :mod:`parser <pynusmv.parser>` module functionalities. It contains the :func:`parseAllString <pynusmv.parser.parseAllString>` function to parse a string according to a pre-defined parser. Several parsers are provided to parse identifiers (:data:`parser.identifier <pynusmv.parser.identifier>`), expressions (:data:`parser.next_expression <pynusmv.parser.next_expression>`), modules (:data:`parser.module <pynusmv.parser.module>`), etc.
 
 The defined modules can then be loaded in PyNuSMV in a similar way to SMV files::
 
+    import pynusmv
+    pynusmv.init.init_nusmv()
     pynusmv.glob.load(counter, main)
 
 This :func:`load <pynusmv.glob.load>` function accepts either sub-classes of :class:`Module <pynusmv.model.Module>`, a single path to an SMV file, or a string containing the definition of the model. Once the model is loaded, the corresponding internal data structures such as the BDD-encoded finite-state machine can be built with ::
