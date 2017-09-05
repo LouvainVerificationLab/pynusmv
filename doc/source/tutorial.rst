@@ -157,12 +157,55 @@ This :func:`compute_model <pynusmv.glob.compute_model>` function accepts the pat
     fsm = pynusmv.glob.prop_database().master.bddFsm
 
 
-Manipulating the BDD-encoded finite-state machine
-=================================================
-
-
 Manipulating BDDs
 =================
+
+The BDD-encoded finite-state machine representing the SMV model is an instance of the :class:`BddFsm <pynusmv.fsm.BddFsm>` class. It gives access to the parts of this model: the BDD representing the initial states (``fsm.init``), its reachable states (``fsm.reachable_states``), etc.
+It also allows us to pick one particular state from a given BDD-encoded set of states with the :meth:`pick_one_state <pynusmv.fsm.BddFsm.pick_one_state>` method, or to count the input values contained in one BDD::
+
+    print(fsm.count_states(fsm.init))
+    for state in fsm.pick_all_states(fsm.init):
+        print(state.get_str_values())
+
+prints ::
+
+    1
+    {'stop': '3', 'c1.c': '0', 'start': '0', 'c2.c': '0'}
+
+The :class:`BddFsm <pynusmv.fsm.BddFsm>` class also gives access to the transition relation (``fsm.trans``) and the :meth:`pre <pynusmv.fsm.BddFsm.pre>` and :meth:`post <pynusmv.fsm.BddFsm.post>` methods returning the pre- and post-images of given states::
+
+    for state in fsm.pick_all_states(fsm.post(fsm.init)):
+        print(state.get_str_values())
+
+prints ::
+
+    {'stop': '3', 'c1.c': '0', 'start': '0', 'c2.c': '1'}
+    {'stop': '3', 'c1.c': '1', 'start': '0', 'c2.c': '0'}
+
+The transition relation is an instance of the :class:`BddTrans <pynusmv.fsm.BddTrans>` class and can be modified. Several transition relations can also co-exist, separately from the FSM itself.
+
+The BDD-encoded FSM can also return the BDD encoder :class:`BddEnc <pynusmv.fsm.BddEnc>` (through ``fsm.bddEnc``) that keeps track of how the model variables are encoded into BDD variables.
+This encoder gives access to masks (:meth:`BddEnc.inputsMask <pynusmv.fsm.BddEnc.inputsMask>` for instance) representing all valid values for input variables. It also gives access to cubes (:meth:`BddEnc.statesCube <pynusmv.fsm.BddEnc.statesCube>` for instance) and can produce cubes for particular state or input variables (via :meth:`BddEnc.cube_for_inputs_vars <pynusmv.fsm.BddEnc.cube_for_inputs_vars>` for instance). Finally, it gives access to the set of declared variables and the current order of BDD variables used for building BDDs::
+
+    enc = fsm.bddEnc
+    print(enc.stateVars)
+    print(enc.inputsVars)
+
+prints ::
+
+    frozenset({'c1.c', 'c2.c'})
+    frozenset({'run'})
+
+The BDD encoder also gives access to the symbols table that is used to store the symbols of the model (``bddEnc.symbTable``). This :class:`SymbTable <pynusmv.fsm.SymbTable>` can be used to declare new variables and to encode them into BDD variables.
+
+Most of the parts of the FSM, such as the initial and reachable states, or the masks and cubes returned by the BDD encoder, are encoded into BDDs. These BDDs are instances of the :class:`BDD <pynusmv.dd.BDD>` class, that provides several operations on BDDs. For instance, ::
+
+    fsm.reachable_states & fsm.fair_states
+
+computes the conjunct of both BDDs, getting the fair reachable states of the model. Most common BDD operations are provided as builtin operators, such as disjunction (``|``), conjunction (``&``), negation (``~``). These BDDs also support comparison, and the class also provides a way to build the ``True`` and ``False`` canonical BDDs with ``BDD.true()`` and ``BDD.false()``, respectively.
+Finally, the :mod:`dd <pynusmv.dd>` module contains some function to enable or disable BDD variable reordering::
+
+    pynusmv.dd.enable_dynamic_reordering()
 
 
 Defining properties
