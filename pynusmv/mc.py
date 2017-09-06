@@ -3,7 +3,8 @@ The :mod:`pynusmv.mc` module provides some functions of NuSMV dealing with
 model checking, like CTL model checking.
 """
 
-__all__ = ['check_ctl_spec', 'eval_simple_expression', 'eval_ctl_spec',
+__all__ = ['check_ltl_spec', 'check_explain_ltl_spec',
+           'check_ctl_spec', 'eval_simple_expression', 'eval_ctl_spec',
            'ef', 'eg', 'ex', 'eu', 'au',
            'explain', 'explainEX', 'explainEU', 'explainEG']
 
