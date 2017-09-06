@@ -3,10 +3,13 @@
 Tutorial
 ********
 
-This page presents a short overview of PyNuSMV capabilities with a small example. It then goes deeper into these capabilities and explains how to use them.
+This page presents a short overview of PyNuSMV capabilities with a small example in the :ref:`getting_started` section. It then goes deeper into these capabilities and explains how to use them in the next sections.
 
 .. contents:: Contents
     :local:
+
+
+.. _getting_started:
 
 Getting started
 ===============
@@ -18,7 +21,7 @@ Let's consider the following SMV model. This model is composed of two counters, 
 
 
 Considering that the model is saved in the ``counters.smv`` file in the current directory, we can now run Python. 
-The following Python session shows the basics of PyNuSMV. After importing pynusmv, the function :func:`init_nusmv <pynusmv.init.init_nusmv>` **must** be called before calling any other PyNuSMV functionality. The function :func:`deinit_nusmv <pynusmv.init.deinit_nusmv>` must also be called after using PyNuSMV to release all resources hold by NuSMV. After initializing PyNuSMV, the model is read with the function :func:`load_from_file <pynusmv.glob.load_from_file>` and the model is computed, that is, flattened and encoded into BDDs, with the function :func:`compute_model <pynusmv.glob.compute_model>`.
+The following Python session shows the basics of PyNuSMV. After importing :mod:`pynusmv`, the function :func:`init_nusmv <pynusmv.init.init_nusmv>` **must** be called before calling any other PyNuSMV functionality. The function :func:`deinit_nusmv <pynusmv.init.deinit_nusmv>` must also be called after using PyNuSMV to release all resources hold by NuSMV. After initializing PyNuSMV, the model is read with the function :func:`load_from_file <pynusmv.glob.load_from_file>` and the model is computed, that is, flattened and encoded into BDDs, with the function :func:`compute_model <pynusmv.glob.compute_model>`.
 
 
 >>> import pynusmv
@@ -28,7 +31,7 @@ The following Python session shows the basics of PyNuSMV. After importing pynusm
 >>> pynusmv.init.deinit_nusmv()
 
 
-Another way to initialize and release NuSMV resources is to use the result of the :func:`init_nusmv <pynusmv.init.init_nusmv>` function as a context with the `with` statement. The following code is equivalent to the one above:
+Another way to initialize and release NuSMV resources is to use the result of the :func:`init_nusmv <pynusmv.init.init_nusmv>` function as a context manager with the ``with`` statement. The following code is equivalent to the one above:
 
 
 >>> import pynusmv
@@ -70,7 +73,7 @@ AF c1.c = stop - 1
 >>> pynusmv.init.deinit_nusmv()
 
 
-This (very) short tutorial showed the main functionalities of PyNuSMV. More of them are available, such as functionalities to parse and evaluate a simple expression, to build new CTL specifications, or to perform operations on BDDs. The rest of this page gives more details on these functionalities; the :ref:`full documentation <pynusmv-api>` of the library is also given beside this tutorial.
+This short tutorial showed the main functionalities of PyNuSMV. More of them are available, such as functionalities to parse and evaluate a simple expression, to build new CTL specifications, or to perform operations on BDDs. The rest of this page gives more details on these functionalities. The :ref:`full documentation <pynusmv-api>` of the library is also given beside this tutorial.
 
 
 Defining a model
@@ -134,29 +137,27 @@ This prints the following ::
             c1: counter(run = rc1, start, stop);
             c2: counter(run = rc2, start, stop);
 
-Note that SMV state and input variables can be declared as members of the ``Module`` sub-class defining the module by instantiating :class:`Var <pynusmv.model.Var>` and :class:`IVar <pynusmv.model.IVar>` classes. The argument to the constructor is the type of the variable, and can be either a primitive one (:class:`Range <pynusmv.model.Range>`, :class:`Boolean <pynusmv.model.Boolean>`, etc.), or instances of another module. All these instantiated objects can then be used as identifiers everywhere in the module definition.
+SMV state and input variables can be declared as members of the ``Module`` sub-class defining the module by instantiating :class:`Var <pynusmv.model.Var>` and :class:`IVar <pynusmv.model.IVar>` classes. The argument to the constructor is the type of the variable, and can be either a primitive one (:class:`Range <pynusmv.model.Range>`, :class:`Boolean <pynusmv.model.Boolean>`, etc.), or instances of another module. All these instantiated objects can then be used as identifiers everywhere in the module definition.
+The different sections of an SMV module are declared as members with the corresponding names such as ``INIT``, ``TRANS``, or ``ASSIGN``. Some must be iterables (such as ``INIT`` and ``TRANS``), others must be mappings (such as ``ASSIGN``).
+The :mod:`model <pynusmv.model>` module supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write ``c1.c`` for the ``c`` variable of the ``c1`` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with ``c + 1``.
 
-The different sections of an SMV module are declared as members with special names such as ``INIT``, ``TRANS``, or ``ASSIGN``. Some must be iterables (such as ``INIT`` and ``TRANS``), others must be mappings (such as ``ASSIGN``).
-
-The :mod:`model <pynusmv.model>` module supports a large variety of classes to define all concepts in SMV modules. For instance, in the code above, we can write ``c1.c`` for the ``c`` variable of the ``c1`` instance. Standard arithmetic operations such as additions are supported by SMV expressions, as shown with ``c + 1`` above.
-
-Another way to produce a Python-defined NuSMV model is to parse an existing SMV model (as a string or as a file) with the :mod:`parser <pynusmv.parser>` module functionalities. It contains the :func:`parseAllString <pynusmv.parser.parseAllString>` function to parse a string according to a pre-defined parser. Several parsers are provided to parse identifiers (:data:`parser.identifier <pynusmv.parser.identifier>`), expressions (:data:`parser.next_expression <pynusmv.parser.next_expression>`), modules (:data:`parser.module <pynusmv.parser.module>`), etc.
+Another way to produce a Python-defined NuSMV model is to parse an existing SMV model (as a string) with the :mod:`parser <pynusmv.parser>` module functionalities. It contains the :func:`parseAllString <pynusmv.parser.parseAllString>` function to parse a string according to a pre-defined parser. Several parsers are provided to parse identifiers (:data:`parser.identifier <pynusmv.parser.identifier>`), expressions (:data:`parser.next_expression <pynusmv.parser.next_expression>`), modules (:data:`parser.module <pynusmv.parser.module>`), etc.
 
 
 Loading a model
 ===============
 
-The defined modules can be loaded in PyNuSMV in a similar way to SMV files::
+The Python-defined modules can be loaded in PyNuSMV in a similar way to SMV files::
 
     import pynusmv
     pynusmv.init.init_nusmv()
     pynusmv.glob.load(counter, main)
 
-This :func:`load <pynusmv.glob.load>` function accepts either sub-classes of :class:`Module <pynusmv.model.Module>`, a single path to an SMV file, or a string containing the definition of the model. Once the model is loaded, the corresponding internal data structures such as the BDD-encoded finite-state machine can be built with ::
+This :func:`load <pynusmv.glob.load>` function accepts either sub-classes of :class:`Module <pynusmv.model.Module>`, a single path to an SMV file, or a string containing the whole definition of the model. Once the model is loaded, the corresponding internal data structures such as the BDD-encoded finite-state machine are built with ::
 
     pynusmv.glob.compute_model()
 
-This :func:`compute_model <pynusmv.glob.compute_model>` function accepts the path to a file containing the BDD variable order to use for building the BDD FSM, and whether or not single enumerations should be kept as they are, or converted into defines. Once the model is built, the BDD-encoded FSM can be accessed via ::
+This :func:`compute_model <pynusmv.glob.compute_model>` function accepts the path to a file containing the BDD variable order to use for building the BDD FSM, and whether or not single enumerations should be kept as they are, or converted into defines. Once the model is built, the BDD-encoded FSM is accessed via ::
 
     fsm = pynusmv.glob.prop_database().master.bddFsm
 
@@ -164,7 +165,7 @@ This :func:`compute_model <pynusmv.glob.compute_model>` function accepts the pat
 Manipulating BDDs
 =================
 
-The BDD-encoded finite-state machine representing the SMV model is an instance of the :class:`BddFsm <pynusmv.fsm.BddFsm>` class. It gives access to the parts of this model: the BDD representing the initial states (``fsm.init``), its reachable states (``fsm.reachable_states``), etc.
+The BDD-encoded finite-state machine representing the SMV model is an instance of the :class:`BddFsm <pynusmv.fsm.BddFsm>` class. It gives access to the parts of the model: the BDD representing the initial states (``fsm.init``), its reachable states (``fsm.reachable_states``), etc.
 It also allows us to pick one particular state from a given BDD-encoded set of states with the :meth:`pick_one_state <pynusmv.fsm.BddFsm.pick_one_state>` method, or to count the input values contained in one BDD::
 
     print(fsm.count_states(fsm.init))
@@ -186,10 +187,22 @@ prints ::
     {'stop': '3', 'c1.c': '0', 'start': '0', 'c2.c': '1'}
     {'stop': '3', 'c1.c': '1', 'start': '0', 'c2.c': '0'}
 
-The transition relation is an instance of the :class:`BddTrans <pynusmv.fsm.BddTrans>` class and can be modified. Several transition relations can also co-exist, separately from the FSM itself.
+The transition relation is an instance of the :class:`BddTrans <pynusmv.fsm.BddTrans>` class and can be replaced. Several transition relations can also co-exist, separately from the FSM itself. The :class:`BddTrans <pynusmv.fsm.BddTrans>` class provides a way to define a new separated transition relation from a TRANS expression::
+
+    from pynusmv.fsm import BddTrans
+    trans = BddTrans.from_string(fsm.bddEnc.symbTable,"next(c1.c) = 0")
+    for state in fsm.pick_all_states(trans.post(fsm.init)):
+        print(state.get_str_values())
+
+prints ::
+
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '3'}
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '2'}
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '1'}
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '0'}
 
 The BDD-encoded FSM can also return the BDD encoder :class:`BddEnc <pynusmv.fsm.BddEnc>` (through ``fsm.bddEnc``) that keeps track of how the model variables are encoded into BDD variables.
-This encoder gives access to masks (:meth:`BddEnc.inputsMask <pynusmv.fsm.BddEnc.inputsMask>` for instance) representing all valid values for input variables. It also gives access to cubes (:meth:`BddEnc.statesCube <pynusmv.fsm.BddEnc.statesCube>` for instance) and can produce cubes for particular state or input variables (via :meth:`BddEnc.cube_for_inputs_vars <pynusmv.fsm.BddEnc.cube_for_inputs_vars>` for instance). Finally, it gives access to the set of declared variables and the current order of BDD variables used for building BDDs::
+This encoder gives access to masks, such as :meth:`BddEnc.inputsMask <pynusmv.fsm.BddEnc.inputsMask>`, that represents all valid values for input variables, for instance. It also gives access to cubes (:meth:`BddEnc.statesCube <pynusmv.fsm.BddEnc.statesCube>`, for instance) and can produce cubes for particular state or input variables via :meth:`BddEnc.cube_for_inputs_vars <pynusmv.fsm.BddEnc.cube_for_inputs_vars>`. Finally, it gives access to the current order of BDD variables used for building BDDs and the set of declared variables::
 
     enc = fsm.bddEnc
     print(enc.stateVars)
@@ -206,7 +219,7 @@ Most of the parts of the FSM, such as the initial and reachable states, or the m
 
     fsm.reachable_states & fsm.fair_states
 
-computes the conjunct of both BDDs, getting the fair reachable states of the model. Most common BDD operations are provided as builtin operators, such as disjunction (``|``), conjunction (``&``), negation (``~``). These BDDs also support comparison, and the class also provides a way to build the ``True`` and ``False`` canonical BDDs with ``BDD.true()`` and ``BDD.false()``, respectively.
+computes the conjunct of both BDDs, getting the fair reachable states of the model. Most common BDD operations are provided as builtin operators, such as disjunction (``|``), conjunction (``&``), and negation (``~``). These BDDs also support comparison, and the class provides a way to build the ``True`` and ``False`` canonical BDDs with ``BDD.true()`` and ``BDD.false()``, respectively.
 Finally, the :mod:`dd <pynusmv.dd>` module contains some function to enable or disable BDD variable reordering::
 
     pynusmv.dd.enable_dynamic_reordering()
@@ -219,9 +232,9 @@ A NuSMV property ``prop`` is a structure containing useful information about a g
 
     prop_db = pynusmv.glob.prop_database()
 
-once the model has been built with :func:`compute_model <pynusmv.glob.compute_model()>`. The property database contains all properties defined beside the loaded model, such as the specification ``AF c1.c = stop - 1`` defined in the ``counters.smv`` model at the beginning of this tutorial. It acts as an iterable.
+once the model has been built with :func:`compute_model <pynusmv.glob.compute_model()>`. The property database contains all properties defined beside the loaded model, such as the specification ``AF c1.c = stop - 1`` defined in the ``counters.smv`` model at the beginning of this tutorial. It acts as a sequence of properties and particular properties can be accessed through their indices.
 
-Property expressions ``spec`` are instances of the :class:`Spec <pynusmv.prop.Spec>` class. They reflect NuSMV internal structures, so they have a type ``spec.type``, a left child ``spec.car`` and a right child ``spec.cdr`` (both can be ``None``, depending on the type of the expression). New specifications can be defined thanks to :mod:`prop <pynusmv.prop>` module functions such as atomic propositions with the :func:`atom <pynusmv.prop.atom>` function, Boolean operators (``&``, ``|``, etc.), CTL operators (:func:`ag <pynusmv.prop.ag>`, :func:`ef <pynusmv.prop.ef>`, etc.), and LTL ones (:func:`x <pynusmv.prop.x>`, :func:`u <pynusmv.prop.u>`, etc.) For instance, the specification ``AF c1.c = stop - 1`` can be obtained with ::
+Property expressions ``spec`` are instances of the :class:`Spec <pynusmv.prop.Spec>` class. They reflect NuSMV internal structures, so they have a type ``spec.type``, a left child ``spec.car`` and a right child ``spec.cdr`` (both can be ``None``, depending on the type of the expression). New specifications can be defined thanks to :mod:`prop <pynusmv.prop>` module functions such as atomic propositions with the :func:`atom <pynusmv.prop.atom>` function, Boolean operators (``&``, ``|``, etc.), CTL operators (:func:`ag <pynusmv.prop.ag>`, :func:`ef <pynusmv.prop.ef>`, etc.), and LTL ones (:func:`x <pynusmv.prop.x>`, :func:`u <pynusmv.prop.u>`, etc.) For instance, the specification ``AF c1.c = stop - 1`` can be built with ::
 
     from pynusmv import prop
     spec = prop.af(prop.atom("c1.c = stop - 1"))
@@ -233,10 +246,28 @@ Verifying properties
 Once a model is loaded into PyNuSMV and a specification is defined, the latter can be checked on the former. The :mod:`mc <pynusmv.mc>` module provides all functionalities to perform this verification. It contains high-level functions as :func:`check_ltl_spec <pynusmv.mc.check_ltl_spec>` and :func:`check_ctl_spec <pynusmv.mc.check_ctl_spec>` for directly checking formulas. For instance, the specification above can be checked with ::
 
     from pynusmv.mc import check_ctl_spec
-    print(check_ctl_spec(fsm, spec))
+    print(check_ctl_spec(fsm, spec)) # Prints False
 
 
 It also gives access to lower-level functions to evaluate the BDD representing the states satisfying some CTL formula (:func:`eval_ctl_spec <pynusmv.mc.eval_ctl_spec>`), or to evaluate particular operators (:func:`mc.eg <pynusmv.mc.eg>`, etc.) It can also explain why a given specification is not satisfied by a given model::
 
     from pynusmv.mc import explain, eval_ctl_spec
-    explanation = explain(fsm, fsm.init & ~eval_ctl_spec(fsm, spec)), spec)
+    explanation = explain(fsm, fsm.init & ~eval_ctl_spec(fsm, spec), spec)
+
+The produced explanation is a sequence of states and inputs values representing a looping path in the model that shows why the formula is violated::
+
+    for state, inputs in zip(explanation[::2], explanation[1::2]):
+        if state == explanation[-1]:
+            print("-- Loop starts here")
+        print(state.get_str_values())
+        print(inputs.get_str_values())
+
+prints ::
+
+    -- Loop starts here
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '0'}
+    {'run': 'rc2'}
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '1'}
+    {'run': 'rc2'}
+    {'start': '0', 'c1.c': '0', 'stop': '3', 'c2.c': '2'}
+    {'run': 'rc2'}
