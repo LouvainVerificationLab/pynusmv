@@ -2424,9 +2424,11 @@ class ModuleMetaClass(type):
 
     @classmethod
     def __prepare__(mcs, name, bases, **keywords):
+        # pylint: disable=unused-argument
         return OrderedDict()
 
     def __new__(mcs, name, bases, namespace, **keywords):
+        # pylint: disable=unused-argument
         newnamespace = OrderedDict()
         for member in namespace:
             # Update sections of namespace
@@ -2546,7 +2548,6 @@ class ModuleMetaClass(type):
 
         from .parser import (parseAllString,
                              _var_section_body,
-                             #identifier,
                              complex_identifier, type_identifier,
                              _ivar_section_body, _simple_type_specifier,
                              _frozenvar_section_body, _define_section_body,

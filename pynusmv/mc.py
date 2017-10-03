@@ -49,10 +49,10 @@ def check_ltl_spec(spec):
             nsopt.OptsHandler_get_instance(),
             "oreg_justice_emptiness_bdd_algorithm")
     if (nscompile.
-        FlatHierarchy_get_compassion(glob.
-                                     global_compile_flathierarchy()) is None
-        and
-        o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+            FlatHierarchy_get_compassion(glob.
+                                         global_compile_flathierarchy())
+            is None and
+            o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
         
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
@@ -114,10 +114,10 @@ def check_explain_ltl_spec(spec):
             nsopt.OptsHandler_get_instance(),
             "oreg_justice_emptiness_bdd_algorithm")
     if (nscompile.
-        FlatHierarchy_get_compassion(glob.
-                                     global_compile_flathierarchy()) is None
-        and
-        o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+            FlatHierarchy_get_compassion(glob.
+                                         global_compile_flathierarchy())
+            is None and
+            o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
         
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
