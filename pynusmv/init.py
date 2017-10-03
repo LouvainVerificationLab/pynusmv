@@ -146,7 +146,7 @@ class _WeakWrapper():
         self.collector = collector
         self.object = weakref.ref(obj, self._unref)
 
-    def _unref(self, o):
+    def _unref(self, _):
         self.collector.discard(self)
 
     def _free(self):

@@ -735,7 +735,7 @@ class BddTrans(PointerWrapper):
                 if `strtrans` is wrongly typed under `context`
 
         """
-        type_checker = nssymb_table.SymbTable_get_type_checker(symb_table._ptr)
+        #type_checker =nssymb_table.SymbTable_get_type_checker(symb_table._ptr)
 
         if strcontext is not None:
             strtrans = "(" + strtrans + ")" + " IN " + strcontext

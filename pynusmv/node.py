@@ -1829,7 +1829,7 @@ class Declaration(Atom):
     def name(self, name):
         """Update the name of the declared identifier."""
         name_ptr = nsnode.string2node(nsutils.find_string(name))
-        ptr = nsnode.setcar(self._ptr, name_ptr)
+        nsnode.setcar(self._ptr, name_ptr)
         self._anonymous = False
 
 

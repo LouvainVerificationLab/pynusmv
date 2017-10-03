@@ -313,7 +313,7 @@ def eu(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    return BDD(nsmc.eu(fsm._ptr, s1._ptr, s1._ptr),
+    return BDD(nsmc.eu(fsm._ptr, s1._ptr, s2._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
 def au(fsm, s1, s2):
@@ -328,7 +328,7 @@ def au(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    return BDD(nsmc.au(fsm._ptr, s1._ptr, s1._ptr),
+    return BDD(nsmc.au(fsm._ptr, s1._ptr, s2._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
 def explain(fsm, state, spec, context=None):

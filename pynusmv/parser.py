@@ -51,7 +51,7 @@ __all__ = [
     'parseAllString']
 
 
-from .exception import NuSMVParsingError, _Error
+from .exception import NuSMVParsingError
 
 from .utils import update
 from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
@@ -513,7 +513,7 @@ _array_expression <<= ( Suppress("[") + Group(delimitedList(next_expression))
 _define = _array_expression | next_expression
 _define_declaration = (identifier + Suppress(":=") + _define + Suppress(";"))
 
-def _handle_define_body(s, l, t):
+def _handle_define_body(_, l, t):
     b = OrderedDict()
     for identifier, body in zip(t[::2], t[1::2]):
         if not isinstance(body, Expression):

@@ -122,7 +122,7 @@ class Element(object):
         """
         self.comments = comments if comments is not None else []
 
-    def __str__(self, string=""):
+    def _to_string(self, string=""):
         """
         Return the string representation of this element, augmented with
         comments and the given string.
@@ -489,7 +489,7 @@ class Identifier(Expression):
 
     def __str__(self):
         string = str(self.name)
-        return super(Identifier, self).__str__(string=string)
+        return super(Identifier, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -562,7 +562,7 @@ class ArrayAccess(ComplexIdentifier):
 
     def __str__(self):
         string = str(self.array) + "[" + str(self.index) + "]"
-        return super(ArrayAccess, self).__str__(string=string)
+        return super(ArrayAccess, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -596,7 +596,7 @@ class NumericalConst(Constant):
 
     def __str__(self):
         string = self.value
-        return super(NumericalConst, self).__str__(string=string)
+        return super(NumericalConst, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -622,7 +622,7 @@ class BooleanConst(Constant):
 
     def __str__(self):
         string = self.value
-        return super(BooleanConst, self).__str__(string=string)
+        return super(BooleanConst, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -670,7 +670,7 @@ class NumberWord(Constant):
 
     def __str__(self):
         string = str(self.value)
-        return super(NumberWord, self).__str__(string=string)
+        return super(NumberWord, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -697,7 +697,7 @@ class RangeConst(Constant):
 
     def __str__(self):
         string = str(self.start) + " .. " + str(self.stop)
-        return super(RangeConst, self).__str__(string=string)
+        return super(RangeConst, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -731,7 +731,7 @@ class Conversion(Function):
 
     def __str__(self):
         string = str(self.target_type) + "(" + str(self.value) + ")"
-        return super(Conversion, self).__str__(string=string)
+        return super(Conversion, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -767,7 +767,7 @@ class WordFunction(Function):
                   ", " +
                   str(self.size) +
                   ")")
-        return super(WordFunction, self).__str__(string=string)
+        return super(WordFunction, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -802,7 +802,7 @@ class Count(Function):
         string = ("count((" +
                   "), (".join(str(value) for value in self.values) +
                   "))")
-        return super(Count, self).__str__(string=string)
+        return super(Count, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -833,7 +833,7 @@ class Next(Expression):
 
     def __str__(self):
         string = "next(" + str(self.value) + ")"
-        return super(Next, self).__str__(string=string)
+        return super(Next, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -859,7 +859,7 @@ class Smallinit(Expression):
 
     def __str__(self):
         string = "init(" + str(self.value) + ")"
-        return super(Smallinit, self).__str__(string=string)
+        return super(Smallinit, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -899,7 +899,7 @@ class Case(Expression):
                 body.comments = comments
         string.append("esac")
         string = "\n".join(string)
-        return super(Case, self).__str__(string=string)
+        return super(Case, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -926,7 +926,7 @@ class Subscript(Expression):
 
     def __str__(self):
         string = str(self.array) + "[" + str(self.index) + "]"
-        return super(Subscript, self).__str__(string=string)
+        return super(Subscript, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -963,7 +963,7 @@ class BitSelection(Expression):
                  ":" +
                  str(self.stop) +
                  "]")
-        return super(BitSelection, self).__str__(string=string)
+        return super(BitSelection, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -998,7 +998,7 @@ class Set(Expression):
         string = ("{" +
                   ", ".join(str(element) for element in self.elements) +
                   "}")
-        return super(Set, self).__str__(string=string)
+        return super(Set, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1041,7 +1041,7 @@ class Not(Operator):
 
     def __str__(self):
         string = "! " + self._enclose(self.value)
-        return super(Not, self).__str__(string=string)
+        return super(Not, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1070,7 +1070,7 @@ class Concat(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " :: " + self._enclose(self.right)
-        return super(Concat, self).__str__(string=string)
+        return super(Concat, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1101,7 +1101,7 @@ class Minus(Operator):
 
     def __str__(self):
         string = "- " + self._enclose(self.value)
-        return super(Minus, self).__str__(string=string)
+        return super(Minus, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1130,7 +1130,7 @@ class Mult(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " * " + self._enclose(self.right)
-        return super(Mult, self).__str__(string=string)
+        return super(Mult, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1164,7 +1164,7 @@ class Div(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " / " + self._enclose(self.right)
-        return super(Div, self).__str__(string=string)
+        return super(Div, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1196,7 +1196,7 @@ class Mod(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " mod " + self._enclose(self.right)
-        return super(Mod, self).__str__(string=string)
+        return super(Mod, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1228,7 +1228,7 @@ class Add(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " + " + self._enclose(self.right)
-        return super(Add, self).__str__(string=string)
+        return super(Add, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1262,7 +1262,7 @@ class Sub(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " - " + self._enclose(self.right)
-        return super(Sub, self).__str__(string=string)
+        return super(Sub, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1294,7 +1294,7 @@ class LShift(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " << " + self._enclose(self.right)
-        return super(LShift, self).__str__(string=string)
+        return super(LShift, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1326,7 +1326,7 @@ class RShift(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " >> " + self._enclose(self.right)
-        return super(RShift, self).__str__(string=string)
+        return super(RShift, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1360,7 +1360,7 @@ class Union(Operator):
         string = (self._enclose(self.left) +
                   " union " +
                   self._enclose(self.right))
-        return super(Union, self).__str__(string=string)
+        return super(Union, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1394,7 +1394,7 @@ class In(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " in " + self._enclose(self.right)
-        return super(In, self).__str__(string=string)
+        return super(In, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1426,7 +1426,7 @@ class Equal(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " = " + self._enclose(self.right)
-        return super(Equal, self).__str__(string=string)
+        return super(Equal, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1470,7 +1470,7 @@ class NotEqual(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " != " + self._enclose(self.right)
-        return super(NotEqual, self).__str__(string=string)
+        return super(NotEqual, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1514,7 +1514,7 @@ class Lt(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " < " + self._enclose(self.right)
-        return super(Lt, self).__str__(string=string)
+        return super(Lt, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1546,7 +1546,7 @@ class Gt(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " > " + self._enclose(self.right)
-        return super(Gt, self).__str__(string=string)
+        return super(Gt, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1578,7 +1578,7 @@ class Le(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " <= " + self._enclose(self.right)
-        return super(Le, self).__str__(string=string)
+        return super(Le, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1610,7 +1610,7 @@ class Ge(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " >= " + self._enclose(self.right)
-        return super(Ge, self).__str__(string=string)
+        return super(Ge, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1642,7 +1642,7 @@ class And(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " & " + self._enclose(self.right)
-        return super(And, self).__str__(string=string)
+        return super(And, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1676,7 +1676,7 @@ class Or(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " | " + self._enclose(self.right)
-        return super(Or, self).__str__(string=string)
+        return super(Or, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1710,7 +1710,7 @@ class Xor(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " xor " + self._enclose(self.right)
-        return super(Xor, self).__str__(string=string)
+        return super(Xor, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1746,7 +1746,7 @@ class Xnor(Operator):
         string = (self._enclose(self.left) +
                   " xnor " +
                   self._enclose(self.right))
-        return super(Xnor, self).__str__(string=string)
+        return super(Xnor, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1785,7 +1785,7 @@ class Ite(Operator):
                   self._enclose(self.left) +
                   " : " +
                   self._enclose(self.right))
-        return super(Ite, self).__str__(string=string)
+        return super(Ite, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1819,7 +1819,7 @@ class Iff(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " <-> " + self._enclose(self.right)
-        return super(Iff, self).__str__(string=string)
+        return super(Iff, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1853,7 +1853,7 @@ class Implies(Operator):
 
     def __str__(self):
         string = self._enclose(self.left) + " -> " + self._enclose(self.right)
-        return super(Implies, self).__str__(string=string)
+        return super(Implies, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
@@ -1882,7 +1882,7 @@ class ArrayExpr(Element):
 
     def __str__(self):
         string = str(self.array)
-        return super(ArrayExpr, self).__str__(string=string)
+        return super(ArrayExpr, self)._to_string(string=string)
 
     def __hash__(self):
         return 17 + 23 * hash("ArrayExpr") + 23 ** 2 * hash(self.array)
@@ -1914,7 +1914,7 @@ class Boolean(SimpleType):
 
     def __str__(self):
         string = "boolean"
-        return super(Boolean, self).__str__(string=string)
+        return super(Boolean, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Boolean()
@@ -1932,7 +1932,7 @@ class Word(SimpleType):
     def __str__(self):
         string = ((self.sign + " " if self.sign else "") +
                   "word" +"[" + str(self.size) + "]")
-        return super(Word, self).__str__(string=string)
+        return super(Word, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Word(deepcopy(self.size, memo),
@@ -1949,7 +1949,7 @@ class Scalar(SimpleType):
 
     def __str__(self):
         string = "{" + ", ".join(str(value) for value in self.values) + "}"
-        return super(Scalar, self).__str__(string=string)
+        return super(Scalar, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Scalar(deepcopy(self.values, memo))
@@ -1966,7 +1966,7 @@ class Range(SimpleType):
 
     def __str__(self):
         string = str(self.start) + " .. " + str(self.stop)
-        return super(Range, self).__str__(string=string)
+        return super(Range, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Range(deepcopy(self.start, memo),
@@ -1990,7 +1990,7 @@ class Array(SimpleType):
                   str(self.stop) +
                   " of " +
                   str(self.elementtype))
-        return super(Array, self).__str__(string=string)
+        return super(Array, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Array(deepcopy(self.start, memo),
@@ -2014,7 +2014,7 @@ class Modtype(Type):
                   "(" +
                   ", ".join(str(arg) for arg in self.args) +
                   ")")
-        return super(Modtype, self).__str__(string=string)
+        return super(Modtype, self)._to_string(string=string)
 
     def __deepcopy__(self, memo):
         return Modtype(deepcopy(self.modulename, memo),
@@ -2098,7 +2098,7 @@ class MappingSection(Section):
             if hasattr(expr, "comments"):
                 expr.comments = comments
         string = "\n".join(rep)
-        return super(MappingSection, self).__str__(string=string)
+        return super(MappingSection, self)._to_string(string=string)
 
 
 class Variables(MappingSection):
@@ -2197,7 +2197,7 @@ class ListingSection(Section):
             else:
                 rep.append(self.indentation + str(element))
         string = "\n".join(rep)
-        return super(ListingSection, self).__str__(string=string)
+        return super(ListingSection, self)._to_string(string=string)
 
 
 class Constants(ListingSection):
@@ -2546,7 +2546,8 @@ class ModuleMetaClass(type):
 
         from .parser import (parseAllString,
                              _var_section_body,
-                             identifier, complex_identifier, type_identifier,
+                             #identifier,
+                             complex_identifier, type_identifier,
                              _ivar_section_body, _simple_type_specifier,
                              _frozenvar_section_body, _define_section_body,
                              _assign_constraint_body, _assign_identifier,
