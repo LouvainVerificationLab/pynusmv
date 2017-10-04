@@ -220,7 +220,12 @@ class Slist(PointerWrapper, Iterable):
         Removes all occurences of `item` in this list
         
         :param item: the item to remove
+        
+        ..note: This method should not be used as the NuSMV implementation it
+                relies on is buggy.
         """
+        # NuSMV Implementation is buggy, it does not update the size of the
+        # list
         _utils.Slist_remove(self._ptr, self._conversion.to_pointer(item))
     
     def __eq__(self, other):

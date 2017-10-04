@@ -85,6 +85,9 @@ class TestSlist(unittest.TestCase):
         for i in lst:
             self.assertEqual(lst[i], 9-i, "lst[{}] != 9-{}".format(i,i))
         
+        with self.assertRaises(KeyError):
+            lst[10]
+        
     def test_copy(self):
         """This test verifies the behavior of the copy method"""
         lst = Slist.empty(self.IntConversion)
@@ -134,7 +137,9 @@ class TestSlist(unittest.TestCase):
         
         a.push(42)
         b.push(42)
-        self.assertTrue(a == b) 
+        self.assertTrue(a == b)
+        
+        self.assertFalse(a == 1)
         
     def test_contains(self):
         """Validates the __contains__ behavior"""
@@ -209,7 +214,16 @@ class TestSlist(unittest.TestCase):
         for i in range(5): 
             self.assertFalse(i in b)
             self.assertTrue(9-i in b)
-            
+    
+    @unittest.expectedFailure # There is a bug in the NuSMV implementation
+    def test_remove(self):
+        """Validates the behavior of remove"""
+        a = Slist.from_list([1, 2, 3, 1, 4, 1], self.IntConversion)
+        b = Slist.from_list([2, 3, 4], self.IntConversion)
+        
+        a.remove(1)
+        self.assertEqual(a, b)
+    
     def test_clear(self):
         """Validates the behavior of clear"""
         lst = Slist.empty(self.IntConversion)
@@ -240,5 +254,11 @@ class TestSlist(unittest.TestCase):
         self.assertEqual(len(lst), 5)
         for i in range(5):
             self.assertEqual(4-i, lst.pop())
+    
+    def test_iterator_string(self):
+        """Tests Slist iterator string representation"""
+        lst = Slist.from_list([4, 3, 2, 1, 0], self.IntConversion)
+        it = iter(lst)
+        self.assertEqual(str(it), "SlistIterator[4, 3, 2, 1, 0]")
     
         
