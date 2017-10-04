@@ -2,7 +2,7 @@ import unittest
 
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.fsm import BddFsm
-from pynusmv.dd import BDD
+from pynusmv.dd import BDD, Cube
 from pynusmv.mc import eval_simple_expression as evalSexp
 from pynusmv.exception import NuSMVBddPickingError
 
@@ -84,6 +84,30 @@ class TestEnc(unittest.TestCase):
         self.assertTrue(p & q <= enc.statesCube)
         self.assertFalse(a <= enc.statesCube)
         self.assertFalse(~a <= enc.statesCube)
+    
+    def test_var_cubes(self):
+        fsm = self.model()
+        enc = fsm.bddEnc
+        
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        pq = fsm.pick_one_state(p & q)
+        pnq = fsm.pick_one_state(p & ~q)
+        
+        pcube = enc.cube_for_state_vars({"p"})
+        qcube = enc.cube_for_state_vars({"q"})
+        false = BDD.false()
+        
+        self.assertEqual(pcube | qcube, pcube + qcube)
+        self.assertTrue(pcube | qcube <= enc.statesCube)
+        self.assertEqual(qcube & pcube, qcube * pcube)
+        self.assertEqual(pcube - qcube, pcube)
+        
+        self.assertTrue(pcube & pq <= pcube)
+        self.assertTrue(pcube | pq >= pcube)
+        self.assertTrue(pcube - pq <= pcube)
     
         
     def test_inputsCube(self):
