@@ -152,6 +152,22 @@ class TestFsm(unittest.TestCase):
         self.assertTrue(false < s < q < true or false < s < ~q < true)
         
         
+    def test_state_values(self):
+        fsm = self.model()
+        
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        s = fsm.pick_one_state(p & q)
+        self.assertEqual(s.get_str_values(),
+                         s.get_str_values(layers={"model"}))
+        self.assertEqual(s.get_str_values(),
+                         {"p": "TRUE", "q": "TRUE"})
+        
+        
     def test_pick_one_state_error(self):
         fsm = self.model()
         
@@ -186,6 +202,22 @@ class TestFsm(unittest.TestCase):
         ac = fsm.pick_one_inputs(true)
         self.assertTrue(false < ac < true)
         self.assertTrue(ac == a or ac == ~a)
+        
+        
+    def test_inputs_values(self):
+        fsm = self.model()
+        
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        i = fsm.pick_one_inputs(a)
+        self.assertEqual(i.get_str_values(),
+                         i.get_str_values(layers={"model"}))
+        self.assertEqual(i.get_str_values(),
+                         {"a": "TRUE"})
         
         
     def test_pick_one_inputs_error(self):
