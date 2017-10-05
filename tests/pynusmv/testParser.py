@@ -113,3 +113,11 @@ class TestParser(unittest.TestCase):
         
         with self.assertRaises(NuSMVParsingError):
             spec = parse_ctl_spec("A A")
+    
+    def test_parsing_error(self):
+        try:
+            expr = parse_next_expression("a == 0")
+        except NuSMVParsingError as err:
+            self.assertEqual(len(err.errors), 1)
+            self.assertEqual(str(err),
+                             "Error at line 1, token '=': syntax error")
