@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.fsm import BddFsm
@@ -7,6 +8,7 @@ from pynusmv.mc import eval_simple_expression as evalSexp
 from pynusmv.exception import NuSMVBddPickingError, NuSMVCannotFlattenError
 from pynusmv import glob
 from pynusmv import node
+from pynusmv import model as smv
 
 from pynusmv_lower_interface.nusmv.compile.symb_table import symb_table as nssymb_table
 from pynusmv_lower_interface.nusmv.utils import utils as nsutils
@@ -29,6 +31,19 @@ class TestFsm(unittest.TestCase):
         fsm = BddFsm.from_filename("tests/pynusmv/models/deadlock.smv")
         self.assertIsNotNone(fsm)
         return fsm
+    
+    def simple_model(self):
+        class main(smv.Module):
+            c = smv.Var(smv.Range(0, 3))
+            INIT = [c == 0]
+            TRANS = [c.next() == (c + 1)]
+        fsm = BddFsm.from_modules(main)
+        return fsm
+    
+    
+    def test_deepcopy(self):
+        fsm = self.simple_model()
+        self.assertEqual(fsm, deepcopy(fsm))
         
         
     def test_init(self):
@@ -152,6 +167,22 @@ class TestFsm(unittest.TestCase):
         self.assertTrue(false < s < q < true or false < s < ~q < true)
         
         
+    def test_pick_one_state_random(self):
+        fsm = self.model()
+        
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        s = fsm.pick_one_state_random(p)
+        self.assertTrue(false < s < p < true)
+        
+        with self.assertRaises(NuSMVBddPickingError):
+            fsm.pick_one_state_random(false)
+        
+        
     def test_state_values(self):
         fsm = self.model()
         
@@ -185,7 +216,6 @@ class TestFsm(unittest.TestCase):
         s = fsm.pick_one_state(a)
         
         
-        
     def test_pick_one_inputs(self):
         fsm = self.model()
         
@@ -202,6 +232,24 @@ class TestFsm(unittest.TestCase):
         ac = fsm.pick_one_inputs(true)
         self.assertTrue(false < ac < true)
         self.assertTrue(ac == a or ac == ~a)
+        
+        
+    def test_pick_one_inputs_random(self):
+        fsm = self.model()
+        
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        ac = fsm.pick_one_inputs_random(a)
+        self.assertTrue(false < ac <= a < true)
+        self.assertTrue(ac == a)
+        self.assertTrue(ac.isnot_false())
+        
+        with self.assertRaises(NuSMVBddPickingError):
+            fsm.pick_one_inputs_random(false)
         
         
     def test_inputs_values(self):
@@ -252,6 +300,26 @@ class TestFsm(unittest.TestCase):
         self.assertTrue((si == (a & p & q)) | (si == (a & p & ~q)))
         si = fsm.pick_one_state_inputs(true)
         self.assertTrue(false < si < true)
+        with self.assertRaises(NuSMVBddPickingError):
+            si = fsm.pick_one_state_inputs(false)
+        
+        
+    def test_pick_one_state_inputs_random(self):
+        fsm = self.model()
+
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+
+        si = fsm.pick_one_state_inputs_random(a & p)
+        self.assertTrue(false < si <= a & p < true)
+        self.assertTrue(si.isnot_false())
+        self.assertTrue((si == (a & p & q)) | (si == (a & p & ~q)))
+        
+        with self.assertRaises(NuSMVBddPickingError):
+            fsm.pick_one_state_inputs_random(false)
         
         
     def test_get_inputs(self):
@@ -306,6 +374,21 @@ class TestFsm(unittest.TestCase):
         self.assertEqual(fsm.count_inputs(true), 2)
         self.assertEqual(fsm.count_inputs(false), 0)
         self.assertEqual(fsm.count_inputs(p & q & a), 0) # WHY ?
+    
+    
+    def test_count_states_inputs(self):
+        fsm = self.model()
+        
+        false = BDD.false(fsm.bddEnc.DDmanager)
+        true = BDD.true(fsm.bddEnc.DDmanager)
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        self.assertEqual(fsm.count_states_inputs(a), 4)
+        self.assertEqual(fsm.count_states_inputs(p & ~a), 2)
+        self.assertEqual(fsm.count_states_inputs(true), 8)
+        self.assertEqual(fsm.count_states_inputs(false), 0)
         
         
     def test_count_inputs_no_in_model(self):
@@ -360,6 +443,7 @@ class TestFsm(unittest.TestCase):
         
         pinputs = fsm.pick_all_states(p)
         self.assertEqual(len(pinputs), 2) # Contains all inputs
+        self.assertEqual(len(fsm.pick_all_inputs(false)), 0)
         
         
     def test_pick_states_inputs(self):
@@ -375,6 +459,7 @@ class TestFsm(unittest.TestCase):
         self.assertEqual(len(pstates), 2)
         for pstate in pstates:
             self.assertTrue(false < pstate < p)
+        self.assertEqual(len(fsm.pick_all_states_inputs(false)), 0)
         
              
     def test_pick_no_inputs(self):
