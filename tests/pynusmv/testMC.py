@@ -9,6 +9,8 @@ from pynusmv import mc
 from pynusmv import glob
 from pynusmv import prop
 from pynusmv import parser
+from pynusmv.utils import fixpoint
+from pynusmv.dd import BDD
 
 
 class TestMC(unittest.TestCase):
@@ -123,6 +125,10 @@ class TestMC(unittest.TestCase):
         spec = prop.Spec(parser.parse_ctl_spec("EG admin = alice"))
         egalice = mc.eval_ctl_spec(fsm, spec)
         self.assertEqual(mc.eg(fsm, alice), egalice)
+        
+        self.assertEqual(egalice,
+                         fixpoint(lambda Z: alice & fsm.pre(Z),
+                                  BDD.true()) & fsm.reachable_states)
     
     def test_ex(self):
         glob.load("tests/pynusmv/models/admin.smv")
