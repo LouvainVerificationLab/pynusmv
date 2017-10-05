@@ -1383,7 +1383,7 @@ class SymbTable(PointerWrapper):
 
         :return: an object that can serve as key to perform the lookup in a dict.
         """
-        return self._ptr
+        return int(self._ptr)
 
     def __eq__(self, other):
         """
