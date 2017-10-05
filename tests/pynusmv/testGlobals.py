@@ -9,7 +9,13 @@ from pynusmv.exception import (NuSMVNoReadModelError,
                                NuSMVCannotFlattenError,
                                NuSMVModelAlreadyFlattenedError,
                                NuSMVNeedFlatModelError,
-                               NuSMVNeedFlatHierarchyError)
+                               NuSMVNeedFlatHierarchyError,
+                               NuSMVModelAlreadyReadError,
+                               NuSMVParsingError,
+                               NuSMVModelAlreadyEncodedError,
+                               NuSMVFlatModelAlreadyBuiltError,
+                               NuSMVNeedVariablesEncodedError,
+                               NuSMVModelAlreadyBuiltError)
 from pynusmv.parser import parse_simple_expression
 
 class TestGlobals(unittest.TestCase):
@@ -23,6 +29,33 @@ class TestGlobals(unittest.TestCase):
         
     def test_parsing(self):
         glob.load_from_file("tests/pynusmv/models/counters.smv")
+    
+    
+    def test_load_from_string(self):
+        main = """
+        MODULE main
+            VAR state : boolean;
+            INIT state
+            TRANS next(state) = !state
+        """
+        glob.load(main)
+    
+    
+    def test_load_from_string_syntax_errors(self):
+        main = """
+        MODULE main
+            VAR state : boolean
+            INIT state
+            TRANS next(state) = !state
+        """
+        with self.assertRaises(NuSMVParsingError):
+            glob.load(main)
+    
+    
+    def test_load_errors(self):
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        with self.assertRaises(NuSMVModelAlreadyReadError):
+            glob.load_from_file("tests/pynusmv/models/counters.smv")
             
             
     def test_load_allow_flattening_with_command(self):
@@ -34,6 +67,13 @@ class TestGlobals(unittest.TestCase):
     def test_no_flattening_hierarchy(self):
         with self.assertRaises(NuSMVNoReadModelError):
             glob.flatten_hierarchy()
+        
+    
+    def test_flattening_hierarchy_already_done(self):
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        glob.flatten_hierarchy(keep_single_enum=True)
+        with self.assertRaises(NuSMVModelAlreadyFlattenedError):
+            glob.flatten_hierarchy()
             
             
     def test_load_and_flat_allow_encoding_with_command(self):
@@ -44,6 +84,13 @@ class TestGlobals(unittest.TestCase):
         
     def test_no_encoding(self):
         with self.assertRaises(NuSMVNeedFlatHierarchyError):
+            glob.encode_variables()
+        
+    def test_already_encoded(self):
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        glob.flatten_hierarchy()
+        glob.encode_variables()
+        with self.assertRaises(NuSMVModelAlreadyEncodedError):
             glob.encode_variables()
     
     def test_no_bdd_encoding(self):
@@ -94,6 +141,9 @@ class TestGlobals(unittest.TestCase):
     def test_no_flat_model(self):
         with self.assertRaises(NuSMVNeedFlatHierarchyError):
             glob.build_flat_model()
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        glob.flatten_hierarchy()
+        glob.build_flat_model()
             
     
     def test_no_flat_model_after_parsing(self):
@@ -106,6 +156,8 @@ class TestGlobals(unittest.TestCase):
         glob.load_from_file("tests/pynusmv/models/counters.smv")
         glob.flatten_hierarchy()
         glob.build_flat_model()
+        with self.assertRaises(NuSMVFlatModelAlreadyBuiltError):
+            glob.build_flat_model()
         
 
     def test_no_model(self):
@@ -117,6 +169,13 @@ class TestGlobals(unittest.TestCase):
         glob.flatten_hierarchy()
         with self.assertRaises(NuSMVNeedFlatModelError):
             glob.build_model()
+        glob.build_flat_model()
+        with self.assertRaises(NuSMVNeedVariablesEncodedError):
+            glob.build_model()
+        glob.encode_variables()
+        glob.build_model()
+        with self.assertRaises(NuSMVModelAlreadyBuiltError):
+            glob.build_model()
     
 
     def test_model(self):
@@ -125,6 +184,19 @@ class TestGlobals(unittest.TestCase):
         glob.encode_variables()
         glob.build_flat_model()
         glob.build_model()
+    
+    
+    def test_get_symb_table(self):
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        symb_table = glob.symb_table()
+    
+    
+    def test_get_flat_hierarchy(self):
+        with self.assertRaises(NuSMVNeedFlatHierarchyError):
+            flat = glob.flat_hierarchy()
+        glob.load_from_file("tests/pynusmv/models/counters.smv")
+        glob.compute_model()
+        flat = glob.flat_hierarchy()
         
         
     def test_compute_model(self):
