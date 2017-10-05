@@ -3,7 +3,7 @@ import pyparsing
 
 from pynusmv import parser
 from pynusmv.model import (Expression, Identifier, Self, Dot, ArrayAccess,
-                           ArrayExpr)
+                           ArrayExpr, Subscript)
 
 class TestParsing(unittest.TestCase):
     
@@ -260,3 +260,10 @@ MODULE counter(a, b, c)
         parsed = parser.parseAllString(parser.module, module)
         
         self.assertEqual(str(parsed), module)
+    
+    def test_subscript(self):
+        expr = "(a)[b]"
+        res = parser.parseAllString(parser.simple_expression, expr)
+        self.assertIsNotNone(res)
+        self.assertEqual(type(res), Subscript)
+    
