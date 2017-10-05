@@ -3,7 +3,7 @@ import sys
 
 from pynusmv_lower_interface.nusmv.cmd import cmd
 
-from pynusmv.prop import PropDb
+from pynusmv.prop import PropDb, propTypes
 from pynusmv import glob
 
 from pynusmv.init import init_nusmv, deinit_nusmv
@@ -33,4 +33,14 @@ class TestPropDb(unittest.TestCase):
         
         for prop in propDb:
             self.assertIsNotNone(prop, "prop should not be None")
+    
+    def test_propDb_access(self):
+        propDb = glob.prop_database()
+        self.assertEqual(len(propDb.get_props_of_type('CTL')), 2)
+        self.assertEqual(propDb[-1], propDb[1])
+        
+        with self.assertRaises(IndexError):
+            prop = propDb[-3]
+        with self.assertRaises(IndexError):
+            prop = propDb[3]
         
