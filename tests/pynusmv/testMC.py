@@ -103,3 +103,58 @@ class TestMC(unittest.TestCase):
         #    print(state)
         self.assertTrue(any(state["admin"] != "none"
                             for state in explanation[::2]))
+    
+    def test_ef(self):
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        alice = mc.eval_simple_expression(fsm, "admin = alice")
+        spec = prop.Spec(parser.parse_ctl_spec("EF admin = alice"))
+        efalice = mc.eval_ctl_spec(fsm, spec)
+        self.assertEqual(mc.ef(fsm, alice), efalice)
+    
+    def test_eg(self):
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        alice = mc.eval_simple_expression(fsm, "admin = alice")
+        spec = prop.Spec(parser.parse_ctl_spec("EG admin = alice"))
+        egalice = mc.eval_ctl_spec(fsm, spec)
+        self.assertEqual(mc.eg(fsm, alice), egalice)
+    
+    def test_ex(self):
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        alice = mc.eval_simple_expression(fsm, "admin = alice")
+        spec = prop.Spec(parser.parse_ctl_spec("EX admin = alice"))
+        exalice = mc.eval_ctl_spec(fsm, spec)
+        self.assertEqual(mc.ex(fsm, alice), exalice)
+    
+    def test_eu(self):
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        none = mc.eval_simple_expression(fsm, "admin = none")
+        alice = mc.eval_simple_expression(fsm, "admin = alice")
+        spec = prop.Spec(parser.parse_ctl_spec(
+            "E[admin = none U admin = alice]"))
+        eunonealice = mc.eval_ctl_spec(fsm, spec)
+        self.assertEqual(mc.eu(fsm, none, alice), eunonealice)
+    
+    def test_au(self):
+        glob.load("tests/pynusmv/models/admin.smv")
+        glob.compute_model()
+        fsm = glob.prop_database().master.bddFsm
+        
+        none = mc.eval_simple_expression(fsm, "admin = none")
+        alice = mc.eval_simple_expression(fsm, "admin = alice")
+        spec = prop.Spec(parser.parse_ctl_spec(
+            "A[admin = none U admin = alice]"))
+        aunonealice = mc.eval_ctl_spec(fsm, spec)
+        self.assertEqual(mc.au(fsm, none, alice), aunonealice)
+        
