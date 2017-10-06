@@ -504,9 +504,6 @@ class Identifier(Expression):
     def __deepcopy__(self, memo):
         return Identifier(self.name)
 
-    def to_node(self):
-        return
-
 
 class Self(Identifier):
 
@@ -532,7 +529,7 @@ class Dot(ComplexIdentifier):
 
     def __str__(self):
         string = str(self.instance) + "." + str(self.element)
-        return super(Dot, self).__str__(string=string)
+        return super(Dot, self)._to_string(string=string)
 
     def _equals(self, other):
         """Return whether `self` is equals to `other`."""
