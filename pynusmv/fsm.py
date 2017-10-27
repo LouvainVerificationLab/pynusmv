@@ -18,6 +18,7 @@ __all__ = ['BddFsm', 'BddTrans', 'BddEnc', 'SymbTable']
 
 import tempfile
 
+from pynusmv_lower_interface.nusmv.dd import dd as nsdd
 from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as bddFsm
 from pynusmv_lower_interface.nusmv.enc.bdd import bdd as bddEnc
 from pynusmv_lower_interface.nusmv.enc.base import base as nsbaseEnc
@@ -35,8 +36,9 @@ from pynusmv_lower_interface.nusmv.opt import opt as nsopt
 
 from .dd import BDD, State, Inputs, StateInputs, DDManager, Cube
 from .utils import PointerWrapper, AttributeDict
-from .exception import NuSMVBddPickingError, NuSMVFlatteningError, NuSMVSymbTableError
-from .parser import parse_next_expression
+from .exception import (NuSMVBddPickingError, NuSMVFlatteningError,
+                        NuSMVSymbTableError, UnknownVariableError)
+from .parser import parse_next_expression, parse_identifier
 from . import node
 
 
@@ -1049,6 +1051,134 @@ class BddEnc(PointerWrapper):
             tmp.write("\n".join(str(var) for var in order).encode("UTF-8"))
             tmp.flush()
             bddEnc.BddEnc_force_order_from_filename(self._ptr, tmp.name)
+    
+    def dump(self, bdd, file_):
+        """
+        Dump the given BDD into the given file.
+
+        :param bdd: the BDD to dump.
+        :param file_: the file object in which the BDD is dumped.
+
+        .. note:: the format is the following:
+                  each line of the file is:
+                  * ID TRUE: for the TRUE node
+                  * ID FALSE: for the FALSE node
+                  * ID VAR COMP IDTHEN IDELSE: for any other node
+                  where ID is an ID for the node, VAR is the variable of the
+                  node, COMP is 0 or 1 depending on whether the node is
+                  complemented (1) or not (0), and IDTHEN and IDELSE are the
+                  IDs of the then and else children of the node.
+                  The lines are ordered according to an inverse topological
+                  order of the DAG represented by the BDD.
+        """
+        manager = self.DDmanager._ptr
+        encoder = self._ptr
+        
+        visited = set()
+        
+        def dump_recur(bdd):
+            if int(bdd) in visited:
+                return
+            visited.add(int(bdd))
+            
+            # TRUE node
+            if nsdd.bdd_is_true(manager, bdd):
+                print(int(bdd), "TRUE", file=file_)
+        
+            # FALSE node
+            elif nsdd.bdd_is_false(manager, bdd):
+                print(int(bdd), "FALSE", file=file_)
+                
+            # Other node
+            else:
+                then = nsdd.bdd_then(manager, bdd)
+                else_ = nsdd.bdd_else(manager, bdd)
+                
+                dump_recur(then)
+                dump_recur(else_)
+                
+                index = nsdd.bdd_index(manager, bdd)
+                var = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
+                complemented = nsdd.bdd_iscomplement(manager, bdd)
+                print(int(bdd),
+                      nsnode.sprint_node(var),
+                      complemented,
+                      int(then),
+                      int(else_),
+                      file=file_)
+        
+        dump_recur(bdd._ptr)
+    
+    def load(self, file_):
+        """
+        Load and return the BDD stored in the given file.
+
+        :param file_: the file object in which the BDD is dumped.
+        :raise: a :exc:`UnknownVariableError`
+            <pynusmv.exception.UnknownVariableError>` if some variable name
+            present in the file is unknown.
+
+        .. note:: the format of the file is the following:
+                  each line of the file is:
+                  * ID TRUE: for the TRUE node
+                  * ID FALSE: for the FALSE node
+                  * ID VAR COMP IDTHEN IDELSE: for any other node
+                  where ID is an ID for the node, VAR is the variable of the
+                  node, COMP is 0 or 1 depending on whether the node is
+                  complemented (1) or not (0), and IDTHEN and IDELSE are the
+                  IDs of the then and else children of the node.
+                  The lines are ordered according to an inverse topological
+                  order of the DAG represented by the BDD.
+        """
+        manager = self.DDmanager._ptr
+        encoder = self._ptr
+        
+        # Get variable nodes for each variable
+        var_list = bddEnc.BddEnc_get_var_ordering(self._ptr, bddEnc.DUMP_BITS)
+        variables = {}
+        it = nsutils.NodeList_get_first_iter(var_list)
+        while not nsutils.ListIter_is_end(it):
+            node = nsutils.NodeList_get_elem_at(var_list, it)
+            variables[nsnode.sprint_node(node)] = node
+            it = nsutils.ListIter_get_next(it)
+        nsutils.NodeList_destroy(var_list)
+        
+        
+        nodes = {}
+        for line in file_:
+            split = line.split()
+            
+            # Standard node
+            if len(split) > 2:
+                id_, varname, complemented, left, right = split
+                
+                # Check varname, get index and variable
+                if varname not in variables:
+                    raise UnknownVariableError("Unknown variable: " + varname)
+                index = bddEnc.BddEnc_get_var_index_from_name(encoder,
+                                                              variables
+                                                              [varname])
+                var = nsdd.bdd_new_var_with_index(manager, index)
+                
+                # Build and store bdd node
+                left_bdd = nodes[left]
+                right_bdd = nodes[right]
+                bdd = nsdd.bdd_ite(manager, var, left_bdd, right_bdd)
+                
+                if complemented == "1":
+                    bdd = nsdd.bdd_not(manager, bdd)
+                
+                nodes[id_] = bdd
+                
+            # Leaf node
+            else:
+                id_, value = split
+                if value == "TRUE":
+                    nodes[id_] = nsdd.bdd_true(manager)
+                else: # value == "FALSE"
+                    nodes[id_] = nsdd.bdd_false(manager)
+        
+        return BDD(nodes[id_], self.DDmanager, freeit=True)
 
 
 class SymbTable(PointerWrapper):

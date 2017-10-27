@@ -8,6 +8,7 @@ used by PyNuSMV internals.
 __all__ = ['PointerWrapper', 'fixpoint', 'update', 'StdioFile','writeonly',
            'indexed']
 
+from collections import MutableSet
 from pynusmv_lower_interface.nusmv.utils import utils
 from pynusmv.init import _register_wrapper
 

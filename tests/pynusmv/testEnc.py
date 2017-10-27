@@ -1,10 +1,12 @@
 import unittest
 
+import io
+
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.fsm import BddFsm
 from pynusmv.dd import BDD, Cube
 from pynusmv.mc import eval_simple_expression as evalSexp
-from pynusmv.exception import NuSMVBddPickingError
+from pynusmv.exception import NuSMVBddPickingError, UnknownVariableError
 
 class TestEnc(unittest.TestCase):
     
@@ -165,4 +167,76 @@ class TestEnc(unittest.TestCase):
         self.assertTupleEqual(new_order,
                               fsm.bddEnc.get_variables_ordering()
                               [:len(new_order)])
+    
+    def test_bdd_dump(self):
+        fsm = self.cardgame_post_fair()
+        
+        # Dump
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(fsm.reachable_states, f)
+            content = f.getvalue()
+        
+        # Check that every node is before its parents,
+        # and that every child is effectively in the dump
+        nodes = set()
+        lines = content.split("\n")
+        for i, line in enumerate(lines):
+            if line:
+                # Get the node ID
+                id_ = line.split(" ")[0]
+                # Check that it is not in previous lines
+                for previous in lines[:i]:
+                    self.assertNotIn(id_, previous)
+                # Get children IDs
+                split = line.split(" ")
+                if len(split) > 2:
+                    id_, _, _, left, right = split
+                    self.assertIn(left, nodes)
+                    self.assertIn(right, nodes)
+                # Add current node
+                nodes.add(id_)
+    
+    def test_bdd_dump_load(self):
+        fsm = self.cardgame_post_fair()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
+    
+    def test_bdd_load(self):
+        fsm = self.cardgame_post_fair()
+        with open("tests/pynusmv/models/"
+                  "cardgame_post_fair.reachable.bdd") as f:
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(fsm.reachable_states, reconstructed)
+    
+    def test_bdd_incorrect_load(self):
+        fsm = self.model()
+        with self.assertRaises(UnknownVariableError):
+            with open("tests/pynusmv/models/"
+                      "cardgame_post_fair.reachable.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_dump_load_simple_model(self):
+        fsm = self.model()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
+    
+    def test_bdd_dump_load_counters(self):
+        fsm = self.counters_model()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
         
