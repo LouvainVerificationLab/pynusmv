@@ -91,7 +91,7 @@ def deinit_nusmv(ddinfo=False):
     :param ddinfo: Whether or not display Decision Diagrams statistics.
 
     """
-    global __collector, __collecting
+    global __collector
     if __collector is None:
         raise NuSMVInitError(
             "Cannot deinitialize NuSMV before initialization.")
@@ -135,9 +135,6 @@ def is_nusmv_init():
     Return whether NuSMV is initialized.
 
     """
-    # It isn't required to declare that __collector is global since no 
-    # assignment is made to that variable.
-    #global __collector
     return __collector is not None
 
 
@@ -165,9 +162,6 @@ def _register_wrapper(wrapper):
     :type wrapper: :class:`PointerWrapper <pynusmv.utils.PointerWrapper>`
 
     """
-    # It isn't required to declare that these variables be delcared global since
-    # no assignment is made to any of them.
-    #global __collector, __collecting
     if __collector is None:
         raise NuSMVInitError("Cannot register before initializing NuSMV.")
     else:
