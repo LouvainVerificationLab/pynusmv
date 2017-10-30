@@ -239,4 +239,30 @@ class TestEnc(unittest.TestCase):
             f.seek(0)
             reconstructed = fsm.bddEnc.load(f)
             self.assertEqual(states, reconstructed)
+    
+    def test_bdd_dump_load_input_vars(self):
+        fsm = self.model()
+        
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        bdds = {a, p & a, q & ~a}
+        
+        for bdd in bdds:
+            with io.StringIO() as f:
+                fsm.bddEnc.dump(bdd, f)
+                f.seek(0)
+                reconstructed = fsm.bddEnc.load(f)
+                self.assertEqual(bdd, reconstructed)
+    
+    def test_bdd_dump_load_monolithic_trans(self):
+        fsm = self.model()
+        trans = fsm.trans.monolithic
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(trans, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(trans, reconstructed)
         

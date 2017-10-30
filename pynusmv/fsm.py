@@ -1133,16 +1133,14 @@ class BddEnc(PointerWrapper):
         manager = self.DDmanager._ptr
         encoder = self._ptr
         
-        # Get variable nodes for each variable
-        var_list = bddEnc.BddEnc_get_var_ordering(self._ptr, bddEnc.DUMP_BITS)
+        # Get variable node for each variable
         variables = {}
-        it = nsutils.NodeList_get_first_iter(var_list)
-        while not nsutils.ListIter_is_end(it):
-            node = nsutils.NodeList_get_elem_at(var_list, it)
-            variables[nsnode.sprint_node(node)] = node
-            it = nsutils.ListIter_get_next(it)
-        nsutils.NodeList_destroy(var_list)
-        
+        max_level = self.DDmanager.size
+        for current_level in range(1, max_level):
+            index = nsdd.dd_get_index_at_level(manager, current_level)
+            name = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
+            if name is not None:
+                variables[nsnode.sprint_node(name)] = name
         
         nodes = {}
         for line in file_:
