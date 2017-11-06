@@ -39,7 +39,7 @@ from .dd import BDD, State, Inputs, StateInputs, DDManager, Cube
 from .utils import PointerWrapper, AttributeDict
 from .exception import (NuSMVBddPickingError, NuSMVFlatteningError,
                         NuSMVSymbTableError, UnknownVariableError)
-from .parser import parse_next_expression, parse_identifier
+from .parser import parse_next_expression
 from . import node
 
 
@@ -1145,8 +1145,7 @@ class BddEnc(PointerWrapper):
         
         # Get variable node for each variable
         variables = {}
-        max_level = self.DDmanager.size
-        for current_level in range(1, max_level):
+        for current_level in range(1, self.DDmanager.size):
             index = nsdd.dd_get_index_at_level(manager, current_level)
             name = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
             if name is not None:
@@ -1169,9 +1168,7 @@ class BddEnc(PointerWrapper):
                 var = nsdd.bdd_new_var_with_index(manager, index)
                 
                 # Build and store bdd node
-                left_bdd = nodes[left]
-                right_bdd = nodes[right]
-                bdd = nsdd.bdd_ite(manager, var, left_bdd, right_bdd)
+                bdd = nsdd.bdd_ite(manager, var, nodes[left], nodes[right])
                 
                 if complemented == "1":
                     bdd = nsdd.bdd_not(manager, bdd)
