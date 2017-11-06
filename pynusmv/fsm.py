@@ -1143,13 +1143,15 @@ class BddEnc(PointerWrapper):
         manager = self.DDmanager._ptr
         encoder = self._ptr
         
-        # Get variable node for each variable
+        # Get variable BDD for each variable
         variables = {}
         for current_level in range(1, self.DDmanager.size):
             index = nsdd.dd_get_index_at_level(manager, current_level)
             name = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
             if name is not None:
-                variables[nsnode.sprint_node(name)] = name
+                index = bddEnc.BddEnc_get_var_index_from_name(encoder, name)
+                var = nsdd.bdd_new_var_with_index(manager, index)
+                variables[nsnode.sprint_node(name)] = var
         
         nodes = {}
         for line in file_:
@@ -1162,13 +1164,12 @@ class BddEnc(PointerWrapper):
                 # Check varname, get index and variable
                 if varname not in variables:
                     raise UnknownVariableError("Unknown variable: " + varname)
-                index = bddEnc.BddEnc_get_var_index_from_name(encoder,
-                                                              variables
-                                                              [varname])
-                var = nsdd.bdd_new_var_with_index(manager, index)
                 
                 # Build and store bdd node
-                bdd = nsdd.bdd_ite(manager, var, nodes[left], nodes[right])
+                bdd = nsdd.bdd_ite(manager,
+                                   variables[varname],
+                                   nodes[left],
+                                   nodes[right])
                 
                 if complemented == "1":
                     bdd = nsdd.bdd_not(manager, bdd)
