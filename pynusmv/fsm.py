@@ -1065,14 +1065,15 @@ class BddEnc(PointerWrapper):
                   * the list of variables appearing in the BDD, one variable
                     name per line;
                   * the BDD itself, where each line is:
-                  ** ID TRUE: for the TRUE node
-                  ** ID FALSE: for the FALSE node
-                  ** ID VAR COMP IDTHEN IDELSE: for any other node
-                  where ID is an ID for the node, VAR is the index of the
-                  variable of the node in the list above, COMP is 0 or 1
-                  depending on whether the node is complemented (1) or not (0),
-                  and IDTHEN and IDELSE are the IDs of the then and else
-                  children of the node.
+                  ** TRUE: for the TRUE node
+                  ** FALSE: for the FALSE node
+                  ** VAR COMP IDTHEN IDELSE: for any other node
+                     where VAR is the index of the variable of the node in the
+                     list above, COMP is 0 or 1 depending on whether the node
+                     is complemented (1) or not (0), and IDTHEN and IDELSE are
+                     the indices of the then and else children of the node in
+                     the list of nodes (starting at 0 with the first dumped
+                     node).
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
                   The two parts of the file are separated by an empty line.
@@ -1144,13 +1145,13 @@ class BddEnc(PointerWrapper):
             if nsdd.bdd_is_true(manager, bdd):
                 node_id = next(counter)
                 ids[int(bdd)] = node_id
-                print(node_id, "TRUE", file=file_)
+                print("TRUE", file=file_)
         
             # FALSE node
             elif nsdd.bdd_is_false(manager, bdd):
                 node_id = next(counter)
                 ids[int(bdd)] = node_id
-                print(node_id, "FALSE", file=file_)
+                print("FALSE", file=file_)
                 
             # Other node
             else:
@@ -1174,9 +1175,8 @@ class BddEnc(PointerWrapper):
                 # Get complemented
                 complemented = nsdd.bdd_iscomplement(manager, bdd)
                 
-                # Print the node line: ID var_id complemented left_id, right_id
-                print(node_id,
-                      variables[varname],
+                # Print the node line: var_id complemented left_id, right_id
+                print(variables[varname],
                       complemented,
                       ids[int(then)],
                       ids[int(else_)],
@@ -1198,14 +1198,15 @@ class BddEnc(PointerWrapper):
                   * the list of variables appearing in the BDD, one variable
                     name per line;
                   * the BDD itself, where each line is:
-                  ** ID TRUE: for the TRUE node
-                  ** ID FALSE: for the FALSE node
-                  ** ID VAR COMP IDTHEN IDELSE: for any other node
-                  where ID is an ID for the node, VAR is the index of the
-                  variable of the node in the list above, COMP is 0 or 1
-                  depending on whether the node is complemented (1) or not (0),
-                  and IDTHEN and IDELSE are the IDs of the then and else
-                  children of the node.
+                  ** TRUE: for the TRUE node
+                  ** FALSE: for the FALSE node
+                  ** VAR COMP IDTHEN IDELSE: for any other node
+                     where VAR is the index of the variable of the node in the
+                     list above, COMP is 0 or 1 depending on whether the node
+                     is complemented (1) or not (0), and IDTHEN and IDELSE are
+                     the indices of the then and else children of the node in
+                     the list of nodes (starting at 0 with the first dumped
+                     node).
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
                   The two parts of the file are separated by an empty line.
@@ -1230,14 +1231,16 @@ class BddEnc(PointerWrapper):
                 var = nsdd.bdd_new_var_with_index(manager, index)
                 variables[nsnode.sprint_node(name)] = var
         
-        nodes = {}
+        nodes = []
         for line in file_:
             split = line.split()
             
             # Standard node
             if len(split) > 2:
-                id_, var_id, complemented, left, right = split
+                var_id, complemented, left, right = split
                 var_id = int(var_id)
+                left = int(left)
+                right = int(right)
                 
                 # Check var_id and varname
                 if var_id < 0 or var_id >= len(variables_list):
@@ -1246,6 +1249,8 @@ class BddEnc(PointerWrapper):
                 if variables_list[var_id] not in variables:
                     raise UnknownVariableError("Unknown variable: " +
                                                variables_list[var_id])
+                
+                # TODO Check left and right IDs
                 
                 # Build and store bdd node
                 bdd = nsdd.bdd_ite(manager,
@@ -1256,17 +1261,17 @@ class BddEnc(PointerWrapper):
                 if complemented == "1":
                     bdd = nsdd.bdd_not(manager, bdd)
                 
-                nodes[id_] = bdd
+                nodes.append(bdd)
                 
             # Leaf node
             else:
-                id_, value = split
+                value = line.strip()
                 if value == "TRUE":
-                    nodes[id_] = nsdd.bdd_true(manager)
+                    nodes.append(nsdd.bdd_true(manager))
                 else: # value == "FALSE"
-                    nodes[id_] = nsdd.bdd_false(manager)
+                    nodes.append(nsdd.bdd_false(manager))
         
-        return BDD(nodes[id_], self.DDmanager, freeit=True)
+        return BDD(nodes[-1], self.DDmanager, freeit=True)
 
 
 class SymbTable(PointerWrapper):

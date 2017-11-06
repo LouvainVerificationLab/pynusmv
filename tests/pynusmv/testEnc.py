@@ -176,26 +176,23 @@ class TestEnc(unittest.TestCase):
             fsm.bddEnc.dump(fsm.reachable_states, f)
             content = f.getvalue()
         
-        # Check that every node is before its parents,
-        # and that every child is effectively in the dump
-        nodes = set()
         lines = content.split("\n")
+        
+        # Ignore variables lines
+        index = 0
+        while lines[index].strip():
+            index += 1
+        lines = lines[index+1:]
+        
+        # Check that every child is effectively in the dump
         for i, line in enumerate(lines):
             if line:
-                # Get the node ID
-                id_ = line.split(" ")[0]
-                # Check that it is not in previous lines
-                for previous in lines[:i]:
-                    previous_id = previous.split(" ")[0]
-                    self.assertNotEqual(id_, previous_id)
                 # Get children IDs
                 split = line.split(" ")
                 if len(split) > 2:
-                    id_, _, _, left, right = split
-                    self.assertIn(left, nodes)
-                    self.assertIn(right, nodes)
-                # Add current node
-                nodes.add(id_)
+                    _, _, left, right = split
+                    self.assertTrue(int(left) < i)
+                    self.assertTrue(int(right) < i)
     
     def test_bdd_dump_load(self):
         fsm = self.cardgame_post_fair()
