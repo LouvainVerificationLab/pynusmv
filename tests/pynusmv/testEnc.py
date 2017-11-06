@@ -186,7 +186,8 @@ class TestEnc(unittest.TestCase):
                 id_ = line.split(" ")[0]
                 # Check that it is not in previous lines
                 for previous in lines[:i]:
-                    self.assertNotIn(id_, previous)
+                    previous_id = previous.split(" ")[0]
+                    self.assertNotEqual(id_, previous_id)
                 # Get children IDs
                 split = line.split(" ")
                 if len(split) > 2:

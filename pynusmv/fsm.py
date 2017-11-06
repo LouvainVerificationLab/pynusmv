@@ -17,6 +17,7 @@ represented and stored by NuSMV:
 __all__ = ['BddFsm', 'BddTrans', 'BddEnc', 'SymbTable']
 
 import tempfile
+from itertools import count
 
 from pynusmv_lower_interface.nusmv.dd import dd as nsdd
 from pynusmv_lower_interface.nusmv.fsm.bdd import bdd as bddFsm
@@ -1075,6 +1076,8 @@ class BddEnc(PointerWrapper):
         encoder = self._ptr
         
         visited = set()
+        counter = count(0)
+        ids = {}
         
         def dump_recur(bdd):
             if int(bdd) in visited:
@@ -1083,11 +1086,15 @@ class BddEnc(PointerWrapper):
             
             # TRUE node
             if nsdd.bdd_is_true(manager, bdd):
-                print(int(bdd), "TRUE", file=file_)
+                node_id = next(counter)
+                ids[int(bdd)] = node_id
+                print(node_id, "TRUE", file=file_)
         
             # FALSE node
             elif nsdd.bdd_is_false(manager, bdd):
-                print(int(bdd), "FALSE", file=file_)
+                node_id = next(counter)
+                ids[int(bdd)] = node_id
+                print(node_id, "FALSE", file=file_)
                 
             # Other node
             else:
@@ -1097,14 +1104,17 @@ class BddEnc(PointerWrapper):
                 dump_recur(then)
                 dump_recur(else_)
                 
+                node_id = next(counter)
+                ids[int(bdd)] = node_id
+                
                 index = nsdd.bdd_index(manager, bdd)
                 var = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
                 complemented = nsdd.bdd_iscomplement(manager, bdd)
-                print(int(bdd),
+                print(node_id,
                       nsnode.sprint_node(var),
                       complemented,
-                      int(then),
-                      int(else_),
+                      ids[int(then)],
+                      ids[int(else_)],
                       file=file_)
         
         dump_recur(bdd._ptr)
