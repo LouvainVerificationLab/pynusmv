@@ -1061,20 +1061,76 @@ class BddEnc(PointerWrapper):
         :param file_: the file object in which the BDD is dumped.
 
         .. note:: the format is the following:
-                  each line of the file is:
-                  * ID TRUE: for the TRUE node
-                  * ID FALSE: for the FALSE node
-                  * ID VAR COMP IDTHEN IDELSE: for any other node
-                  where ID is an ID for the node, VAR is the variable of the
-                  node, COMP is 0 or 1 depending on whether the node is
-                  complemented (1) or not (0), and IDTHEN and IDELSE are the
-                  IDs of the then and else children of the node.
+                  The content of the file is composed of:
+                  * the list of variables appearing in the BDD, one variable
+                    name per line;
+                  * the BDD itself, where each line is:
+                  ** ID TRUE: for the TRUE node
+                  ** ID FALSE: for the FALSE node
+                  ** ID VAR COMP IDTHEN IDELSE: for any other node
+                  where ID is an ID for the node, VAR is the index of the
+                  variable of the node in the list above, COMP is 0 or 1
+                  depending on whether the node is complemented (1) or not (0),
+                  and IDTHEN and IDELSE are the IDs of the then and else
+                  children of the node.
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
+                  The two parts of the file are separated by an empty line.
         """
         manager = self.DDmanager._ptr
         encoder = self._ptr
         
+        
+        # ----- Extract variables ---------------------------------------------
+        
+        # A class to make BDD pointers hashable
+        class SBW(object):
+            """Simple BDD wrapper"""
+            def __init__(self, bdd):
+                self.bdd = bdd
+            def __eq__(self, other):
+                return (self.bdd == other.bdd
+                        if isinstance(other, SBW)
+                        else False)
+            def __hash__(self):
+                return int(self.bdd)
+        
+        var_counter = count(0)
+        variables = {} # Variable name to id
+        pending = {SBW(bdd._ptr)}
+        visited = set()
+        
+        while pending:
+            current = pending.pop()
+            visited.add(current)
+            current_ptr = current.bdd
+            
+            # Get variable only if not true and not false
+            if (not nsdd.bdd_is_true(manager, current_ptr) and
+                not nsdd.bdd_is_false(manager, current_ptr)):
+                
+                # Get variable name, sets its ID, print it into file_
+                index = nsdd.bdd_index(manager, current_ptr)
+                var = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
+                varname = nsnode.sprint_node(var)
+                if varname not in variables:
+                    var_id = next(var_counter)
+                    variables[varname] = var_id
+                    print(varname, file=file_)
+                
+                # Get left child
+                then = SBW(nsdd.bdd_then(manager, current_ptr))
+                if then not in visited:
+                    pending.add(then)
+                
+                # Get right child
+                else_ = SBW(nsdd.bdd_else(manager, current_ptr))
+                if else_ not in visited:
+                    pending.add(else_)
+        # Add empty line before BDD nodes
+        print(file=file_)
+        
+        # ----- Extract BDD nodes ---------------------------------------------
         visited = set()
         counter = count(0)
         ids = {}
@@ -1098,20 +1154,29 @@ class BddEnc(PointerWrapper):
                 
             # Other node
             else:
+                # Get children
                 then = nsdd.bdd_then(manager, bdd)
                 else_ = nsdd.bdd_else(manager, bdd)
                 
+                # Dump them
                 dump_recur(then)
                 dump_recur(else_)
                 
+                # Get and set ID
                 node_id = next(counter)
                 ids[int(bdd)] = node_id
                 
+                # Get variable name
                 index = nsdd.bdd_index(manager, bdd)
                 var = bddEnc.BddEnc_get_var_name_from_index(encoder, index)
+                varname = nsnode.sprint_node(var)
+                
+                # Get complemented
                 complemented = nsdd.bdd_iscomplement(manager, bdd)
+                
+                # Print the node line: ID var_id complemented left_id, right_id
                 print(node_id,
-                      nsnode.sprint_node(var),
+                      variables[varname],
                       complemented,
                       ids[int(then)],
                       ids[int(else_)],
@@ -1128,20 +1193,32 @@ class BddEnc(PointerWrapper):
             <pynusmv.exception.UnknownVariableError>` if some variable name
             present in the file is unknown.
 
-        .. note:: the format of the file is the following:
-                  each line of the file is:
-                  * ID TRUE: for the TRUE node
-                  * ID FALSE: for the FALSE node
-                  * ID VAR COMP IDTHEN IDELSE: for any other node
-                  where ID is an ID for the node, VAR is the variable of the
-                  node, COMP is 0 or 1 depending on whether the node is
-                  complemented (1) or not (0), and IDTHEN and IDELSE are the
-                  IDs of the then and else children of the node.
+        .. note:: the format is the following:
+                  The content of the file is composed of:
+                  * the list of variables appearing in the BDD, one variable
+                    name per line;
+                  * the BDD itself, where each line is:
+                  ** ID TRUE: for the TRUE node
+                  ** ID FALSE: for the FALSE node
+                  ** ID VAR COMP IDTHEN IDELSE: for any other node
+                  where ID is an ID for the node, VAR is the index of the
+                  variable of the node in the list above, COMP is 0 or 1
+                  depending on whether the node is complemented (1) or not (0),
+                  and IDTHEN and IDELSE are the IDs of the then and else
+                  children of the node.
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
+                  The two parts of the file are separated by an empty line.
         """
         manager = self.DDmanager._ptr
         encoder = self._ptr
+        
+        # Get variable list
+        line = file_.readline()
+        variables_list = []
+        while line.strip():
+            variables_list.append(line.strip())
+            line = file_.readline()
         
         # Get variable BDD for each variable
         variables = {}
@@ -1159,15 +1236,20 @@ class BddEnc(PointerWrapper):
             
             # Standard node
             if len(split) > 2:
-                id_, varname, complemented, left, right = split
+                id_, var_id, complemented, left, right = split
+                var_id = int(var_id)
                 
-                # Check varname, get index and variable
-                if varname not in variables:
-                    raise UnknownVariableError("Unknown variable: " + varname)
+                # Check var_id and varname
+                if var_id < 0 or var_id >= len(variables_list):
+                    raise UnknownVariableError("Unknown variable index: " +
+                                               var_id)
+                if variables_list[var_id] not in variables:
+                    raise UnknownVariableError("Unknown variable: " +
+                                               variables_list[var_id])
                 
                 # Build and store bdd node
                 bdd = nsdd.bdd_ite(manager,
-                                   variables[varname],
+                                   variables[variables_list[var_id]],
                                    nodes[left],
                                    nodes[right])
                 
