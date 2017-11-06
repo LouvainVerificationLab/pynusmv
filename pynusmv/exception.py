@@ -20,7 +20,7 @@ __all__ = ['PyNuSMVError', 'MissingManagerError', 'NuSMVLexerError',
            'NuSMVBeFsmMasterInstanceNotInitializedError',
            'NuSMVBmcAlreadyInitializedError', 'NuSMVNeedBooleanModelError',
            'NuSMVWffError', 'NuSmvIllegalTraceStateError',
-           'UnknownVariableError']
+           'BDDDumpFormatError']
 
 
 from collections import namedtuple
@@ -319,8 +319,8 @@ class NuSmvIllegalTraceStateError(PyNuSMVError):
     """
     pass
 
-class UnknownVariableError(PyNuSMVError):
+class BDDDumpFormatError(PyNuSMVError):
     """
-    Exception raised when a given variable is unknown by the system.
+    Exception raised when an error occurs while loading a dumped BDD.
     """
     pass

@@ -38,7 +38,7 @@ from pynusmv_lower_interface.nusmv.opt import opt as nsopt
 from .dd import BDD, State, Inputs, StateInputs, DDManager, Cube
 from .utils import PointerWrapper, AttributeDict
 from .exception import (NuSMVBddPickingError, NuSMVFlatteningError,
-                        NuSMVSymbTableError, UnknownVariableError)
+                        NuSMVSymbTableError, BDDDumpFormatError)
 from .parser import parse_next_expression
 from . import node
 
@@ -1060,20 +1060,22 @@ class BddEnc(PointerWrapper):
         :param bdd: the BDD to dump.
         :param file_: the file object in which the BDD is dumped.
 
-        .. note:: the format is the following:
-                  The content of the file is composed of:
+        .. note:: The content of the file is composed of:
+                  
                   * the list of variables appearing in the BDD, one variable
                     name per line;
                   * the BDD itself, where each line is:
-                  ** TRUE: for the TRUE node
-                  ** FALSE: for the FALSE node
-                  ** VAR COMP IDTHEN IDELSE: for any other node
-                     where VAR is the index of the variable of the node in the
-                     list above, COMP is 0 or 1 depending on whether the node
-                     is complemented (1) or not (0), and IDTHEN and IDELSE are
-                     the indices of the then and else children of the node in
-                     the list of nodes (starting at 0 with the first dumped
-                     node).
+                  
+                    * TRUE: for the TRUE node
+                    * FALSE: for the FALSE node
+                    * VAR COMP IDTHEN IDELSE: for any other node
+                      where VAR is the index of the variable of the node in the
+                      list above, COMP is 0 or 1 depending on whether the node
+                      is complemented (1) or not (0), and IDTHEN and IDELSE are
+                      the indices of the then and else children of the node in
+                      the list of nodes (starting at 0 with the first dumped
+                      node).
+                  
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
                   The two parts of the file are separated by an empty line.
@@ -1189,24 +1191,26 @@ class BddEnc(PointerWrapper):
         Load and return the BDD stored in the given file.
 
         :param file_: the file object in which the BDD is dumped.
-        :raise: a :exc:`UnknownVariableError`
-            <pynusmv.exception.UnknownVariableError>` if some variable name
-            present in the file is unknown.
+        :raise: a :exc:`BDDDumpFormatError
+                <pynusmv.exception.BDDDumpFormatError>` if some error occurs
+                while loading the BDD.
 
-        .. note:: the format is the following:
-                  The content of the file is composed of:
+        .. note:: The content of the file is composed of:
+                  
                   * the list of variables appearing in the BDD, one variable
                     name per line;
                   * the BDD itself, where each line is:
-                  ** TRUE: for the TRUE node
-                  ** FALSE: for the FALSE node
-                  ** VAR COMP IDTHEN IDELSE: for any other node
-                     where VAR is the index of the variable of the node in the
-                     list above, COMP is 0 or 1 depending on whether the node
-                     is complemented (1) or not (0), and IDTHEN and IDELSE are
-                     the indices of the then and else children of the node in
-                     the list of nodes (starting at 0 with the first dumped
-                     node).
+                  
+                    * TRUE: for the TRUE node
+                    * FALSE: for the FALSE node
+                    * VAR COMP IDTHEN IDELSE: for any other node
+                      where VAR is the index of the variable of the node in the
+                      list above, COMP is 0 or 1 depending on whether the node
+                      is complemented (1) or not (0), and IDTHEN and IDELSE are
+                      the indices of the then and else children of the node in
+                      the list of nodes (starting at 0 with the first dumped
+                      node).
+                  
                   The lines are ordered according to an inverse topological
                   order of the DAG represented by the BDD.
                   The two parts of the file are separated by an empty line.
@@ -1244,13 +1248,19 @@ class BddEnc(PointerWrapper):
                 
                 # Check var_id and varname
                 if var_id < 0 or var_id >= len(variables_list):
-                    raise UnknownVariableError("Unknown variable index: " +
-                                               var_id)
+                    raise BDDDumpFormatError("Unknown variable index: " +
+                                             var_id)
                 if variables_list[var_id] not in variables:
-                    raise UnknownVariableError("Unknown variable: " +
-                                               variables_list[var_id])
+                    raise BDDDumpFormatError("Unknown variable: " +
+                                             variables_list[var_id])
                 
-                # TODO Check left and right IDs
+                # Check left and right IDs
+                if left < 0 or left >= len(nodes):
+                    raise BDDDumpFormatError("Left child is not a valid ID:" +
+                                             line)
+                if right < 0 or right >= len(nodes):
+                    raise BDDDumpFormatError("Right child is not a valid ID:" +
+                                             line)
                 
                 # Build and store bdd node
                 bdd = nsdd.bdd_ite(manager,

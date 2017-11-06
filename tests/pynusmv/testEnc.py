@@ -6,7 +6,7 @@ from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.fsm import BddFsm
 from pynusmv.dd import BDD, Cube
 from pynusmv.mc import eval_simple_expression as evalSexp
-from pynusmv.exception import NuSMVBddPickingError, UnknownVariableError
+from pynusmv.exception import NuSMVBddPickingError, BDDDumpFormatError
 
 class TestEnc(unittest.TestCase):
     
@@ -211,9 +211,9 @@ class TestEnc(unittest.TestCase):
             reconstructed = fsm.bddEnc.load(f)
             self.assertEqual(fsm.reachable_states, reconstructed)
     
-    def test_bdd_incorrect_load(self):
+    def test_bdd_incorrect_load_unknown_var(self):
         fsm = self.model()
-        with self.assertRaises(UnknownVariableError):
+        with self.assertRaises(BDDDumpFormatError):
             with open("tests/pynusmv/models/"
                       "cardgame_post_fair.reachable.bdd") as f:
                 reconstructed = fsm.bddEnc.load(f)
