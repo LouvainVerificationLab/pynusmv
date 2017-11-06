@@ -1249,7 +1249,7 @@ class BddEnc(PointerWrapper):
                 # Check var_id and varname
                 if var_id < 0 or var_id >= len(variables_list):
                     raise BDDDumpFormatError("Unknown variable index: " +
-                                             var_id)
+                                             str(var_id))
                 if variables_list[var_id] not in variables:
                     raise BDDDumpFormatError("Unknown variable: " +
                                              variables_list[var_id])

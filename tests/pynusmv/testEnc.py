@@ -206,7 +206,7 @@ class TestEnc(unittest.TestCase):
     
     def test_bdd_load(self):
         fsm = self.cardgame_post_fair()
-        with open("tests/pynusmv/models/"
+        with open("tests/pynusmv/bdds/"
                   "cardgame_post_fair.reachable.bdd") as f:
             reconstructed = fsm.bddEnc.load(f)
             self.assertEqual(fsm.reachable_states, reconstructed)
@@ -214,8 +214,29 @@ class TestEnc(unittest.TestCase):
     def test_bdd_incorrect_load_unknown_var(self):
         fsm = self.model()
         with self.assertRaises(BDDDumpFormatError):
-            with open("tests/pynusmv/models/"
+            with open("tests/pynusmv/bdds/"
                       "cardgame_post_fair.reachable.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_var_index_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.var.index.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_left_child_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.left.child.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_right_child_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.right.child.bdd") as f:
                 reconstructed = fsm.bddEnc.load(f)
     
     def test_bdd_dump_load_simple_model(self):
