@@ -425,3 +425,18 @@
  CFLAGS  = $(ICFLAGS) $(MFLAG) $(XCFLAGS)
  
  LINTFLAGS = -u -n
+--- NuSMV-2.5.4/cudd-2.4.1.1/util/pipefork.c	2011-10-12 11:05:29.000000000 +0200
++++ CUDD/util/pipefork.c 2016-12-16 10:48:56.000000000 +0100
+@@ -39,12 +39,7 @@ int util_pipefork(char **argv,		/* normal argv argument list */
+     int forkpid, waitPid;
+     int topipe[2], frompipe[2];
+     char buffer[1024];
+-
+-#if (defined __hpux) || (defined __osf__) || (defined _IBMR2) || (defined __SVR4) || (defined __CYGWIN32__) || (defined __MINGW32__) 
+     int status;
+-#else
+-    union wait status;
+-#endif
+ 
+     /* create the PIPES...
+      * fildes[0] for reading from command
