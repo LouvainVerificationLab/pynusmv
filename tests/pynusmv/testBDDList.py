@@ -33,6 +33,19 @@ class TestBDDList(unittest.TestCase):
         self.assertEqual(len(ln), 5)
         with self.assertRaises(NotImplementedError):
             s = ln[2::]
+    
+    
+    def test_get(self):
+        ln = BDDList.from_tuple((None, None, None, None, None))
+        self.assertEqual(ln[0], None)
+        with self.assertRaises(IndexError):
+            ln[-1]
+        with self.assertRaises(IndexError):
+            ln[5]
+        with self.assertRaises(IndexError):
+            ln[6]
+        with self.assertRaises(IndexError):
+            ln["a"]
             
             
     def test_elements(self):
@@ -55,3 +68,4 @@ class TestBDDList(unittest.TestCase):
         self.assertSequenceEqual((init, BDD.true(init._manager), init),
                                  ln.to_tuple())
         del ln
+    

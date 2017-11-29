@@ -3,7 +3,7 @@ import unittest
 from pynusmv_lower_interface.nusmv.utils import utils as _u
 from pynusmv.init        import init_nusmv, deinit_nusmv
 from pynusmv.collections import Assoc
-from pynusmv.node        import Node 
+from pynusmv.node        import Node
 from pynusmv.parser      import parse_simple_expression
 
 class TestAssoc(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestAssoc(unittest.TestCase):
     """
     
     def setUp(self):
-        init_nusmv()    
+        init_nusmv()
      
     def tearDown(self):
         deinit_nusmv()
@@ -24,6 +24,7 @@ class TestAssoc(unittest.TestCase):
         """
         h = Assoc(_u.new_assoc(), freeit=True)
         a = Node.from_ptr(parse_simple_expression("a.car = 3"), freeit=False)
+        b = Node.from_ptr(parse_simple_expression("b.car = 3"), freeit=False)
         
         # __contains__
         self.assertFalse(a in h)
@@ -32,6 +33,8 @@ class TestAssoc(unittest.TestCase):
         self.assertTrue(a in h)
         # __getitem__
         self.assertEqual(h[a], a)
+        with self.assertRaises(KeyError):
+            h[b]
         # __delitem__
         del h[a]
         self.assertFalse(a in h)
@@ -64,4 +67,8 @@ class TestAssoc(unittest.TestCase):
         a = Node.from_ptr(parse_simple_expression("a.car = 3"), freeit=False)
         h = Assoc.empty(freeit=True)
         self.assertFalse(a in h)
+        
+        hh = Assoc.empty(initial_capa=1, freeit=True)
+        hh[a] = a
+        self.assertTrue(a in hh)
         

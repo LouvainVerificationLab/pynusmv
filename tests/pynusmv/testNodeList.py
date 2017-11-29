@@ -171,15 +171,16 @@ class TestNodeList(unittest.TestCase):
         
     def test_delitem(self):
         a   = self.node_from_expr("a = 1")
-        lst = NodeList.from_list([a])
-        self.assertEqual(1, len(lst))
+        b   = self.node_from_expr("b = 2")
+        lst = NodeList.from_list([a, b])
+        self.assertEqual(2, len(lst))
         self.assertTrue(a in lst)
           
-        del lst[0]
-        self.assertTrue(a not in lst)
-        self.assertEqual(0, len(lst))
+        del lst[1]
+        self.assertTrue(b not in lst)
+        self.assertEqual(1, len(lst))
 
-    def test_iter(self):    
+    def test_iter(self):
         nlst= NodeList.empty()
         a = self.node_from_expr("a = 1")
         b = self.node_from_expr("b = 2")
@@ -194,6 +195,18 @@ class TestNodeList(unittest.TestCase):
             out.append(v)
             
         self.assertListEqual(out, lst)
+    
+    def test_iter_string(self):
+        nlst = NodeList.empty()
+        a = self.node_from_expr("a = 1")
+        b = self.node_from_expr("b = 2")
+        c = self.node_from_expr("c = 3")
+        nlst.append(a)
+        nlst.append(b)
+        nlst.append(c) 
+        
+        it = iter(nlst)
+        self.assertEqual(str(it), "NodeListIter[a = 1, b = 2, c = 3]")
         
     def test_print_nodes(self):
         a   = self.node_from_expr("a = 1")

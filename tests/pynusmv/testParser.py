@@ -11,7 +11,8 @@ from pynusmv.prop import PropDb
 
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv import glob
-from pynusmv.parser import parse_next_expression, parse_ctl_spec
+from pynusmv.parser import (parse_next_expression, parse_ctl_spec,
+                            parse_ltl_spec)
 from pynusmv.node import find_hierarchy
 
 from pynusmv.exception import NuSMVParsingError
@@ -113,3 +114,15 @@ class TestParser(unittest.TestCase):
         
         with self.assertRaises(NuSMVParsingError):
             spec = parse_ctl_spec("A A")
+    
+    def test_ltl_error(self):
+        with self.assertRaises(NuSMVParsingError):
+            spec = parse_ltl_spec("A A")
+    
+    def test_parsing_error(self):
+        try:
+            expr = parse_next_expression("a == 0")
+        except NuSMVParsingError as err:
+            self.assertEqual(len(err.errors), 1)
+            self.assertEqual(str(err),
+                             "Error at line 1, token '=': syntax error")

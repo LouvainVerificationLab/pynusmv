@@ -12,7 +12,7 @@ from pynusmv_lower_interface.nusmv.fsm.be import be   as _be
 from pynusmv              import glob 
 from pynusmv.init         import init_nusmv, deinit_nusmv
 from pynusmv.node         import Node
-from pynusmv.collections  import NodeIterator 
+from pynusmv.collections  import NodeIterator
 
 class TestNodeIterator(unittest.TestCase):
     def model(self):
@@ -45,4 +45,8 @@ class TestNodeIterator(unittest.TestCase):
         iterator = NodeIterator.from_node(Node.from_ptr(self._TEST))
         lst = [i for i in iterator]
         self.assertEqual(2, len(lst))
+    
+    def test_iterator_string(self):
+        iterator = NodeIterator.from_node(Node.from_ptr(self._TEST))
+        self.assertEqual(str(iterator), "NodeIterator[, , ]")
             

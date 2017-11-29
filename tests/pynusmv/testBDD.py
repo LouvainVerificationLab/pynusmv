@@ -1,6 +1,8 @@
 import unittest
 import sys
 
+from copy import deepcopy
+
 from pynusmv_lower_interface.nusmv.cmd import cmd
 
 from pynusmv.prop import PropDb
@@ -115,6 +117,9 @@ class TestBDD(unittest.TestCase):
         self.assertNotEqual(true, init.dup())
         self.assertNotEqual(init, false.dup())
         
+        copy = deepcopy(init)
+        self.assertEqual(init, copy)
+        
         
     def test_true_false_equalities(self):
         (fsm, enc, manager) = self.init_model()
@@ -122,7 +127,7 @@ class TestBDD(unittest.TestCase):
         true = BDD.true(manager)
         false = BDD.false(manager)
         
-        self.assertTrue(false != true)        
+        self.assertTrue(false != true)
         self.assertFalse(false == true)
         self.assertTrue(false == false)
         self.assertTrue(true == true)
@@ -160,6 +165,8 @@ class TestBDD(unittest.TestCase):
         self.assertFalse(init == true)
         self.assertFalse(init == false)
         
+        self.assertFalse(init == 1)
+        
 
     def test_init_comparisons(self):
         (fsm, enc, manager) = self.init_model()
@@ -177,6 +184,12 @@ class TestBDD(unittest.TestCase):
         self.assertFalse(init <= false)
         self.assertFalse(true < init)
         self.assertFalse(true <= init)
+        
+        self.assertTrue(init.entailed(true))
+        self.assertFalse(init.entailed(false))
+        
+        self.assertTrue(init.intersected(true))
+        self.assertFalse(init.intersected(false))
         
     
     def test_true_false_and(self):
@@ -314,4 +327,17 @@ class TestBDD(unittest.TestCase):
                          len(fsm.bddEnc.get_variables_ordering("bits")) + 1)
         self.assertEqual(init.size, 5)
         self.assertEqual(processing.size, 3)
+    
+    def test_operations(self):
+        (fsm, enc, manager) = self.init_model()
+        
+        alice = eval_simple_expression(fsm, "admin = alice")
+        processing = eval_simple_expression(fsm, "state = processing")
+        
+        self.assertTrue(~alice < alice.imply(processing))
+        self.assertFalse(alice.diff(processing).intersected(processing))
+        self.assertTrue(alice.intersection(processing) <= alice)
+        
+        stateCube = enc.cube_for_state_vars(["state"])
+        self.assertEqual(alice, alice.forall(stateCube))
         

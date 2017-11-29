@@ -51,11 +51,11 @@ __all__ = [
     'parseAllString']
 
 
-from .exception import NuSMVParsingError, _Error
+from .exception import NuSMVParsingError
 
 from .utils import update
 from .model import (Identifier, Self, Dot, ArrayAccess, Trueexp, Falseexp,
-                    NumberWord, RangeConst,
+                    NumericalConst, NumberWord, RangeConst,
                     Conversion, WordFunction, Count, Next, Smallinit, Case,
                     Subscript, BitSelection, Set, Not, Concat,
                     Minus, Mult, Div, Mod, Add, Sub, LShift, RShift, Union, In,
@@ -285,7 +285,7 @@ _variable_identifier = complex_identifier
 
 # Integer numbers
 _integer_number = Combine(Optional("-") + PWord(nums))
-_integer_number.setParseAction(lambda s, l, t: int(t[0]))
+_integer_number.setParseAction(lambda s, l, t: NumericalConst(int(t[0])))
 
 # Constants
 _boolean_constant = oneOf("TRUE FALSE")
@@ -382,6 +382,7 @@ _not = ZeroOrMore("!") + _array
 _not.setParseAction(lambda s, l, t: reduce(lambda e, n: Not(e), t[:-1], t[-1]))
 
 _concat = _not + ZeroOrMore(Suppress("::") + _not)
+# pylint: disable=unnecessary-lambda
 _concat.setParseAction(lambda s, l, t: reduce(lambda e, n: Concat(e, n),
                                               t[0:1] + t[2::2]))
 
@@ -403,10 +404,12 @@ _set_set.setParseAction(lambda s, l, t: Set(t))
 _set = (_range_constant | _shift | _set_set)
 
 _union = _set + ZeroOrMore("union" + _set)
+# pylint: disable=unnecessary-lambda
 _union.setParseAction(lambda s, l, t: reduce(lambda e, n: Union(e, n),
                                              t[0:1] + t[2::2]))
 
 _in = _union + ZeroOrMore("in" + _union)
+# pylint: disable=unnecessary-lambda
 _in.setParseAction(lambda s, l, t: reduce(lambda e, n: In(e, n),
                                           t[0:1] + t[2::2]))
 
@@ -414,6 +417,7 @@ _comparison = _in + ZeroOrMore(oneOf("= != < > <= >=") + _in)
 _comparison.setParseAction(lambda s, l, t: _reduce_list_to_expr(t))
 
 _and = _comparison + ZeroOrMore("&" + _comparison)
+# pylint: disable=unnecessary-lambda
 _and.setParseAction(lambda s, l, t: reduce(lambda e, n: And(e, n),
                                            t[0:1] + t[2::2]))
 
@@ -426,6 +430,7 @@ _ite.setParseAction(lambda s, l, t:
                     t[0] if len(t) <= 1 else Ite(t[0], t[2], t[4]))
 
 _iff = _ite + ZeroOrMore("<->" + _ite)
+# pylint: disable=unnecessary-lambda
 _iff.setParseAction(lambda s, l, t: reduce(lambda e, n: Iff(e, n),
                                            t[0:1] + t[2::2]))
 
@@ -514,6 +519,7 @@ _define = _array_expression | next_expression
 _define_declaration = (identifier + Suppress(":=") + _define + Suppress(";"))
 
 def _handle_define_body(s, l, t):
+    # pylint: disable=unused-argument
     b = OrderedDict()
     for identifier, body in zip(t[::2], t[1::2]):
         if not isinstance(body, Expression):
@@ -612,6 +618,7 @@ def _create_module(string, location, tokens):
     :rtype: :class:`pynusmv.model.ModuleMetaClass`
 
     """
+    # pylint: disable=unused-argument
 
     from .model import ModuleMetaClass, Module as ModuleClass
 

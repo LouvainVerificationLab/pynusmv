@@ -466,6 +466,9 @@ class BDD(PointerWrapper):
     def diff(self, other):
         return self & ~other
 
+    def union(self, other):
+        return self.or_(other)
+
     def intersection(self, other):
         return self.and_(other)
 

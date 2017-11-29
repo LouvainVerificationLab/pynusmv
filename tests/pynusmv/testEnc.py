@@ -1,10 +1,12 @@
 import unittest
 
+import io
+
 from pynusmv.init import init_nusmv, deinit_nusmv
 from pynusmv.fsm import BddFsm
-from pynusmv.dd import BDD
+from pynusmv.dd import BDD, Cube
 from pynusmv.mc import eval_simple_expression as evalSexp
-from pynusmv.exception import NuSMVBddPickingError
+from pynusmv.exception import NuSMVBddPickingError, BDDDumpFormatError
 
 class TestEnc(unittest.TestCase):
     
@@ -85,6 +87,30 @@ class TestEnc(unittest.TestCase):
         self.assertFalse(a <= enc.statesCube)
         self.assertFalse(~a <= enc.statesCube)
     
+    def test_var_cubes(self):
+        fsm = self.model()
+        enc = fsm.bddEnc
+        
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        pq = fsm.pick_one_state(p & q)
+        pnq = fsm.pick_one_state(p & ~q)
+        
+        pcube = enc.cube_for_state_vars({"p"})
+        qcube = enc.cube_for_state_vars({"q"})
+        false = BDD.false()
+        
+        self.assertEqual(pcube | qcube, pcube + qcube)
+        self.assertTrue(pcube | qcube <= enc.statesCube)
+        self.assertEqual(qcube & pcube, qcube * pcube)
+        self.assertEqual(pcube - qcube, pcube)
+        
+        self.assertTrue(pcube & pq <= pcube)
+        self.assertTrue(pcube | pq >= pcube)
+        self.assertTrue(pcube - pq <= pcube)
+    
         
     def test_inputsCube(self):
         fsm = self.model()
@@ -141,4 +167,121 @@ class TestEnc(unittest.TestCase):
         self.assertTupleEqual(new_order,
                               fsm.bddEnc.get_variables_ordering()
                               [:len(new_order)])
+    
+    def test_bdd_dump(self):
+        fsm = self.cardgame_post_fair()
+        
+        # Dump
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(fsm.reachable_states, f)
+            content = f.getvalue()
+        
+        lines = content.split("\n")
+        
+        # Ignore variables lines
+        index = 0
+        while lines[index].strip():
+            index += 1
+        lines = lines[index+1:]
+        
+        # Check that every child is effectively in the dump
+        for i, line in enumerate(lines):
+            if line:
+                # Get children IDs
+                split = line.split(" ")
+                if len(split) > 2:
+                    _, _, left, right = split
+                    self.assertTrue(int(left) < i)
+                    self.assertTrue(int(right) < i)
+    
+    def test_bdd_dump_load(self):
+        fsm = self.cardgame_post_fair()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
+    
+    def test_bdd_load(self):
+        fsm = self.cardgame_post_fair()
+        with open("tests/pynusmv/bdds/"
+                  "cardgame_post_fair.reachable.bdd") as f:
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(fsm.reachable_states, reconstructed)
+    
+    def test_bdd_incorrect_load_unknown_var(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "cardgame_post_fair.reachable.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_var_index_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.var.index.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_left_child_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.left.child.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_incorrect_load_right_child_error(self):
+        fsm = self.model()
+        with self.assertRaises(BDDDumpFormatError):
+            with open("tests/pynusmv/bdds/"
+                      "constraints.reachable.error.right.child.bdd") as f:
+                reconstructed = fsm.bddEnc.load(f)
+    
+    def test_bdd_dump_load_simple_model(self):
+        fsm = self.model()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
+    
+    def test_bdd_dump_load_counters(self):
+        fsm = self.counters_model()
+        states = fsm.reachable_states
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(states, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(states, reconstructed)
+    
+    def test_bdd_dump_load_input_vars(self):
+        fsm = self.model()
+        
+        p = evalSexp(fsm, "p")
+        q = evalSexp(fsm, "q")
+        a = evalSexp(fsm, "a")
+        
+        bdds = {a, p & a, q & ~a}
+        
+        for bdd in bdds:
+            with io.StringIO() as f:
+                fsm.bddEnc.dump(bdd, f)
+                f.seek(0)
+                reconstructed = fsm.bddEnc.load(f)
+                self.assertEqual(bdd, reconstructed)
+    
+    def test_bdd_dump_load_monolithic_trans(self):
+        fsm = self.model()
+        trans = fsm.trans.monolithic
+        
+        with io.StringIO() as f:
+            fsm.bddEnc.dump(trans, f)
+            f.seek(0)
+            reconstructed = fsm.bddEnc.load(f)
+            self.assertEqual(trans, reconstructed)
         

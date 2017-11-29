@@ -3,7 +3,8 @@ The :mod:`pynusmv.mc` module provides some functions of NuSMV dealing with
 model checking, like CTL model checking.
 """
 
-__all__ = ['check_ctl_spec', 'eval_simple_expression', 'eval_ctl_spec',
+__all__ = ['check_ltl_spec', 'check_explain_ltl_spec',
+           'check_ctl_spec', 'eval_simple_expression', 'eval_ctl_spec',
            'ef', 'eg', 'ex', 'eu', 'au',
            'explain', 'explainEX', 'explainEU', 'explainEG']
 
@@ -48,10 +49,10 @@ def check_ltl_spec(spec):
             nsopt.OptsHandler_get_instance(),
             "oreg_justice_emptiness_bdd_algorithm")
     if (nscompile.
-        FlatHierarchy_get_compassion(glob.
-                                     global_compile_flathierarchy()) is None
-        and
-        o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+            FlatHierarchy_get_compassion(glob.
+                                         global_compile_flathierarchy())
+            is None and
+            o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
         
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
@@ -113,10 +114,10 @@ def check_explain_ltl_spec(spec):
             nsopt.OptsHandler_get_instance(),
             "oreg_justice_emptiness_bdd_algorithm")
     if (nscompile.
-        FlatHierarchy_get_compassion(glob.
-                                     global_compile_flathierarchy()) is None
-        and
-        o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
+            FlatHierarchy_get_compassion(glob.
+                                         global_compile_flathierarchy())
+            is None and
+            o == nsfsmbdd.BDD_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM_EL_FWD):
         
         saved_options = nsfsmbdd.Bdd_elfwd_check_set_and_save_options(
                             nsfsmbdd.BDD_ELFWD_OPT_ALL)
@@ -312,7 +313,7 @@ def eu(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    return BDD(nsmc.eu(fsm._ptr, s1._ptr, s1._ptr),
+    return BDD(nsmc.eu(fsm._ptr, s1._ptr, s2._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
 def au(fsm, s1, s2):
@@ -327,7 +328,7 @@ def au(fsm, s1, s2):
     :type s2: :class:`BDD <pynusmv.dd.BDD>`
     :rtype: :class:`BDD <pynusmv.dd.BDD>`
     """
-    return BDD(nsmc.au(fsm._ptr, s1._ptr, s1._ptr),
+    return BDD(nsmc.au(fsm._ptr, s1._ptr, s2._ptr),
                fsm.bddEnc.DDmanager, freeit=True)
 
 def explain(fsm, state, spec, context=None):

@@ -38,6 +38,12 @@ class TestExplain(unittest.TestCase):
         master = propDb.master
         fsm = propDb.master.bddFsm
         return fsm
+    
+    
+    def inputs_model(self):
+        glob.load_from_file("tests/pynusmv/models/inputs.smv")
+        glob.compute_model()
+        return glob.prop_database().master.bddFsm
         
         
     def test_init(self):
@@ -61,6 +67,20 @@ class TestExplain(unittest.TestCase):
         adminNone = eval_ctl_spec(fsm, atom("admin = none"))
         self.assertTrue((initState & adminNone).isnot_false())
         self.assertTrue(init <= adminNone)
+        
+        
+    def test_explain_atom(self):
+        fsm = self.init_model()
+        manager = fsm.bddEnc.DDmanager
+        init = fsm.init
+        
+        initState = fsm.pick_one_state(init)
+        
+        spec = Spec(parse_ctl_spec("admin = none"))
+        
+        path = explain(fsm, initState, spec)
+        self.assertEqual(initState, path[0])
+        self.assertEqual(len(path), 1)
         
         
     def test_explain_ex(self):
@@ -118,6 +138,25 @@ class TestExplain(unittest.TestCase):
         for i in range(0,len(path), 2):
             self.assertTrue(path[i] <= adminAlice)
         self.assertTrue(path[-1] <= adminAlice)
+        
+        
+    def test_explain_eg_first_state(self):
+        fsm = self.inputs_model()
+        manager = fsm.bddEnc.DDmanager
+        init = fsm.init
+        
+        p = eval_ctl_spec(fsm, atom("p"))
+        egp = eval_ctl_spec(fsm, eg(atom("p")))
+        self.assertTrue(egp <= p)
+        
+        state = fsm.pick_one_state(egp)
+        path, (inloop, loop) = explainEG(fsm, state, p)
+        self.assertEqual(state, path[0])
+        self.assertIn(loop, path)
+        self.assertEqual(len(path), 1)
+        for i in range(0,len(path), 2):
+            self.assertTrue(path[i] <= p)
+        self.assertTrue(path[-1] <= p)
     
     def test_explain(self):
         fsm = self.init_model()

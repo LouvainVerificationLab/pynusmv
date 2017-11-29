@@ -19,7 +19,8 @@ __all__ = ['PyNuSMVError', 'MissingManagerError', 'NuSMVLexerError',
            'NuSMVParsingError', 'NuSMVModuleError', 'NuSMVSymbTableError',
            'NuSMVBeFsmMasterInstanceNotInitializedError',
            'NuSMVBmcAlreadyInitializedError', 'NuSMVNeedBooleanModelError',
-           'NuSMVWffError', 'NuSmvIllegalTraceStateError']
+           'NuSMVWffError', 'NuSmvIllegalTraceStateError',
+           'BDDDumpFormatError']
 
 
 from collections import namedtuple
@@ -315,5 +316,11 @@ class NuSmvIllegalTraceStateError(PyNuSMVError):
     Exception raised when an operation is made on a trace which is not in an
     appropriate state (for instance forcing a step to be considered loopback
     while the parent trace is frozen).
+    """
+    pass
+
+class BDDDumpFormatError(PyNuSMVError):
+    """
+    Exception raised when an error occurs while loading a dumped BDD.
     """
     pass
