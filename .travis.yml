@@ -54,7 +54,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install python3 ; fi
 
 install:
-  - pip install coveralls
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install coveralls ; fi
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then coverage run --source=pynusmv setup.py test ; fi
