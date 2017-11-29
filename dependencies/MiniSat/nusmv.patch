@@ -564,7 +564,7 @@ diff -Naur minisat.ORIG/simp/Solver_C.C minisat/simp/Solver_C.C
 +  return (MiniSat_ptr)new SimpSolver();
 +}
 +
-+extern "C"void MiniSat_Delete(MiniSat_ptr ms)
++extern "C" void MiniSat_Delete(MiniSat_ptr ms)
 +{
 +  delete (SimpSolver *)ms;
 +}
